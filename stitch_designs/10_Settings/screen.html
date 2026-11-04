@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;display:inline-block;vertical-align:middle;line-height:1;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#faf8ff","surface-container-highest":"#dae2fd","on-error":"#ffffff","surface-container-lowest":"#ffffff","surface":"#faf8ff","tertiary-fixed":"#e1e0ff","error-container":"#ffdad6","on-tertiary-fixed":"#07006c","tertiary-container":"#4749d5","on-secondary-container":"#57657a","surface-tint":"#2151da","primary-container":"#1e4fd8","secondary":"#515f74","secondary-fixed":"#d5e3fc","primary-fixed":"#dce1ff","surface-container":"#eaedff","secondary-container":"#d5e3fc","outline":"#747686","tertiary":"#2d2bbd","surface-container-high":"#e2e7ff","on-tertiary-container":"#d3d2ff","on-primary":"#ffffff","primary-fixed-dim":"#b7c4ff","on-surface":"#131b2e","on-primary-fixed-variant":"#0039b4","on-tertiary":"#ffffff","inverse-surface":"#283044","secondary-fixed-dim":"#b9c7df","inverse-primary":"#b7c4ff","on-secondary-fixed":"#0d1c2e","inverse-on-surface":"#eef0ff","error":"#ba1a1a","surface-variant":"#dae2fd","on-error-container":"#93000a","surface-dim":"#d2d9f4","on-primary-container":"#cbd4ff","primary":"#0038b1","on-background":"#131b2e","tertiary-fixed-dim":"#c0c1ff","on-primary-fixed":"#001551","on-secondary":"#ffffff","surface-container-low":"#f2f3ff","outline-variant":"#c4c5d7","on-tertiary-fixed-variant":"#2f2ebe","surface-bright":"#faf8ff","on-surface-variant":"#434655","on-secondary-fixed-variant":"#3a485b"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"space-sm":"0.5rem","margin":"2rem","gutter-mobile":"1rem","space-md":"1rem","space-xs":"0.25rem","gutter":"1.5rem","space-xl":"2rem","space-lg":"1.5rem","margin-mobile":"1rem"},fontFamily:{"headline-xl":["Inter"],"label-sm":["Inter"],"headline-xl-mobile":["Inter"],"headline-sm":["Inter"],"label-md":["Inter"],"code-sm":["JetBrains Mono"],"body-lg":["Inter"],"headline-lg":["Inter"],"label-lg":["Inter"],"headline-md":["Inter"],"body-md":["Inter"],"body-sm":["Inter"]},fontSize:{"headline-xl":["36px",{lineHeight:"44px",letterSpacing:"-0.025em",fontWeight:"700"}],"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.03em",fontWeight:"600"}],"headline-xl-mobile":["28px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"700"}],"headline-sm":["16px",{lineHeight:"24px",letterSpacing:"-0.01em",fontWeight:"600"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.01em",fontWeight:"500"}],"code-sm":["12px",{lineHeight:"16px",letterSpacing:"0em",fontWeight:"400"}],"body-lg":["16px",{lineHeight:"24px",letterSpacing:"-0.005em",fontWeight:"400"}],"headline-lg":["24px",{lineHeight:"32px",letterSpacing:"-0.02em",fontWeight:"600"}],"label-lg":["14px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"500"}],"headline-md":["20px",{lineHeight:"28px",letterSpacing:"-0.015em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"400"}],"body-sm":["12px",{lineHeight:"16px",letterSpacing:"0em",fontWeight:"400"}]}}}};</script></head><body class="bg-surface font-body-md text-body-md text-on-surface"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between"><div class="flex flex-col"><div class="h-16 px-space-md flex items-center justify-between"><div class="flex items-center gap-space-sm"><img alt="ReachOut Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTWvHApa3kKTY0_zBb62vHZZMmKTP9Eixxa1r7zmqSbQtMqLHhqef22pXnLLrREa-0aAVUuL0OAGz1piuq4alEZ6zqP8BSRkcIkiJggeWP2-ygt1D9U5JX-iXim2FMNIo_zqJ363O7htdcCkn-sIfsNqAXJh1XFfWqIaM-J5eBKrRDpG0LvScMUDjqdvLnh_jA4N8VJsxMDeCqyhzZKCmFl68GNdw62wI7CKa3ZdFq"/><span class="font-headline-sm text-headline-sm text-on-surface">ReachOut</span></div><span class="font-label-sm text-label-sm px-space-xs py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed">v2.4</span></div><div class="px-space-md pt-space-xs pb-space-sm"><button class="w-full flex items-center justify-between px-space-sm py-2 rounded-lg bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" type="button"><div class="flex items-center gap-space-xs truncate"><span class="material-symbols-outlined text-[18px] text-primary">workspaces</span><span class="font-label-md text-label-md truncate text-on-surface">Shoaib's Outreach</span></div><span class="material-symbols-outlined text-[16px]">unfold_more</span></button></div><nav class="px-space-sm space-y-1 overflow-y-auto max-h-[calc(100vh-220px)]" data-active-classes="bg-primary-container text-on-primary font-label-lg font-bold rounded-lg shadow-sm"><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span>Dashboard</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="my-profile" href="#"><span class="material-symbols-outlined text-[20px]">account_circle</span><span>My Profile</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="lead-finder" href="#"><span class="material-symbols-outlined text-[20px]">person_search</span><span>Lead Finder</span></a><div class="pt-space-xs"><div class="flex items-center justify-between px-space-sm py-1.5 text-on-surface-variant"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">hub</span><span class="font-label-lg text-label-lg">Outreach Modules</span></div><span class="material-symbols-outlined text-[16px]">expand_more</span></div><div class="pl-8 pr-space-xs space-y-1 mt-0.5"><a class="block px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="module-social-media" href="#">Social Media</a><a class="block px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="module-video-editing" href="#">Video Editing</a><a class="block px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="module-ai-video" href="#">AI Video</a><a class="block px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="module-product-manager" href="#">Product Manager</a></div></div><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="email-composer" href="#"><span class="material-symbols-outlined text-[20px]">edit_note</span><span>Email Composer</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="inbox" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">inbox</span><span>Inbox</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-full bg-error-container text-on-error-container">3</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="analytics" href="#"><span class="material-symbols-outlined text-[20px]">bar_chart</span><span>Analytics</span></a><a aria-current="page" class="flex items-center gap-space-sm px-space-sm py-2 transition-all bg-primary-container text-on-primary font-label-lg font-bold rounded-lg shadow-sm" data-path="settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span>Settings</span></a></nav></div><div class="p-space-sm"><div class="flex items-center justify-between p-space-sm rounded-xl bg-surface-container-low"><div class="flex items-center gap-space-sm min-w-0"><div class="relative flex-shrink-0"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMyZR23rxqC0ChraMUzMm31ejMvxcedHNHdArQjmtGxiyA1zb3dfEIlax7_oju-rwKnXI779JU76Y-AOpj8pWwH1HuAPO7zkV3qfvkbf8YgnuU34Utlnlxtp3coVsPDv1btY56Hqs0zo0Zrq-yr8YNVocElkrbe0at2_zbPVNHqVO_-Kj8Bbr0bb9-TmEfcDkKEgb5iakQR3fwR3f30aY2wo_Ptfta2tWh5lqIdu7z"/><span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-primary ring-2 ring-surface-container-lowest"></span></div><div class="min-w-0"><p class="font-label-md text-label-md text-on-surface truncate font-semibold">Shoaib ul Din</p><p class="font-body-sm text-body-sm text-on-surface-variant truncate">Freelancer</p></div></div><button class="text-on-surface-variant hover:text-on-surface p-1 rounded-lg hover:bg-surface-container" type="button"><span class="material-symbols-outlined text-[18px]">more_vert</span></button></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-gutter"><div class="flex items-center gap-space-md"><div class="relative w-64 md:w-80"><span class="material-symbols-outlined absolute left-3 top-2.5 text-[20px] text-outline">search</span><input class="w-full h-10 pl-10 pr-space-md rounded-lg bg-surface-container-low text-body-md font-body-md text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Quick search leads, campaigns..." type="text"/></div></div><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs px-space-sm py-1.5 rounded-full bg-surface-container text-on-surface-variant"><span class="material-symbols-outlined text-[16px] text-primary">auto_awesome</span><span class="font-label-sm text-label-sm font-semibold text-on-surface">840 / 1000 AI Credits</span></div><button class="relative p-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span></button><button class="flex items-center gap-space-xs px-space-md py-2 rounded-lg bg-primary-container text-on-primary hover:bg-primary transition-all font-label-lg text-label-lg" type="button"><span class="material-symbols-outlined text-[18px]">add</span><span>New Campaign</span></button><img alt="Profile" class="w-8 h-8 rounded-full object-cover ml-space-xs" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMyZR23rxqC0ChraMUzMm31ejMvxcedHNHdArQjmtGxiyA1zb3dfEIlax7_oju-rwKnXI779JU76Y-AOpj8pWwH1HuAPO7zkV3qfvkbf8YgnuU34Utlnlxtp3coVsPDv1btY56Hqs0zo0Zrq-yr8YNVocElkrbe0at2_zbPVNHqVO_-Kj8Bbr0bb9-TmEfcDkKEgb5iakQR3fwR3f30aY2wo_Ptfta2tWh5lqIdu7z"/></div></header><main class="relative pt-16 bg-surface min-h-screen w-full px-gutter py-space-xl"><div class="flex flex-col w-full pb-16">
+<!-- Top Ambient Glow -->
+<div class="relative w-full mb-space-lg">
+<div class="absolute -top-12 left-1/4 w-96 h-48 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md relative">
+<div class="space-y-1">
+<div class="flex items-center gap-space-xs text-primary font-label-md text-label-md tracking-wider uppercase">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+<span>Workspace Preferences</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface">Account &amp; Outreach Settings</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+          Manage sender email integrations, sending limits, sequence throttles, and compliance rules.
+        </p>
+</div>
+<!-- Quick Deliverability Health Indicator -->
+<div class="flex items-center gap-space-md bg-surface-container-lowest px-space-md py-space-sm rounded-xl shadow-sm self-start md:self-auto">
+<div class="relative flex items-center justify-center w-10 h-10">
+<svg class="w-10 h-10 -rotate-90" viewbox="0 0 36 36">
+<path class="text-surface-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+<path class="text-primary-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="98, 100" stroke-linecap="round" stroke-width="3.5"></path>
+</svg>
+<span class="absolute font-label-sm text-label-sm font-bold text-primary">98%</span>
+</div>
+<div class="leading-tight">
+<p class="font-label-md text-label-md font-semibold text-on-surface">Sender Reputation</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Tier 1 • Excellent Health</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Settings Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
+<!-- LEFT COLUMN: Accounts & Volume (7 cols) -->
+<div class="lg:col-span-7 space-y-space-lg">
+<!-- Section 1: Email Account & Integration -->
+<section class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm space-y-space-md">
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="p-2 rounded-lg bg-surface-container-low text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">alternate_email</span>
+</span>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Email Account &amp; Integration</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Active SMTP/IMAP protocol &amp; DNS authentication status</p>
+</div>
+</div>
+<span class="px-space-sm py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm">Primary Relay</span>
+</div>
+<!-- Integration Status Card -->
+<div class="bg-surface-container-low rounded-xl p-space-md space-y-space-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-11 h-11 rounded-lg bg-surface-container-lowest shadow-sm flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px] text-primary-container">mail</span>
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-space-xs">
+<p class="font-label-lg text-label-lg font-semibold text-on-surface truncate">shoaib.outreach@gmail.com</p>
+<span class="material-symbols-outlined text-primary text-[18px]" title="Google Workspace Verified">verified</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Google Workspace Enterprise Connector</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm flex-shrink-0 self-start sm:self-auto">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+              Connected &amp; Healthy
+            </span>
+</div>
+<!-- DNS Records Metric Pill Group -->
+<div class="grid grid-cols-3 gap-space-sm pt-space-xs">
+<div class="bg-surface-container-lowest p-space-sm rounded-lg shadow-sm flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">SPF Record</span>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[16px] text-primary">check_circle</span>
+<span class="font-label-md text-label-md font-semibold text-on-surface">100% Passed</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-sm rounded-lg shadow-sm flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">DKIM Keys</span>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[16px] text-primary">check_circle</span>
+<span class="font-label-md text-label-md font-semibold text-on-surface">2048-bit OK</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-sm rounded-lg shadow-sm flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">DMARC Policy</span>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[16px] text-primary">check_circle</span>
+<span class="font-label-md text-label-md font-semibold text-on-surface">Enforced</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Integration Actions -->
+<div class="flex flex-wrap items-center gap-space-sm pt-space-xs">
+<button class="inline-flex items-center gap-space-xs px-space-md py-2 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-all font-label-md text-label-md" type="button">
+<span class="material-symbols-outlined text-[18px]">sync</span>
+<span>Reconnect Account</span>
+</button>
+<button class="inline-flex items-center gap-space-xs px-space-md py-2 rounded-lg bg-surface-container-low text-primary hover:bg-surface-container transition-all font-label-md text-label-md" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>Add Secondary Sender</span>
+</button>
+<span class="text-on-surface-variant font-body-sm text-body-sm ml-auto">Pool size: 1 of 3 mailbox slots</span>
+</div>
+</section>
+<!-- Section 2: Daily Sending Limits & Warmup -->
+<section class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm space-y-space-md">
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="p-2 rounded-lg bg-surface-container-low text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">speed</span>
+</span>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Daily Sending Limits &amp; Warmup</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Balance campaign outreach pacing to guard domain sender score</p>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-primary bg-primary-fixed px-space-sm py-0.5 rounded-full font-semibold">Warmup Active</span>
+</div>
+<!-- Slider Visualizer Area -->
+<div class="bg-surface-container-low rounded-xl p-space-md space-y-space-md">
+<div class="flex items-baseline justify-between">
+<label class="font-label-lg text-label-lg font-medium text-on-surface" for="sending-slider">Outreach Volume Ceiling</label>
+<div class="flex items-baseline gap-1">
+<span class="font-headline-lg text-headline-lg font-bold text-primary" id="slider-val-display">50</span>
+<span class="font-label-md text-label-md text-on-surface-variant">emails / day</span>
+</div>
+</div>
+<!-- Interactive Slider -->
+<div class="relative py-2">
+<input class="w-full h-2 bg-surface-container-highest rounded-full appearance-none cursor-pointer accent-primary focus:outline-none" id="sending-slider" max="150" min="10" oninput="document.getElementById('slider-val-display').innerText = this.value" step="5" type="range" value="50"/>
+<div class="flex justify-between items-center text-on-surface-variant font-label-sm text-label-sm mt-2">
+<span>10 / day (Initial)</span>
+<span class="text-primary font-semibold">Safe Zone: 40–75 / day</span>
+<span>150 / day (Max Throttle)</span>
+</div>
+</div>
+<!-- Safe Warmup Recommendation Banner -->
+<div class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-lowest">
+<span class="material-symbols-outlined text-[18px] text-primary flex-shrink-0 mt-0.5">info</span>
+<div class="space-y-0.5">
+<p class="font-label-md text-label-md font-semibold text-on-surface">Safe Warmup Mode Recommended (40–75)</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                For accounts in their first 60 days, exceeding 75 cold emails per mailbox increases soft-bounce risk by 24%.
+              </p>
+</div>
+</div>
+</div>
+<!-- Ramp-Up Toggle -->
+<div class="flex items-center justify-between p-space-md rounded-xl bg-surface-container-lowest">
+<div class="space-y-0.5 pr-space-md">
+<p class="font-label-lg text-label-lg font-medium text-on-surface">Gradual auto-increment ramp-up</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              System adds +5 emails every 3 consecutive days if bounce rates remain below 1.2%.
+            </p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
+<input checked="" class="sr-only peer" id="toggle-ramp" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-surface-container-lowest after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface-container-lowest after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</section>
+<!-- Section 3: Sending Hours & Timezone Scheduling -->
+<section class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm space-y-space-md">
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="p-2 rounded-lg bg-surface-container-low text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">schedule</span>
+</span>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Sending Hours &amp; Timezone Scheduling</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Deliver messages during normal working hours for maximum open rates</p>
+</div>
+</div>
+</div>
+<div class="space-y-space-md">
+<!-- Timezone Dropdown Selector -->
+<div class="space-y-1.5">
+<label class="font-label-md text-label-md font-medium text-on-surface">Target Zone Reference</label>
+<div class="relative">
+<select class="w-full h-10 px-space-md pr-10 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md appearance-none focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer">
+<option selected="">Recipient Local Timezone (Auto-detect via IP / LinkedIn)</option>
+<option>UTC (Coordinated Universal Time)</option>
+<option>US Eastern Time (EST / EDT)</option>
+<option>US Pacific Time (PST / PDT)</option>
+<option>Central European Time (CET)</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-2.5 text-[20px] text-outline pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- Time Window Pickers -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<div class="space-y-1.5">
+<label class="font-label-md text-label-md font-medium text-on-surface">Sending Window Start</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-[18px] text-outline pointer-events-none">wb_sunny</span>
+<input class="w-full h-10 pl-10 pr-space-md rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:ring-1 focus:ring-primary" type="text" value="09:00 AM"/>
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="font-label-md text-label-md font-medium text-on-surface">Sending Window End</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-[18px] text-outline pointer-events-none">bedtime</span>
+<input class="w-full h-10 pl-10 pr-space-md rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:ring-1 focus:ring-primary" type="text" value="06:00 PM"/>
+</div>
+</div>
+</div>
+<!-- Active Days Selector -->
+<div class="space-y-2 pt-space-xs">
+<span class="font-label-md text-label-md font-medium text-on-surface">Active Dispatch Days</span>
+<div class="grid grid-cols-7 gap-2">
+<!-- Monday -->
+<label class="cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="h-10 rounded-lg flex items-center justify-center font-label-md text-label-md font-medium transition-all bg-surface-container-low text-on-surface-variant peer-checked:bg-primary-container peer-checked:text-on-primary">
+                  Mon
+                </div>
+</label>
+<!-- Tuesday -->
+<label class="cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="h-10 rounded-lg flex items-center justify-center font-label-md text-label-md font-medium transition-all bg-surface-container-low text-on-surface-variant peer-checked:bg-primary-container peer-checked:text-on-primary">
+                  Tue
+                </div>
+</label>
+<!-- Wednesday -->
+<label class="cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="h-10 rounded-lg flex items-center justify-center font-label-md text-label-md font-medium transition-all bg-surface-container-low text-on-surface-variant peer-checked:bg-primary-container peer-checked:text-on-primary">
+                  Wed
+                </div>
+</label>
+<!-- Thursday -->
+<label class="cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="h-10 rounded-lg flex items-center justify-center font-label-md text-label-md font-medium transition-all bg-surface-container-low text-on-surface-variant peer-checked:bg-primary-container peer-checked:text-on-primary">
+                  Thu
+                </div>
+</label>
+<!-- Friday -->
+<label class="cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="h-10 rounded-lg flex items-center justify-center font-label-md text-label-md font-medium transition-all bg-surface-container-low text-on-surface-variant peer-checked:bg-primary-container peer-checked:text-on-primary">
+                  Fri
+                </div>
+</label>
+<!-- Saturday (Unchecked) -->
+<label class="cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="h-10 rounded-lg flex items-center justify-center font-label-md text-label-md font-medium transition-all bg-surface-container-low text-on-surface-variant peer-checked:bg-primary-container peer-checked:text-on-primary opacity-60 peer-checked:opacity-100">
+                  Sat
+                </div>
+</label>
+<!-- Sunday (Unchecked) -->
+<label class="cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="h-10 rounded-lg flex items-center justify-center font-label-md text-label-md font-medium transition-all bg-surface-container-low text-on-surface-variant peer-checked:bg-primary-container peer-checked:text-on-primary opacity-60 peer-checked:opacity-100">
+                  Sun
+                </div>
+</label>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- RIGHT COLUMN: Safety, Compliance & Master Switches (5 cols) -->
+<div class="lg:col-span-5 space-y-space-lg">
+<!-- Section 4: Automation & Safety Rules -->
+<section class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm space-y-space-md">
+<div class="flex items-center gap-space-sm pb-space-xs">
+<span class="p-2 rounded-lg bg-surface-container-low text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">shield_with_heart</span>
+</span>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Automation &amp; Safety Rules</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Defensive campaign safeguards</p>
+</div>
+</div>
+<div class="space-y-space-md">
+<!-- Auto Follow-Up Toggle -->
+<div class="flex items-start justify-between gap-space-md p-space-sm rounded-xl bg-surface-container-low">
+<div class="space-y-1">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[18px]">forward_to_inbox</span>
+<p class="font-label-lg text-label-lg font-medium text-on-surface">Auto-Follow-Up Sequences</p>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Automatically send Day 4 and Day 8 follow-ups if prospect does not respond.
+              </p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer flex-shrink-0 mt-1">
+<input checked="" class="sr-only peer" id="toggle-autofollow" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-surface-container-lowest after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface-container-lowest after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+<!-- Auto-Pause on Reply Toggle -->
+<div class="flex items-start justify-between gap-space-md p-space-sm rounded-xl bg-surface-container-low">
+<div class="space-y-1">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[18px]">reply_all</span>
+<p class="font-label-lg text-label-lg font-medium text-on-surface">Auto-Pause on Reply</p>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Immediately pause sequence when prospect replies to avoid confusing auto-emails.
+              </p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer flex-shrink-0 mt-1">
+<input checked="" class="sr-only peer" id="toggle-autopause" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-surface-container-lowest after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface-container-lowest after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+<!-- Micro-stats info strip -->
+<div class="p-space-sm rounded-lg bg-surface-container flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">psychology</span>
+              Natural Human Delay
+            </span>
+<span class="font-semibold text-on-surface">32–88 sec randomized jitter</span>
+</div>
+</div>
+</section>
+<!-- Section 5: Unsubscribe & Compliance Handling -->
+<section class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm space-y-space-md">
+<div class="flex items-center gap-space-sm pb-space-xs">
+<span class="p-2 rounded-lg bg-surface-container-low text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">verified_user</span>
+</span>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Unsubscribe &amp; Compliance</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">CAN-SPAM &amp; GDPR footer configuration</p>
+</div>
+</div>
+<div class="space-y-space-md">
+<!-- 1-Click Opt-out Toggle -->
+<div class="flex items-start justify-between gap-space-md p-space-sm rounded-xl bg-surface-container-low">
+<div class="space-y-1">
+<p class="font-label-lg text-label-lg font-medium text-on-surface">1-Click Opt-Out Phrase</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Include explicit opt-out instruction in email footer (“Reply STOP to opt out”).
+              </p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer flex-shrink-0 mt-1">
+<input checked="" class="sr-only peer" id="toggle-optout" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-surface-container-lowest after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface-container-lowest after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+<!-- Custom Footer Text Input & Live Preview -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md font-medium text-on-surface">Footer Disclaimer Text</label>
+<span class="font-code-sm text-code-sm text-on-surface-variant">Markdown OK</span>
+</div>
+<textarea class="w-full p-space-sm rounded-lg bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary resize-none" id="footer-input" placeholder="e.g. If you prefer not to receive updates, reply STOP to unsubscribe." rows="3">If you would prefer not to receive helpful insights for your business, reply STOP to instantly unsubscribe.</textarea>
+</div>
+<!-- Real-time Footer Preview Card -->
+<div class="p-space-sm rounded-lg bg-surface-container-low text-on-surface-variant text-center border-t border-dashed border-outline-variant/30">
+<span class="font-label-sm text-label-sm uppercase tracking-wider block text-outline mb-1">Email Footer Preview</span>
+<p class="font-body-sm text-body-sm italic text-on-surface-variant" id="footer-preview">
+              “If you would prefer not to receive helpful insights for your business, reply STOP to instantly unsubscribe.”
+            </p>
+</div>
+</div>
+</section>
+<!-- Section 6: Master Campaign Controls (Danger / Master Switch) -->
+<section class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm space-y-space-md">
+<div class="flex items-center gap-space-sm pb-space-xs">
+<span class="p-2 rounded-lg bg-error-container text-error flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">pause_circle</span>
+</span>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Master Campaign Controls</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Global throttle and instant freeze actions</p>
+</div>
+</div>
+<!-- Master Pause Alert Card -->
+<div class="bg-error-container/40 p-space-md rounded-xl space-y-space-md">
+<div class="flex items-start justify-between gap-space-md">
+<div class="space-y-1">
+<p class="font-label-lg text-label-lg font-bold text-on-surface">Pause All Active Campaigns</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Emergency switch to hold all queued emails, scheduled follow-ups, and AI auto-sends across all active modules.
+              </p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer flex-shrink-0 mt-1">
+<input class="sr-only peer" id="master-pause-switch" onchange="handleMasterPause(this)" type="checkbox"/>
+<div class="w-12 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-surface-container-lowest after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface-container-lowest after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-error"></div>
+</label>
+</div>
+<!-- Impact Module Chips -->
+<div class="bg-surface-container-lowest/80 p-space-sm rounded-lg flex flex-col gap-1.5">
+<div class="flex items-center gap-1.5 text-error font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[16px]">warning</span>
+<span>Instantly pauses all 4 service outreach queues:</span>
+</div>
+<div class="flex flex-wrap gap-1.5 pt-0.5">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-sm text-label-sm">Social Media</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-sm text-label-sm">Video Editing</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-sm text-label-sm">AI Video</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-sm text-label-sm">Product Manager</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+<!-- STICKY BOTTOM ACTIONS DOCK -->
+<div class="sticky bottom-4 mt-space-xl z-30">
+<div class="max-w-4xl mx-auto bg-surface-container-lowest/95 backdrop-blur-md px-space-lg py-space-sm rounded-2xl shadow-xl flex items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[18px] text-primary">cloud_done</span>
+<span id="save-status-text">All configuration modifications staged</span>
+</div>
+<div class="flex items-center gap-space-md">
+<button class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-all px-space-sm py-2" id="btn-reset" onclick="resetDefaults()" type="button">
+          Reset to Defaults
+        </button>
+<button class="inline-flex items-center gap-space-xs px-space-lg py-2.5 rounded-lg bg-primary-container text-on-primary hover:bg-primary transition-all font-label-lg text-label-lg font-semibold shadow-sm" id="btn-save" onclick="saveSettings()" type="button">
+<span class="material-symbols-outlined text-[18px]">check</span>
+<span>Save Settings</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Master Pause Confirmation Modal Mock -->
+<div class="fixed inset-0 z-50 bg-inverse-surface/40 backdrop-blur-sm hidden items-center justify-center p-gutter" id="pause-modal">
+<div class="bg-surface-container-lowest max-w-md w-full rounded-2xl shadow-2xl p-space-lg space-y-space-md">
+<div class="w-12 h-12 rounded-xl bg-error-container text-error flex items-center justify-center">
+<span class="material-symbols-outlined text-[28px]">pause_circle</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Pause All 4 Active Campaigns?</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">
+          This will immediately stop outbound dispatch for all scheduled emails in Social Media, Video Editing, AI Video, and Product Manager sequences.
+        </p>
+</div>
+<div class="flex items-center justify-end gap-space-sm pt-space-xs">
+<button class="px-space-md py-2 rounded-lg bg-surface-container text-on-surface font-label-lg text-label-lg" onclick="cancelPause()" type="button">
+          Keep Running
+        </button>
+<button class="px-space-md py-2 rounded-lg bg-error text-on-error font-label-lg text-label-lg font-semibold" onclick="confirmPause()" type="button">
+          Confirm Pause
+        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Micro-Interactions Script -->
+<script>
+  function handleMasterPause(toggle) {
+    if (toggle.checked) {
+      document.getElementById('pause-modal').classList.remove('hidden');
+      document.getElementById('pause-modal').classList.add('flex');
+    }
+  }
+
+  function cancelPause() {
+    const toggle = document.getElementById('master-pause-switch');
+    toggle.checked = false;
+    document.getElementById('pause-modal').classList.add('hidden');
+    document.getElementById('pause-modal').classList.remove('flex');
+  }
+
+  function confirmPause() {
+    document.getElementById('pause-modal').classList.add('hidden');
+    document.getElementById('pause-modal').classList.remove('flex');
+    const statusText = document.getElementById('save-status-text');
+    statusText.innerText = "All active campaigns are currently PAUSED";
+    statusText.classList.add("text-error", "font-semibold");
+  }
+
+  const footerInput = document.getElementById('footer-input');
+  const footerPreview = document.getElementById('footer-preview');
+  if (footerInput && footerPreview) {
+    footerInput.addEventListener('input', (e) => {
+      footerPreview.innerText = `"${e.target.value}"`;
+    });
+  }
+
+  function resetDefaults() {
+    const slider = document.getElementById('sending-slider');
+    const sliderDisplay = document.getElementById('slider-val-display');
+    slider.value = 50;
+    sliderDisplay.innerText = 50;
+    
+    document.getElementById('toggle-ramp').checked = true;
+    document.getElementById('toggle-autofollow').checked = true;
+    document.getElementById('toggle-autopause').checked = true;
+    document.getElementById('toggle-optout').checked = true;
+    document.getElementById('master-pause-switch').checked = false;
+
+    const statusText = document.getElementById('save-status-text');
+    statusText.innerText = "Reset to recommended presets";
+    statusText.classList.remove("text-error");
+  }
+
+  function saveSettings() {
+    const saveBtn = document.getElementById('btn-save');
+    const originalContent = saveBtn.innerHTML;
+    saveBtn.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span><span>Saving...</span>`;
+    saveBtn.disabled = true;
+
+    setTimeout(() => {
+      saveBtn.innerHTML = `<span class="material-symbols-outlined text-[18px]">done_all</span><span>Saved!</span>`;
+      const statusText = document.getElementById('save-status-text');
+      statusText.innerText = "All changes saved successfully at " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      statusText.classList.remove("text-error");
+      
+      setTimeout(() => {
+        saveBtn.innerHTML = originalContent;
+        saveBtn.disabled = false;
+      }, 1800);
+    }, 600);
+  }
+</script></main></div></body></html>

@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;display:inline-block;vertical-align:middle;line-height:1;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#faf8ff","surface-container-highest":"#dae2fd","on-error":"#ffffff","surface-container-lowest":"#ffffff","surface":"#faf8ff","tertiary-fixed":"#e1e0ff","error-container":"#ffdad6","on-tertiary-fixed":"#07006c","tertiary-container":"#4749d5","on-secondary-container":"#57657a","surface-tint":"#2151da","primary-container":"#1e4fd8","secondary":"#515f74","secondary-fixed":"#d5e3fc","primary-fixed":"#dce1ff","surface-container":"#eaedff","secondary-container":"#d5e3fc","outline":"#747686","tertiary":"#2d2bbd","surface-container-high":"#e2e7ff","on-tertiary-container":"#d3d2ff","on-primary":"#ffffff","primary-fixed-dim":"#b7c4ff","on-surface":"#131b2e","on-primary-fixed-variant":"#0039b4","on-tertiary":"#ffffff","inverse-surface":"#283044","secondary-fixed-dim":"#b9c7df","inverse-primary":"#b7c4ff","on-secondary-fixed":"#0d1c2e","inverse-on-surface":"#eef0ff","error":"#ba1a1a","surface-variant":"#dae2fd","on-error-container":"#93000a","surface-dim":"#d2d9f4","on-primary-container":"#cbd4ff","primary":"#0038b1","on-background":"#131b2e","tertiary-fixed-dim":"#c0c1ff","on-primary-fixed":"#001551","on-secondary":"#ffffff","surface-container-low":"#f2f3ff","outline-variant":"#c4c5d7","on-tertiary-fixed-variant":"#2f2ebe","surface-bright":"#faf8ff","on-surface-variant":"#434655","on-secondary-fixed-variant":"#3a485b"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"space-sm":"0.5rem","margin":"2rem","gutter-mobile":"1rem","space-md":"1rem","space-xs":"0.25rem","gutter":"1.5rem","space-xl":"2rem","space-lg":"1.5rem","margin-mobile":"1rem"},fontFamily:{"headline-xl":["Inter"],"label-sm":["Inter"],"headline-xl-mobile":["Inter"],"headline-sm":["Inter"],"label-md":["Inter"],"code-sm":["JetBrains Mono"],"body-lg":["Inter"],"headline-lg":["Inter"],"label-lg":["Inter"],"headline-md":["Inter"],"body-md":["Inter"],"body-sm":["Inter"]},fontSize:{"headline-xl":["36px",{lineHeight:"44px",letterSpacing:"-0.025em",fontWeight:"700"}],"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.03em",fontWeight:"600"}],"headline-xl-mobile":["28px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"700"}],"headline-sm":["16px",{lineHeight:"24px",letterSpacing:"-0.01em",fontWeight:"600"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.01em",fontWeight:"500"}],"code-sm":["12px",{lineHeight:"16px",letterSpacing:"0em",fontWeight:"400"}],"body-lg":["16px",{lineHeight:"24px",letterSpacing:"-0.005em",fontWeight:"400"}],"headline-lg":["24px",{lineHeight:"32px",letterSpacing:"-0.02em",fontWeight:"600"}],"label-lg":["14px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"500"}],"headline-md":["20px",{lineHeight:"28px",letterSpacing:"-0.015em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"400"}],"body-sm":["12px",{lineHeight:"16px",letterSpacing:"0em",fontWeight:"400"}]}}}};</script></head><body class="bg-surface font-body-md text-body-md text-on-surface"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between"><div class="flex flex-col"><div class="h-16 px-space-md flex items-center justify-between"><div class="flex items-center gap-space-sm"><img alt="ReachOut Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTWvHApa3kKTY0_zBb62vHZZMmKTP9Eixxa1r7zmqSbQtMqLHhqef22pXnLLrREa-0aAVUuL0OAGz1piuq4alEZ6zqP8BSRkcIkiJggeWP2-ygt1D9U5JX-iXim2FMNIo_zqJ363O7htdcCkn-sIfsNqAXJh1XFfWqIaM-J5eBKrRDpG0LvScMUDjqdvLnh_jA4N8VJsxMDeCqyhzZKCmFl68GNdw62wI7CKa3ZdFq"/><span class="font-headline-sm text-headline-sm text-on-surface">ReachOut</span></div><span class="font-label-sm text-label-sm px-space-xs py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed">v2.4</span></div><div class="px-space-md pt-space-xs pb-space-sm"><button class="w-full flex items-center justify-between px-space-sm py-2 rounded-lg bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" type="button"><div class="flex items-center gap-space-xs truncate"><span class="material-symbols-outlined text-[18px] text-primary">workspaces</span><span class="font-label-md text-label-md truncate text-on-surface">Shoaib's Outreach</span></div><span class="material-symbols-outlined text-[16px]">unfold_more</span></button></div><nav class="px-space-sm space-y-1 overflow-y-auto max-h-[calc(100vh-220px)]" data-active-classes="bg-primary-container text-on-primary font-label-lg font-bold rounded-lg shadow-sm"><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span>Dashboard</span></a><a aria-current="page" class="flex items-center gap-space-sm px-space-sm py-2 transition-all bg-primary-container text-on-primary font-label-lg font-bold rounded-lg shadow-sm" data-path="my-profile" href="#"><span class="material-symbols-outlined text-[20px]">account_circle</span><span>My Profile</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="lead-finder" href="#"><span class="material-symbols-outlined text-[20px]">person_search</span><span>Lead Finder</span></a><div class="pt-space-xs"><div class="flex items-center justify-between px-space-sm py-1.5 text-on-surface-variant"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">hub</span><span class="font-label-lg text-label-lg">Outreach Modules</span></div><span class="material-symbols-outlined text-[16px]">expand_more</span></div><div class="pl-8 pr-space-xs space-y-1 mt-0.5"><a class="block px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="module-social-media" href="#">Social Media</a><a class="block px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="module-video-editing" href="#">Video Editing</a><a class="block px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="module-ai-video" href="#">AI Video</a><a class="block px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="module-product-manager" href="#">Product Manager</a></div></div><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="email-composer" href="#"><span class="material-symbols-outlined text-[20px]">edit_note</span><span>Email Composer</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="inbox" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">inbox</span><span>Inbox</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-full bg-error-container text-on-error-container">3</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="analytics" href="#"><span class="material-symbols-outlined text-[20px]">bar_chart</span><span>Analytics</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span>Settings</span></a></nav></div><div class="p-space-sm"><div class="flex items-center justify-between p-space-sm rounded-xl bg-surface-container-low"><div class="flex items-center gap-space-sm min-w-0"><div class="relative flex-shrink-0"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMyZR23rxqC0ChraMUzMm31ejMvxcedHNHdArQjmtGxiyA1zb3dfEIlax7_oju-rwKnXI779JU76Y-AOpj8pWwH1HuAPO7zkV3qfvkbf8YgnuU34Utlnlxtp3coVsPDv1btY56Hqs0zo0Zrq-yr8YNVocElkrbe0at2_zbPVNHqVO_-Kj8Bbr0bb9-TmEfcDkKEgb5iakQR3fwR3f30aY2wo_Ptfta2tWh5lqIdu7z"/><span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-primary ring-2 ring-surface-container-lowest"></span></div><div class="min-w-0"><p class="font-label-md text-label-md text-on-surface truncate font-semibold">Shoaib ul Din</p><p class="font-body-sm text-body-sm text-on-surface-variant truncate">Freelancer</p></div></div><button class="text-on-surface-variant hover:text-on-surface p-1 rounded-lg hover:bg-surface-container" type="button"><span class="material-symbols-outlined text-[18px]">more_vert</span></button></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-gutter"><div class="flex items-center gap-space-md"><div class="relative w-64 md:w-80"><span class="material-symbols-outlined absolute left-3 top-2.5 text-[20px] text-outline">search</span><input class="w-full h-10 pl-10 pr-space-md rounded-lg bg-surface-container-low text-body-md font-body-md text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Quick search leads, campaigns..." type="text"/></div></div><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs px-space-sm py-1.5 rounded-full bg-surface-container text-on-surface-variant"><span class="material-symbols-outlined text-[16px] text-primary">auto_awesome</span><span class="font-label-sm text-label-sm font-semibold text-on-surface">840 / 1000 AI Credits</span></div><button class="relative p-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span></button><button class="flex items-center gap-space-xs px-space-md py-2 rounded-lg bg-primary-container text-on-primary hover:bg-primary transition-all font-label-lg text-label-lg" type="button"><span class="material-symbols-outlined text-[18px]">add</span><span>New Campaign</span></button><img alt="Profile" class="w-8 h-8 rounded-full object-cover ml-space-xs" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMyZR23rxqC0ChraMUzMm31ejMvxcedHNHdArQjmtGxiyA1zb3dfEIlax7_oju-rwKnXI779JU76Y-AOpj8pWwH1HuAPO7zkV3qfvkbf8YgnuU34Utlnlxtp3coVsPDv1btY56Hqs0zo0Zrq-yr8YNVocElkrbe0at2_zbPVNHqVO_-Kj8Bbr0bb9-TmEfcDkKEgb5iakQR3fwR3f30aY2wo_Ptfta2tWh5lqIdu7z"/></div></header><main class="relative pt-16 bg-surface min-h-screen w-full px-gutter py-space-xl"><div class="flex flex-col w-full space-y-space-xl">
+<!-- Header Section with Typographic Texture -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md">
+<div class="space-y-space-xs max-w-3xl">
+<div class="flex items-center gap-space-xs">
+<span class="font-code-sm text-code-sm text-primary uppercase tracking-wider font-semibold">Workspace / Account Intelligence</span>
+<span class="text-outline-variant font-code-sm text-code-sm">•</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-medium">Prompt Context Source</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">Profile &amp; Freelancer Services</h1>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+        Configure your credentials, service offerings, and portfolio highlights used by ReachOut AI to automatically personalize outreach angles, cold pitches, and proof-of-work snippets.
+      </p>
+</div>
+<!-- Live Sync Status Banner -->
+<div class="flex items-center gap-space-sm bg-surface-container-low px-space-md py-space-sm rounded-xl shadow-sm self-start md:self-auto">
+<div class="relative flex h-2.5 w-2.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">AI Pitch Context: Ready</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Last synced 14m ago</span>
+</div>
+</div>
+</div>
+<!-- Profile Showcase Bento Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-lg relative overflow-hidden">
+<!-- Subtle Ambient Accent Mesh -->
+<div class="absolute -right-24 -top-24 w-80 h-80 rounded-full bg-primary-fixed/20 blur-3xl pointer-events-none"></div>
+<div class="relative flex flex-col lg:flex-row lg:items-center justify-between gap-space-lg">
+<!-- Left: Identity & Bio -->
+<div class="flex flex-col sm:flex-row gap-space-lg items-start">
+<div class="relative flex-shrink-0">
+<div class="w-24 h-24 rounded-xl overflow-hidden shadow-md">
+<img class="w-full h-full object-cover" data-alt="Close-up professional studio portrait of a confident young South Asian male creative director and freelance video editor in a minimalist navy jacket against a softly illuminated clean slate-blue background, sharp cinematic lighting, high fidelity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCX8lgPeyjEnatVNZSX_s0vJ3DPqlGJuUgpxAGvQJ8ihKkBoM7ur0TFmZRny5cGh7XCp4V-B1J_sL84awJzzTocniOSdWZ-cRZURFRpGE2NeLr7NwYPt7G-W18xFp_lTDwq0OpYNJ8USICPjCpEMIGScol-aHiG4Zb-VkWubVFS4uqkzK5MZJ63KosiEVm2nxgcbTnXvI86TBD9dzC3y5bvjuvUhIvWJKrMkd98-kXF"/>
+</div>
+<span class="absolute -bottom-2 -right-2 flex items-center gap-1 bg-surface-container-lowest shadow-sm px-2 py-0.5 rounded-full text-label-sm font-label-sm font-semibold text-primary">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+            Active
+          </span>
+</div>
+<div class="space-y-space-xs max-w-xl">
+<div class="flex flex-wrap items-center gap-space-xs">
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-bold">Shoaib ul Din</h2>
+<span class="px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-semibold">Freelancer Pro</span>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold">Top Rated</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-primary font-medium">Video Editor &amp; Social Media Manager</p>
+<div class="flex items-center gap-space-xs text-on-surface-variant font-body-sm text-body-sm pt-0.5">
+<span class="material-symbols-outlined text-[16px] text-outline">location_on</span>
+<span>Islamabad, Pakistan</span>
+<span class="text-outline-variant">•</span>
+<span class="material-symbols-outlined text-[16px] text-outline">schedule</span>
+<span>PKT (UTC+5)</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant pt-1 leading-relaxed">
+            Specializing in high-retention short-form video editing, viral social growth systems, AI-generated synthetic ads, and rapid product execution for founders and hyper-growth creators.
+          </p>
+</div>
+</div>
+<!-- Right: Operational Metrics & Action -->
+<div class="flex flex-col sm:flex-row lg:flex-col justify-between items-start lg:items-end gap-space-md pt-space-sm lg:pt-0">
+<div class="flex flex-wrap lg:flex-col gap-space-xs w-full lg:w-auto">
+<div class="flex items-center gap-space-xs bg-surface-container-low px-space-sm py-1.5 rounded-lg text-on-surface">
+<span class="material-symbols-outlined text-[18px] text-primary">filter_alt</span>
+<span class="font-label-sm text-label-sm font-semibold">28 Active Leads in Pipeline</span>
+</div>
+<div class="flex items-center gap-space-xs bg-surface-container-low px-space-sm py-1.5 rounded-lg text-on-surface">
+<span class="material-symbols-outlined text-[18px] text-tertiary">verified</span>
+<span class="font-label-sm text-label-sm font-semibold">98% Client Satisfaction (34 Reviews)</span>
+</div>
+<div class="flex items-center gap-space-xs bg-surface-container-low px-space-sm py-1.5 rounded-lg text-on-surface">
+<span class="material-symbols-outlined text-[18px] text-outline">bolt</span>
+<span class="font-label-sm text-label-sm font-semibold">Response Rate: 2.4 hrs</span>
+</div>
+</div>
+<button class="flex items-center justify-center gap-space-xs px-space-md py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-all font-label-lg text-label-lg w-full sm:w-auto" onclick="toggleEditBio()" type="button">
+<span class="material-symbols-outlined text-[18px]">edit_note</span>
+<span>Edit Bio &amp; Metadata</span>
+</button>
+</div>
+</div>
+<!-- Collapsible Mini Inline Bio Editor Panel -->
+<div class="hidden mt-space-md pt-space-md bg-surface-container-low p-space-md rounded-xl transition-all" id="inlineBioEditor">
+<div class="space-y-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface font-bold uppercase tracking-wider">Quick Update Master Bio</span>
+<button class="text-on-surface-variant hover:text-on-surface text-body-sm" onclick="toggleEditBio()" type="button">Cancel</button>
+</div>
+<textarea class="w-full p-space-sm rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md focus:outline-none focus:ring-1 focus:ring-primary resize-none" rows="2">Specializing in high-retention short-form video editing, viral social growth systems, AI-generated synthetic ads, and product execution.</textarea>
+<div class="flex justify-end gap-space-xs">
+<button class="px-space-md py-1.5 bg-primary-container text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary transition-all" onclick="notifyToast('Bio saved successfully')" type="button">Save Summary</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Section Divider with Quick Stats Visual Indicator -->
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-space-sm pt-space-xs">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-primary-fixed flex items-center justify-center text-primary font-bold">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Service Offerings &amp; Personalization Units</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">ReachOut dynamically selects the best matching service below when generating custom cold emails.</p>
+</div>
+</div>
+<div class="flex items-center gap-space-xs bg-surface-container-high/60 px-3 py-1 rounded-full text-on-surface-variant font-label-sm text-label-sm">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span>4 Active Service Modules Connected</span>
+</div>
+</div>
+<!-- 4 Service Cards Grid (2x2 Asymmetric Layout) -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-space-lg">
+<!-- Card 1: Product Management -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col justify-between space-y-space-md group hover:shadow-md transition-all">
+<div class="space-y-space-sm">
+<!-- Card Top Bar -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">view_kanban</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Product Management</h4>
+<span class="font-body-sm text-body-sm text-on-surface-variant">SaaS MVP Strategy &amp; Scoping</span>
+</div>
+</div>
+<!-- Module Toggle -->
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-high peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface-container-lowest after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Target Niche Pill & Visual Tag -->
+<div class="flex flex-wrap items-center gap-space-xs pt-1">
+<span class="font-label-sm text-label-sm px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-[14px]">groups</span>
+            Startups &amp; Tech Founders
+          </span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant">
+            Sprint Scoping
+          </span>
+</div>
+<!-- Editable Form Elements -->
+<div class="space-y-space-sm pt-space-xs">
+<!-- Experience Input -->
+<div>
+<label class="block font-label-sm text-label-sm text-outline uppercase font-semibold mb-1">Experience Duration</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-[18px] text-outline">history</span>
+<input class="w-full h-10 pl-9 pr-space-md rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:ring-1 focus:ring-primary" type="text" value="4 months"/>
+</div>
+</div>
+<!-- Description Textarea -->
+<div>
+<label class="block font-label-sm text-label-sm text-outline uppercase font-semibold mb-1">Pitch Summary (AI Context Snippet)</label>
+<textarea class="w-full p-3 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:ring-1 focus:ring-primary resize-none leading-relaxed" rows="3">Agile sprint planning, user interview synthesis, MVP wireframing, and roadmap prioritization for early-stage tech founders and growing digital agencies.</textarea>
+</div>
+<!-- Portfolio URL -->
+<div>
+<label class="block font-label-sm text-label-sm text-outline uppercase font-semibold mb-1">Case Study / Proof of Work URL</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-[18px] text-outline">link</span>
+<input class="w-full h-10 pl-9 pr-10 rounded-lg bg-surface-container-low text-on-surface font-code-sm text-code-sm focus:outline-none focus:ring-1 focus:ring-primary" type="url" value="https://shoaib.design/case-studies/product-mvp"/>
+<a class="absolute right-3 top-2.5 text-outline hover:text-primary transition-colors" href="#" target="_blank">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Footer -->
+<div class="pt-space-sm flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-tertiary">auto_fix_high</span>
+          Injected into 12 AI templates
+        </span>
+<button class="px-space-md py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-all font-label-md text-label-md font-semibold" onclick="notifyToast('Product Management changes saved')" type="button">
+          Save Changes
+        </button>
+</div>
+</div>
+<!-- Card 2: Social Media Management -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col justify-between space-y-space-md group hover:shadow-md transition-all">
+<div class="space-y-space-sm">
+<!-- Card Top Bar -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">share_reviews</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Social Media Management</h4>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Omnichannel Growth &amp; Strategy</span>
+</div>
+</div>
+<!-- Module Toggle -->
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-high peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface-container-lowest after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Target Niche Pill & Visual Tag -->
+<div class="flex flex-wrap items-center gap-space-xs pt-1">
+<span class="font-label-sm text-label-sm px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-[14px]">storefront</span>
+            Local Brands &amp; E-commerce
+          </span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant">
+            Content Calendars
+          </span>
+</div>
+<!-- Editable Form Elements -->
+<div class="space-y-space-sm pt-space-xs">
+<!-- Experience Input -->
+<div>
+<label class="block font-label-sm text-label-sm text-outline uppercase font-semibold mb-1">Experience Duration</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-[18px] text-outline">history</span>
+<input class="w-full h-10 pl-9 pr-space-md rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:ring-1 focus:ring-primary" type="text" value="4 months"/>
+</div>
+</div>
+<!-- Description Textarea -->
+<div>
+<label class="block font-label-sm text-label-sm text-outline uppercase font-semibold mb-1">Pitch Summary (AI Context Snippet)</label>
+<textarea class="w-full p-3 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:ring-1 focus:ring-primary resize-none leading-relaxed" rows="3">Organic audience scaling across Instagram &amp; TikTok, content calendars, community engagement strategies, and branded visual aesthetics for retail &amp; local brands.</textarea>
+</div>
+<!-- Portfolio URL -->
+<div>
+<label class="block font-label-sm text-label-sm text-outline uppercase font-semibold mb-1">Portfolio Showcase URL</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-[18px] text-outline">link</span>
+<input class="w-full h-10 pl-9 pr-10 rounded-lg bg-surface-container-low text-on-surface font-code-sm text-code-sm focus:outline-none focus:ring-1 focus:ring-primary" type="url" value="https://instagram.com/shoaib_media_portfolio"/>
+<a class="absolute right-3 top-2.5 text-outline hover:text-primary transition-colors" href="#" target="_blank">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Footer -->
+<div class="pt-space-sm flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">campaign</span>
+          Primary cold email pitch
+        </span>
+<button class="px-space-md py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-all font-label-md text-label-md font-semibold" onclick="notifyToast('Social Media Management saved')" type="button">
+          Save Changes
+        </button>
+</div>
+</div>
+<!-- Card 3: Video Editing (Primary Featured Hero Card) -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col justify-between space-y-space-md group hover:shadow-md transition-all relative overflow-hidden">
+<!-- Subtle Primary Banner Highlight -->
+<div class="absolute top-0 left-0 right-0 h-1.5 bg-primary"></div>
+<div class="space-y-space-sm">
+<!-- Card Top Bar -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">movie_edit</span>
+</div>
+<div>
+<div class="flex items-center gap-space-xs">
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Video Editing</h4>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-primary text-on-primary font-bold">Primary Service</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">High-Retention Short &amp; Long Form</span>
+</div>
+</div>
+<!-- Module Toggle -->
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-high peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface-container-lowest after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Target Niche Pill & Visual Tag -->
+<div class="flex flex-wrap items-center gap-space-xs pt-1">
+<span class="font-label-sm text-label-sm px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-[14px]">podcasts</span>
+            YouTubers &amp; Podcasters
+          </span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-semibold">
+            Showreel Linked
+          </span>
+</div>
+<!-- Editable Form Elements -->
+<div class="space-y-space-sm pt-space-xs">
+<!-- Experience Input -->
+<div>
+<label class="block font-label-sm text-label-sm text-outline uppercase font-semibold mb-1">Experience Duration</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-[18px] text-primary">history</span>
+<input class="w-full h-10 pl-9 pr-space-md rounded-lg bg-surface-container text-on-surface font-body-md text-body-md font-semibold focus:outline-none focus:ring-1 focus:ring-primary" type="text" value="3 years"/>
+</div>
+</div>
+<!-- Description Textarea -->
+<div>
+<label class="block font-label-sm text-label-sm text-outline uppercase font-semibold mb-1">Pitch Summary (AI Context Snippet)</label>
+<textarea class="w-full p-3 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:ring-1 focus:ring-primary resize-none leading-relaxed" rows="3">High-retention Reels, TikToks, YouTube long-form, dynamic typography, sound design, hooks optimization, and pacing tailored for podcasters and creators.</textarea>
+</div>
+<!-- Portfolio URL with Thumbnail Preview Trigger -->
+<div>
+<label class="block font-label-sm text-label-sm text-outline uppercase font-semibold mb-1">Showreel / Vimeo Portfolio</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-[18px] text-outline">smart_display</span>
+<input class="w-full h-10 pl-9 pr-10 rounded-lg bg-surface-container-low text-on-surface font-code-sm text-code-sm focus:outline-none focus:ring-1 focus:ring-primary" type="url" value="https://vimeo.com/shoaib-edits-showreel"/>
+<a class="absolute right-3 top-2.5 text-outline hover:text-primary transition-colors" href="#" target="_blank">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Footer -->
+<div class="pt-space-sm flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-primary font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">stars</span>
+          Core Specialization Match
+        </span>
+<button class="px-space-md py-2 rounded-lg bg-primary-container hover:bg-primary text-on-primary transition-all font-label-md text-label-md font-semibold shadow-sm" onclick="notifyToast('Video Editing configuration saved')" type="button">
+          Save Changes
+        </button>
+</div>
+</div>
+<!-- Card 4: AI Video Creation -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col justify-between space-y-space-md group hover:shadow-md transition-all">
+<div class="space-y-space-sm">
+<!-- Card Top Bar -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">smart_toy</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">AI Video Creation</h4>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Generative Ads &amp; Avatars</span>
+</div>
+</div>
+<!-- Module Toggle -->
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-high peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface-container-lowest after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Target Niche Pill & Visual Tag -->
+<div class="flex flex-wrap items-center gap-space-xs pt-1">
+<span class="font-label-sm text-label-sm px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-[14px]">ads_click</span>
+            D2C Brands &amp; Ad Agencies
+          </span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant">
+            Runway &amp; Midjourney
+          </span>
+</div>
+<!-- Editable Form Elements -->
+<div class="space-y-space-sm pt-space-xs">
+<!-- Experience Input -->
+<div>
+<label class="block font-label-sm text-label-sm text-outline uppercase font-semibold mb-1">Experience Duration</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-[18px] text-outline">history</span>
+<input class="w-full h-10 pl-9 pr-space-md rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:ring-1 focus:ring-primary" type="text" value="4 months"/>
+</div>
+</div>
+<!-- Description Textarea -->
+<div>
+<label class="block font-label-sm text-label-sm text-outline uppercase font-semibold mb-1">Pitch Summary (AI Context Snippet)</label>
+<textarea class="w-full p-3 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:ring-1 focus:ring-primary resize-none leading-relaxed" rows="3">AI avatar spokespersons, photorealistic product ads, automated generative video pipelines, and multilingual localization using Midjourney, Runway, and ElevenLabs.</textarea>
+</div>
+<!-- Portfolio URL -->
+<div>
+<label class="block font-label-sm text-label-sm text-outline uppercase font-semibold mb-1">Demos / Synthetic Reel URL</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-[18px] text-outline">link</span>
+<input class="w-full h-10 pl-9 pr-10 rounded-lg bg-surface-container-low text-on-surface font-code-sm text-code-sm focus:outline-none focus:ring-1 focus:ring-primary" type="url" value="https://shoaib.design/ai-video-demos"/>
+<a class="absolute right-3 top-2.5 text-outline hover:text-primary transition-colors" href="#" target="_blank">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Footer -->
+<div class="pt-space-sm flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">auto_awesome</span>
+          High conversion pitch variant
+        </span>
+<button class="px-space-md py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-all font-label-md text-label-md font-semibold" onclick="notifyToast('AI Video Creation saved')" type="button">
+          Save Changes
+        </button>
+</div>
+</div>
+</div>
+<!-- Portfolio Visual Showcase Carousel / Samples Strip -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-lg space-y-space-md">
+<div class="flex items-center justify-between">
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Recent Portfolio Assets Connected to ReachOut</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">These multimedia items are embedded as hyperlinked case studies during dynamic cold outreach campaigns.</p>
+</div>
+<button class="flex items-center gap-1 text-primary hover:text-on-primary-fixed-variant font-label-md text-label-md font-semibold" type="button">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span>Add Media Asset</span>
+</button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-space-md">
+<!-- Media Sample 1 -->
+<div class="group relative rounded-xl overflow-hidden shadow-sm bg-surface-container-low">
+<div class="aspect-video w-full overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Dynamic high contrast video editing timeline screenshot displaying 4K video clips, waveforms, and visual effects in a modern creative editing suite, cinematic lighting and clean professional interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwQaiFXQZtBIEcwZbRd16_CCCJU7qwXOfDIC_C44w3JwBWjWdqpNxvqeKfStAOLqDPiPPQ_-uH2SFg5qmYagTLElKKK6kGD52z2QvX1QMRtzBwtjc7kjvB-E5pbwWNwn-RjBTiOJxxroYSYgjHOlJFUbXrfvJFjw2XZAh39bTO71HvXzkFnJCdJIGcPeT6plqqsgYtIjyfs6BInK4Lwry-5bYiAuQlZ9zndhKZM4kf"/>
+</div>
+<div class="p-space-sm bg-surface-container-lowest">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md font-semibold text-on-surface">E-Commerce Reel Master</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-code-sm">0:45</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Linked to Video Editing pitches</p>
+</div>
+</div>
+<!-- Media Sample 2 -->
+<div class="group relative rounded-xl overflow-hidden shadow-sm bg-surface-container-low">
+<div class="aspect-video w-full overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Futuristic AI generated virtual avatar speaking in a high tech sleek podcast studio setting with warm neon rim lighting, cinematic depth of field, ultra realistic digital marketing demonstration." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkjUeqGanRiSHe2nunLSqONxOdvRjP-v1nAIWr080cGVTd0NH3Wly-QYQcu9LALBWqfhE8Gq9HK1poic5p7bp8urXY3fBpyrgjRIgUhR_PVxpFKOollgyxFld1jrLbiv4pgW6LzQ1cA6-zffIji9JOFhRcx_Ad2_rwTUaEzXBdtjWmA3Wt1aAg-SsWJ4vrxiIwG8ept8HdE_cL3eImCruvCwpVGz1AzNy7MhZJjW0R"/>
+</div>
+<div class="p-space-sm bg-surface-container-lowest">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md font-semibold text-on-surface">AI Synthetic Demo Ad</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-code-sm">1:20</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Linked to AI Video pitches</p>
+</div>
+</div>
+<!-- Media Sample 3 -->
+<div class="group relative rounded-xl overflow-hidden shadow-sm bg-surface-container-low">
+<div class="aspect-video w-full overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Clean minimal SaaS product wireframe and user journey flowchart on a high resolution screen, modern UI UX design workflow, subtle cool blue and purple accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJzQQB2dlPvpQdVMTIUudWrfm9FSeAnm-QWUA2stkVOoecy_Hv8MEp1XqO7DMPhvHm5bnsQOwebvHEvEauDj8DFDZ5hZXFfADMtfJSPWiVjSk4RCgIveMRmcwE6ok4l2dhGwVfTtJfHuIq8aj5IEdRNCxbmw35iRDnR1EE36w4nMExCmlOCoibzPRxRAcGyaDVWOJMgpNi0vE-CTiaXO8q0RSponA2LzPg0wI1TYFe"/>
+</div>
+<div class="p-space-sm bg-surface-container-lowest">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md font-semibold text-on-surface">B2B SaaS Onboarding Spec</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-code-sm">PDF/Link</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Linked to Product Management pitches</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Global Sticky Action Bar for Prompt Sync -->
+<div class="sticky bottom-4 z-30">
+<div class="bg-surface-container-lowest/95 backdrop-blur-md rounded-xl shadow-xl p-space-md flex flex-col sm:flex-row items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">sync</span>
+</div>
+<div>
+<div class="flex items-center gap-space-xs">
+<span class="font-label-lg text-label-lg font-bold text-on-surface">Global Profile Status</span>
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed font-semibold">In Sync</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">All 4 service modules are active and mapped to live AI cold generation models.</p>
+</div>
+</div>
+<div class="flex items-center gap-space-sm w-full sm:w-auto justify-end">
+<button class="flex items-center gap-space-xs px-space-md py-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-all font-label-lg text-label-lg font-semibold" onclick="previewPitchOutput()" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+<span>Preview AI Pitch Output</span>
+</button>
+<button class="flex items-center justify-center gap-space-xs px-space-lg py-2.5 rounded-lg bg-primary-container text-on-primary hover:bg-primary transition-all font-label-lg text-label-lg font-bold shadow-md hover:shadow-lg" id="saveAllBtn" onclick="saveAllSettings()" type="button">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+<span>Save All Service Settings</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Interactive AI Pitch Preview Modal / Slide-down Simulation -->
+<div class="hidden fixed inset-0 z-50 bg-on-surface/40 backdrop-blur-sm flex items-center justify-center p-4" id="previewModal">
+<div class="bg-surface-container-lowest rounded-xl shadow-2xl max-w-2xl w-full p-space-lg space-y-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[22px]">auto_awesome</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">AI Cold Email Sample (Dynamic Generated)</h4>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface p-1 rounded-lg" onclick="previewPitchOutput()" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<div class="bg-surface-container-low p-space-md rounded-xl space-y-space-xs font-body-md text-body-md text-on-surface">
+<div class="text-body-sm text-on-surface-variant pb-1">
+<strong>Subject:</strong> Quick video hook idea for your latest pod episode
+        </div>
+<p class="leading-relaxed">
+          Hey Alex,
+        </p>
+<p class="leading-relaxed">
+          Noticed your podcast episode on creator economies hit 14k listens yesterday. With over 3 years producing high-retention Reels &amp; TikToks for creators, I mapped out 3 short-form hooks that could double your reach on Instagram.
+        </p>
+<p class="leading-relaxed">
+          Here is a recent showreel of pacing and sound design styles I've implemented: <span class="text-primary font-code-sm">vimeo.com/shoaib-edits-showreel</span>.
+        </p>
+<p class="leading-relaxed">
+          Open to seeing a free 30-second cut of yesterday's episode?
+        </p>
+<p class="text-on-surface-variant pt-2">
+          Best,<br/><strong>Shoaib ul Din</strong> — Video Editor &amp; Growth Specialist
+        </p>
+</div>
+<div class="flex justify-end gap-space-sm pt-space-xs">
+<button class="px-space-md py-2 rounded-lg bg-surface-container text-on-surface font-label-md text-label-md" onclick="previewPitchOutput()" type="button">Close Preview</button>
+<button class="px-space-md py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md font-semibold" onclick="previewPitchOutput(); notifyToast('Prompt configuration updated');" type="button">Apply to Composer</button>
+</div>
+</div>
+</div>
+<!-- Custom Floating Toast Notification Element -->
+<div class="fixed top-20 right-8 z-50 transform translate-y-[-100px] opacity-0 transition-all duration-300 pointer-events-none" id="toastNotification">
+<div class="bg-surface-container-lowest shadow-lg px-space-md py- space-sm py-2.5 rounded-xl flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">check_circle</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold" id="toastMessage">Settings synchronized</span>
+</div>
+</div>
+</div>
+<script>
+  function toggleEditBio() {
+    const editor = document.getElementById('inlineBioEditor');
+    if (editor.classList.contains('hidden')) {
+      editor.classList.remove('hidden');
+    } else {
+      editor.classList.add('hidden');
+    }
+  }
+
+  function previewPitchOutput() {
+    const modal = document.getElementById('previewModal');
+    if (modal.classList.contains('hidden')) {
+      modal.classList.remove('hidden');
+    } else {
+      modal.classList.add('hidden');
+    }
+  }
+
+  function saveAllSettings() {
+    const btn = document.getElementById('saveAllBtn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span><span>Syncing with AI Engines...</span>';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+      notifyToast('All 4 Service Settings saved and synchronized!');
+    }, 800);
+  }
+
+  function notifyToast(msg) {
+    const toast = document.getElementById('toastNotification');
+    const toastText = document.getElementById('toastMessage');
+    if (!toast) return;
+
+    toastText.innerText = msg;
+    toast.classList.remove('translate-y-[-100px]', 'opacity-0');
+    toast.classList.add('translate-y-0', 'opacity-100');
+
+    setTimeout(() => {
+      toast.classList.remove('translate-y-0', 'opacity-100');
+      toast.classList.add('translate-y-[-100px]', 'opacity-0');
+    }, 2800);
+  }
+</script></main></div></body></html>

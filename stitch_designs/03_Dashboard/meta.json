@@ -1,0 +1,17 @@
+{
+  "name": "projects/13424969627060538107/screens/9be23b483ea840fa9ce5010149e138cd",
+  "title": "ReachOut - Dashboard",
+  "screenshot": {
+    "name": "projects/13424969627060538107/screens/9be23b483ea840fa9ce5010149e138cd/fileEntries/screenshot",
+    "downloadUrl": "https://stitch.googleapis.com/v1/projects/13424969627060538107/files/screenshot_00065f78b856bf33023bd28708134aec:download",
+    "mimeType": "image/png"
+  },
+  "htmlCode": {
+    "name": "projects/13424969627060538107/screens/9be23b483ea840fa9ce5010149e138cd/fileEntries/html",
+    "downloadUrl": "https://stitch.googleapis.com/v1/projects/13424969627060538107/files/9be23b483ea840fa9ce5010149e138cd:download",
+    "mimeType": "text/html"
+  },
+  "width": "2560",
+  "height": "2836",
+  "deviceType": "DESKTOP"
+}

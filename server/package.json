@@ -1,0 +1,20 @@
+{
+  "name": "reachout-server",
+  "version": "1.0.0",
+  "description": "ReachOut AI Outreach Serverless & Local Backend",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.0",
+    "@supabase/supabase-js": "^2.49.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "imapflow": "^1.0.170",
+    "mailparser": "^3.7.2",
+    "nodemailer": "^6.10.0"
+  }
+}

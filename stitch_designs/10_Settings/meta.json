@@ -1,0 +1,17 @@
+{
+  "name": "projects/13424969627060538107/screens/612d5eaba9784f07bdeba0a06abee8ef",
+  "title": "ReachOut - Settings",
+  "screenshot": {
+    "name": "projects/13424969627060538107/screens/612d5eaba9784f07bdeba0a06abee8ef/fileEntries/screenshot",
+    "downloadUrl": "https://stitch.googleapis.com/v1/projects/13424969627060538107/files/screenshot_00065f78bc9c4d12023befe7521b4669:download",
+    "mimeType": "image/png"
+  },
+  "htmlCode": {
+    "name": "projects/13424969627060538107/screens/612d5eaba9784f07bdeba0a06abee8ef/fileEntries/html",
+    "downloadUrl": "https://stitch.googleapis.com/v1/projects/13424969627060538107/files/612d5eaba9784f07bdeba0a06abee8ef:download",
+    "mimeType": "text/html"
+  },
+  "width": "2560",
+  "height": "3060",
+  "deviceType": "DESKTOP"
+}

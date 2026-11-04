@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;display:inline-block;vertical-align:middle;line-height:1;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#faf8ff","surface-container-highest":"#dae2fd","on-error":"#ffffff","surface-container-lowest":"#ffffff","surface":"#faf8ff","tertiary-fixed":"#e1e0ff","error-container":"#ffdad6","on-tertiary-fixed":"#07006c","tertiary-container":"#4749d5","on-secondary-container":"#57657a","surface-tint":"#2151da","primary-container":"#1e4fd8","secondary":"#515f74","secondary-fixed":"#d5e3fc","primary-fixed":"#dce1ff","surface-container":"#eaedff","secondary-container":"#d5e3fc","outline":"#747686","tertiary":"#2d2bbd","surface-container-high":"#e2e7ff","on-tertiary-container":"#d3d2ff","on-primary":"#ffffff","primary-fixed-dim":"#b7c4ff","on-surface":"#131b2e","on-primary-fixed-variant":"#0039b4","on-tertiary":"#ffffff","inverse-surface":"#283044","secondary-fixed-dim":"#b9c7df","inverse-primary":"#b7c4ff","on-secondary-fixed":"#0d1c2e","inverse-on-surface":"#eef0ff","error":"#ba1a1a","surface-variant":"#dae2fd","on-error-container":"#93000a","surface-dim":"#d2d9f4","on-primary-container":"#cbd4ff","primary":"#0038b1","on-background":"#131b2e","tertiary-fixed-dim":"#c0c1ff","on-primary-fixed":"#001551","on-secondary":"#ffffff","surface-container-low":"#f2f3ff","outline-variant":"#c4c5d7","on-tertiary-fixed-variant":"#2f2ebe","surface-bright":"#faf8ff","on-surface-variant":"#434655","on-secondary-fixed-variant":"#3a485b"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"space-sm":"0.5rem","margin":"2rem","gutter-mobile":"1rem","space-md":"1rem","space-xs":"0.25rem","gutter":"1.5rem","space-xl":"2rem","space-lg":"1.5rem","margin-mobile":"1rem"},fontFamily:{"headline-xl":["Inter"],"label-sm":["Inter"],"headline-xl-mobile":["Inter"],"headline-sm":["Inter"],"label-md":["Inter"],"code-sm":["JetBrains Mono"],"body-lg":["Inter"],"headline-lg":["Inter"],"label-lg":["Inter"],"headline-md":["Inter"],"body-md":["Inter"],"body-sm":["Inter"]},fontSize:{"headline-xl":["36px",{lineHeight:"44px",letterSpacing:"-0.025em",fontWeight:"700"}],"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.03em",fontWeight:"600"}],"headline-xl-mobile":["28px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"700"}],"headline-sm":["16px",{lineHeight:"24px",letterSpacing:"-0.01em",fontWeight:"600"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.01em",fontWeight:"500"}],"code-sm":["12px",{lineHeight:"16px",letterSpacing:"0em",fontWeight:"400"}],"body-lg":["16px",{lineHeight:"24px",letterSpacing:"-0.005em",fontWeight:"400"}],"headline-lg":["24px",{lineHeight:"32px",letterSpacing:"-0.02em",fontWeight:"600"}],"label-lg":["14px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"500"}],"headline-md":["20px",{lineHeight:"28px",letterSpacing:"-0.015em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"400"}],"body-sm":["12px",{lineHeight:"16px",letterSpacing:"0em",fontWeight:"400"}]}}}};</script></head><body class="bg-surface font-body-md text-body-md text-on-surface"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between"><div class="flex flex-col"><div class="h-16 px-space-md flex items-center justify-between"><div class="flex items-center gap-space-sm"><img alt="ReachOut Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTWvHApa3kKTY0_zBb62vHZZMmKTP9Eixxa1r7zmqSbQtMqLHhqef22pXnLLrREa-0aAVUuL0OAGz1piuq4alEZ6zqP8BSRkcIkiJggeWP2-ygt1D9U5JX-iXim2FMNIo_zqJ363O7htdcCkn-sIfsNqAXJh1XFfWqIaM-J5eBKrRDpG0LvScMUDjqdvLnh_jA4N8VJsxMDeCqyhzZKCmFl68GNdw62wI7CKa3ZdFq"/><span class="font-headline-sm text-headline-sm text-on-surface">ReachOut</span></div><span class="font-label-sm text-label-sm px-space-xs py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed">v2.4</span></div><div class="px-space-md pt-space-xs pb-space-sm"><button class="w-full flex items-center justify-between px-space-sm py-2 rounded-lg bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" type="button"><div class="flex items-center gap-space-xs truncate"><span class="material-symbols-outlined text-[18px] text-primary">workspaces</span><span class="font-label-md text-label-md truncate text-on-surface">Shoaib's Outreach</span></div><span class="material-symbols-outlined text-[16px]">unfold_more</span></button></div><nav class="px-space-sm space-y-1 overflow-y-auto max-h-[calc(100vh-220px)]" data-active-classes="bg-primary-container text-on-primary font-label-lg font-bold rounded-lg shadow-sm"><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span>Dashboard</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="my-profile" href="#"><span class="material-symbols-outlined text-[20px]">account_circle</span><span>My Profile</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="lead-finder" href="#"><span class="material-symbols-outlined text-[20px]">person_search</span><span>Lead Finder</span></a><div class="pt-space-xs"><div class="flex items-center justify-between px-space-sm py-1.5 text-on-surface-variant"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">hub</span><span class="font-label-lg text-label-lg">Outreach Modules</span></div><span class="material-symbols-outlined text-[16px]">expand_more</span></div><div class="pl-8 pr-space-xs space-y-1 mt-0.5"><a class="block px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="module-social-media" href="#">Social Media</a><a class="block px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="module-video-editing" href="#">Video Editing</a><a class="block px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="module-ai-video" href="#">AI Video</a><a class="block px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="module-product-manager" href="#">Product Manager</a></div></div><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="email-composer" href="#"><span class="material-symbols-outlined text-[20px]">edit_note</span><span>Email Composer</span></a><a aria-current="page" class="flex items-center justify-between px-space-sm py-2 transition-all bg-primary-container text-on-primary font-label-lg font-bold rounded-lg shadow-sm" data-path="inbox" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">inbox</span><span>Inbox</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-full bg-error-container text-on-error-container">3</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="analytics" href="#"><span class="material-symbols-outlined text-[20px]">bar_chart</span><span>Analytics</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span>Settings</span></a></nav></div><div class="p-space-sm"><div class="flex items-center justify-between p-space-sm rounded-xl bg-surface-container-low"><div class="flex items-center gap-space-sm min-w-0"><div class="relative flex-shrink-0"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMyZR23rxqC0ChraMUzMm31ejMvxcedHNHdArQjmtGxiyA1zb3dfEIlax7_oju-rwKnXI779JU76Y-AOpj8pWwH1HuAPO7zkV3qfvkbf8YgnuU34Utlnlxtp3coVsPDv1btY56Hqs0zo0Zrq-yr8YNVocElkrbe0at2_zbPVNHqVO_-Kj8Bbr0bb9-TmEfcDkKEgb5iakQR3fwR3f30aY2wo_Ptfta2tWh5lqIdu7z"/><span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-primary ring-2 ring-surface-container-lowest"></span></div><div class="min-w-0"><p class="font-label-md text-label-md text-on-surface truncate font-semibold">Shoaib ul Din</p><p class="font-body-sm text-body-sm text-on-surface-variant truncate">Freelancer</p></div></div><button class="text-on-surface-variant hover:text-on-surface p-1 rounded-lg hover:bg-surface-container" type="button"><span class="material-symbols-outlined text-[18px]">more_vert</span></button></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-gutter"><div class="flex items-center gap-space-md"><div class="relative w-64 md:w-80"><span class="material-symbols-outlined absolute left-3 top-2.5 text-[20px] text-outline">search</span><input class="w-full h-10 pl-10 pr-space-md rounded-lg bg-surface-container-low text-body-md font-body-md text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Quick search leads, campaigns..." type="text"/></div></div><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs px-space-sm py-1.5 rounded-full bg-surface-container text-on-surface-variant"><span class="material-symbols-outlined text-[16px] text-primary">auto_awesome</span><span class="font-label-sm text-label-sm font-semibold text-on-surface">840 / 1000 AI Credits</span></div><button class="relative p-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span></button><button class="flex items-center gap-space-xs px-space-md py-2 rounded-lg bg-primary-container text-on-primary hover:bg-primary transition-all font-label-lg text-label-lg" type="button"><span class="material-symbols-outlined text-[18px]">add</span><span>New Campaign</span></button><img alt="Profile" class="w-8 h-8 rounded-full object-cover ml-space-xs" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMyZR23rxqC0ChraMUzMm31ejMvxcedHNHdArQjmtGxiyA1zb3dfEIlax7_oju-rwKnXI779JU76Y-AOpj8pWwH1HuAPO7zkV3qfvkbf8YgnuU34Utlnlxtp3coVsPDv1btY56Hqs0zo0Zrq-yr8YNVocElkrbe0at2_zbPVNHqVO_-Kj8Bbr0bb9-TmEfcDkKEgb5iakQR3fwR3f30aY2wo_Ptfta2tWh5lqIdu7z"/></div></header><main class="relative pt-16 bg-surface min-h-screen w-full px-gutter py-space-xl"><div class="flex flex-col w-full">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between pb-space-lg gap-space-md">
+<div>
+<div class="flex items-center gap-space-xs text-on-surface-variant mb-1">
+<span class="font-code-sm text-code-sm uppercase tracking-wider text-primary">Workspace / Inbound Pipeline</span>
+<span class="text-outline text-xs">/</span>
+<span class="font-label-md text-label-md text-secondary">Active Threads</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Outreach Inbox &amp; Conversations</h1>
+</div>
+<!-- Filter Tabs Pill Group -->
+<div class="inline-flex p-1 rounded-xl bg-surface-container-low shadow-sm">
+<button class="px-space-md py-1.5 rounded-lg bg-surface-container-lowest text-primary font-label-md text-label-md shadow-sm transition-all" onclick="filterThreads('all')">
+        All <span class="ml-1 opacity-70">24</span>
+</button>
+<button class="px-space-md py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all flex items-center gap-1.5" onclick="filterThreads('interested')">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        Interested <span class="opacity-60">8</span>
+</button>
+<button class="px-space-md py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all flex items-center gap-1.5" onclick="filterThreads('follow-up')">
+<span class="w-2 h-2 rounded-full bg-amber-500"></span>
+        Follow-Up Needed <span class="opacity-60">5</span>
+</button>
+<button class="px-space-md py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all flex items-center gap-1.5" onclick="filterThreads('booked')">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+        Booked Calls <span class="opacity-60">11</span>
+</button>
+</div>
+</div>
+<!-- Main 3-Column Responsive Grid -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg items-start">
+<!-- COLUMN 1: Threads List (25% -> 3 cols desktop) -->
+<section class="xl:col-span-3 flex flex-col bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden h-[820px]">
+<!-- Search & Filters -->
+<div class="p-space-md bg-surface-container-lowest flex flex-col gap-space-sm shadow-sm z-10">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-[18px] text-outline">search</span>
+<input class="w-full h-9 pl-9 pr-3 rounded-lg bg-surface-container-low text-body-sm font-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest shadow-inner" placeholder="Search leads, channels, keywords..." type="text"/>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant">
+<div class="flex items-center gap-1.5 cursor-pointer px-2 py-1 rounded hover:bg-surface-container-low">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Priority First</span>
+<span class="material-symbols-outlined text-[14px]">expand_more</span>
+</div>
+<button class="flex items-center gap-1 font-label-sm text-label-sm text-primary hover:text-primary-container">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+<span>Refine</span>
+</button>
+</div>
+</div>
+<!-- Threads Scroller -->
+<div class="overflow-y-auto flex-1 divide-y divide-surface-container-low" id="threadList">
+<!-- Thread 1: Sarah Lin (Active) -->
+<article class="p-space-md bg-surface-container-low/60 hover:bg-surface-container-low cursor-pointer transition-colors relative border-l-4 border-l-primary" onclick="selectThread(1)">
+<div class="flex items-start justify-between gap-space-sm mb-1.5">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary flex-shrink-0 animate-pulse"></span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold truncate">Sarah Lin</h3>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex-shrink-0">10m ago</span>
+</div>
+<div class="flex items-center gap-1.5 mb-2">
+<span class="font-label-sm text-label-sm text-secondary font-medium">ApexMedia</span>
+<span class="text-outline text-xs">·</span>
+<span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-label-sm text-label-sm font-semibold inline-flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Interested
+            </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface line-clamp-2 leading-relaxed">
+            Hey Shoaib, sample looked great! When can we chat? Looking to lock our pipeline by Friday.
+          </p>
+<div class="mt-2.5 flex items-center justify-between text-on-surface-variant">
+<span class="font-code-sm text-code-sm text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">videocam</span> 1 clip attached
+            </span>
+<span class="material-symbols-outlined text-[16px] text-outline hover:text-on-surface">star_border</span>
+</div>
+</article>
+<!-- Thread 2: Marcus Vance -->
+<article class="p-space-md hover:bg-surface-container-low cursor-pointer transition-colors" onclick="selectThread(2)">
+<div class="flex items-start justify-between gap-space-sm mb-1.5">
+<div class="flex items-center gap-2">
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate">Marcus Vance</h3>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex-shrink-0">2h ago</span>
+</div>
+<div class="flex items-center gap-1.5 mb-2">
+<span class="font-label-sm text-label-sm text-secondary font-medium">PodFlow</span>
+<span class="text-outline text-xs">·</span>
+<span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 font-label-sm text-label-sm font-semibold inline-flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span> Follow Up
+            </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 leading-relaxed">
+            What is your turnaround time for weekly podcast clips? Need 4-5 edits delivered every Tuesday.
+          </p>
+<div class="mt-2.5 flex items-center justify-between text-on-surface-variant">
+<span class="font-code-sm text-code-sm text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">mail</span> 2 emails
+            </span>
+<span class="material-symbols-outlined text-[16px] text-outline hover:text-on-surface">star_border</span>
+</div>
+</article>
+<!-- Thread 3: Elena Rostova -->
+<article class="p-space-md hover:bg-surface-container-low cursor-pointer transition-colors" onclick="selectThread(3)">
+<div class="flex items-start justify-between gap-space-sm mb-1.5">
+<div class="flex items-center gap-2">
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate">Elena Rostova</h3>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex-shrink-0">5h ago</span>
+</div>
+<div class="flex items-center gap-1.5 mb-2">
+<span class="font-label-sm text-label-sm text-secondary font-medium">BloomBoutique</span>
+<span class="text-outline text-xs">·</span>
+<span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-label-sm text-label-sm font-semibold inline-flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Interested
+            </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 leading-relaxed">
+            Let's set up a call to discuss TikTok management. We want organic growth focused on DTC sales.
+          </p>
+<div class="mt-2.5 flex items-center justify-between text-on-surface-variant">
+<span class="font-code-sm text-code-sm text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">auto_awesome</span> High Intent
+            </span>
+<span class="material-symbols-outlined text-[16px] text-outline hover:text-on-surface">star_border</span>
+</div>
+</article>
+<!-- Thread 4: David Miller -->
+<article class="p-space-md hover:bg-surface-container-low cursor-pointer transition-colors opacity-75" onclick="selectThread(4)">
+<div class="flex items-start justify-between gap-space-sm mb-1.5">
+<div class="flex items-center gap-2">
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate">David Miller</h3>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex-shrink-0">1d ago</span>
+</div>
+<div class="flex items-center gap-1.5 mb-2">
+<span class="font-label-sm text-label-sm text-secondary font-medium">GrowthForge</span>
+<span class="text-outline text-xs">·</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm font-semibold inline-flex items-center gap-1">
+              Not Interested
+            </span>
+</div>
+<p class="font-body-sm text-body-sm text-outline line-clamp-2 leading-relaxed">
+            We already have in-house editors, thanks. Reach out next quarter if our load expands.
+          </p>
+<div class="mt-2.5 flex items-center justify-between text-on-surface-variant">
+<span class="font-code-sm text-code-sm text-outline">Archived Sequence</span>
+<span class="material-symbols-outlined text-[16px] text-outline">archive</span>
+</div>
+</article>
+</div>
+</section>
+<!-- COLUMN 2: Conversation View (45% -> 5 cols desktop) -->
+<section class="xl:col-span-6 flex flex-col bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden h-[820px]">
+<!-- Top Action Bar -->
+<div class="px-space-lg py-space-md bg-surface-container-lowest shadow-sm flex items-center justify-between z-10">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-11 h-11 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-headline-sm text-headline-sm font-bold flex-shrink-0 shadow-sm">
+            SL
+          </div>
+<div class="min-w-0">
+<div class="flex items-center gap-2">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold truncate">Sarah Lin</h2>
+<span class="font-label-sm text-label-sm text-secondary bg-surface-container-low px-2 py-0.5 rounded">Growth Lead</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">
+              ApexMedia • <span class="font-code-sm text-code-sm text-primary">sarah.lin@apexmedia.co</span>
+</p>
+</div>
+</div>
+<!-- Quick Status Tag Dropdown -->
+<div class="flex items-center gap-2">
+<div class="relative">
+<button class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 font-label-md text-label-md font-semibold hover:bg-emerald-100 transition-colors">
+<span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+<span>Interested</span>
+<span class="material-symbols-outlined text-[16px]">arrow_drop_down</span>
+</button>
+</div>
+<button class="p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors" title="More thread actions">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Messages Stream (Bubble Stream) -->
+<div class="flex-1 overflow-y-auto p-space-lg space-y-space-lg bg-surface-container-low/20">
+<!-- Timeline Marker -->
+<div class="flex items-center justify-center my-2">
+<span class="font-label-sm text-label-sm text-outline bg-surface-container-low px-3 py-1 rounded-full uppercase tracking-wider">Yesterday • 4:18 PM</span>
+</div>
+<!-- Bubble 1: Shoaib Outreach Pitch (Right aligned) -->
+<div class="flex flex-col items-end gap-1.5 max-w-[85%] ml-auto">
+<div class="flex items-center gap-2 mr-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Shoaib ul Din (You)</span>
+<span class="font-code-sm text-code-sm text-outline">4:18 PM</span>
+</div>
+<div class="bg-primary text-on-primary p-space-md rounded-2xl rounded-tr-sm shadow-md space-y-2.5">
+<p class="font-body-md text-body-md text-on-primary leading-relaxed">
+              Hey Sarah, caught the latest episode of Apex Talk with Jason Calacanis. Noticed the YouTube shorts pacing was losing audience retention around the 12-second mark.
+            </p>
+<p class="font-body-md text-body-md text-on-primary leading-relaxed">
+              Took the liberty of re-cutting that key segment with custom kinetic subtitles, sound cues, and a high-hook re-entry. Check the sample reel here:
+            </p>
+<!-- Video Reel Card Preview inside Bubble -->
+<a class="block bg-surface-container-lowest/15 hover:bg-surface-container-lowest/25 transition-all p-3 rounded-xl flex items-center gap-3" href="#">
+<div class="w-12 h-12 rounded-lg bg-surface-container-lowest/20 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px] text-white">play_circle</span>
+</div>
+<div class="min-w-0">
+<div class="font-label-md text-label-md text-white font-semibold truncate">Apex_Show_Ep42_Recut_V2.mp4</div>
+<div class="font-code-sm text-code-sm text-on-primary-container truncate">vimeo.com/preview/718293910 • 0:58 sec</div>
+</div>
+</a>
+<p class="font-body-sm text-body-sm text-on-primary/90">
+              Best,<br/>Shoaib • Video Growth Specialist
+            </p>
+</div>
+<div class="flex items-center gap-1 font-label-sm text-label-sm text-outline mr-1">
+<span class="material-symbols-outlined text-[14px] text-primary">done_all</span>
+<span>Opened 4 times • Link clicked</span>
+</div>
+</div>
+<!-- Timeline Marker -->
+<div class="flex items-center justify-center my-2">
+<span class="font-label-sm text-label-sm text-outline bg-surface-container-low px-3 py-1 rounded-full uppercase tracking-wider">Today • 10:14 AM</span>
+</div>
+<!-- Bubble 2: Sarah Lin Response (Left aligned) -->
+<div class="flex flex-col items-start gap-1.5 max-w-[85%] mr-auto">
+<div class="flex items-center gap-2 ml-1">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Sarah Lin</span>
+<span class="font-code-sm text-code-sm text-outline">10:14 AM</span>
+</div>
+<div class="bg-surface-container-lowest text-on-surface p-space-md rounded-2xl rounded-tl-sm shadow-sm space-y-2.5">
+<p class="font-body-md text-body-md text-on-surface leading-relaxed">
+              Hi Shoaib, thanks for reaching out. The sample cut you did on our latest podcast episode was actually really slick. The pacing and hooks are much sharper than what we currently post.
+            </p>
+<p class="font-body-md text-body-md text-on-surface leading-relaxed">
+              What do your monthly retainer packages look like for 15-20 shorts per month? Are you available for a brief Zoom this Thursday at 3 PM EST?
+            </p>
+</div>
+<div class="flex items-center gap-2 ml-1">
+<span class="px-2 py-0.5 rounded bg-surface-container-low font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-emerald-600">bolt</span> Response latency: 17h 56m
+            </span>
+</div>
+</div>
+</div>
+<!-- Reply Composer Area -->
+<div class="p-space-md bg-surface-container-lowest shadow-[0_-2px_8px_rgba(0,0,0,0.02)] space-y-space-sm z-10">
+<!-- AI Suggestion Chips -->
+<div class="flex items-center gap-2 overflow-x-auto pb-1">
+<span class="font-label-sm text-label-sm text-primary flex items-center gap-1 flex-shrink-0 font-semibold">
+<span class="material-symbols-outlined text-[14px]">auto_awesome</span> Smart Replies:
+          </span>
+<button class="px-2.5 py-1 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface font-label-sm text-label-sm flex-shrink-0 transition-colors" onclick="setComposerText('Accept 3 PM Zoom')" type="button">
+            Accept 3 PM Zoom
+          </button>
+<button class="px-2.5 py-1 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface font-label-sm text-label-sm flex-shrink-0 transition-colors" onclick="setComposerText('Send Retainer Pricing Sheet')" type="button">
+            Send Retainer Pricing Sheet
+          </button>
+<button class="px-2.5 py-1 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface font-label-sm text-label-sm flex-shrink-0 transition-colors" onclick="setComposerText('Ask for Brand Guidelines')" type="button">
+            Ask for Brand Guidelines
+          </button>
+</div>
+<!-- Composer Input Card -->
+<div class="rounded-xl bg-surface-container-low/60 p-3 shadow-inner space-y-2">
+<textarea class="w-full bg-transparent text-body-md font-body-md text-on-surface focus:outline-none resize-none leading-relaxed placeholder:text-outline" id="composerInput" rows="3">Hi Sarah, thrilled to hear you liked the cut! Thursday at 3 PM EST works perfectly for me. Here is my calendar link to confirm: cal.com/shoaib/15min. Looking forward to discussing the 15-20 clip retainer.</textarea>
+<!-- Composer Bottom Actions -->
+<div class="flex items-center justify-between pt-2">
+<div class="flex items-center gap-1">
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface" title="Attach file" type="button">
+<span class="material-symbols-outlined text-[18px]">attach_file</span>
+</button>
+<button class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-sm text-label-sm" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary">description</span>
+<span>Attach Retainer PDF</span>
+</button>
+<button class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-sm text-label-sm" type="button">
+<span class="material-symbols-outlined text-[16px]">sticky_note_2</span>
+<span>Add Internal Note</span>
+</button>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-space-md py-2 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors font-label-md text-label-md" type="button">
+                Save Draft
+              </button>
+<button class="flex items-center gap-1.5 px-space-lg py-2 rounded-lg bg-primary-container text-on-primary hover:bg-primary shadow-sm transition-all font-label-lg text-label-lg font-semibold" type="button">
+<span class="material-symbols-outlined text-[18px]">send</span>
+<span>Send Reply</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- COLUMN 3: Lead Details Panel (30% -> 4 cols desktop) -->
+<section class="xl:col-span-3 flex flex-col gap-space-md">
+<!-- Contact Identity Card -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm space-y-space-md">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="relative">
+<img class="w-14 h-14 rounded-full object-cover shadow-sm" data-alt="Close up professional portrait of Sarah Lin, tech marketing growth executive, natural studio lighting, modern minimalist background with soft corporate blue tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_cbddeqVErgIyTfJPDxZzHUOKwSTx7xwU-VRCWiSaKOC9vNXbji6qr3XqnZk2WruzrAJPRFW7-7P-6zgvzEcIQ7Tb5tu8hGs-lKNbkLqo-A-rWvA3e4fSrK0H063rMCep1Wt4_ucb6oI1poUS7yVT1yYURrQWhN4-I_QJjD4Pw8jDVS31WT-R-IL461P4RTLgQgBArmPQfR4xMAbXpuZpp4yvtxpc4oKT5WFsad7I"/>
+<span class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-emerald-500 ring-2 ring-surface-container-lowest"></span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Sarah Lin</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Growth Lead @ ApexMedia</p>
+<div class="mt-1">
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold inline-block">
+                  Video Editing
+                </span>
+</div>
+</div>
+</div>
+<button class="p-1 rounded-lg text-on-surface-variant hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+</div>
+<!-- Pipeline Status Progression Selector -->
+<div class="p-space-sm rounded-lg bg-surface-container-low space-y-1">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Lead Stage Pipeline</span>
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-primary font-bold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">event_available</span>
+              Discovery Call Scheduled
+            </span>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant cursor-pointer">arrow_drop_down</span>
+</div>
+</div>
+<!-- Social & Contact Assets -->
+<div class="space-y-2 pt-1">
+<div class="flex items-center justify-between py-1 text-on-surface">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-primary">mail</span>
+<span class="font-body-sm text-body-sm">Email</span>
+</div>
+<a class="font-code-sm text-code-sm text-primary hover:underline" href="mailto:sarah.lin@apexmedia.co">sarah.lin@apexmedia.co</a>
+</div>
+<div class="flex items-center justify-between py-1 text-on-surface">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">language</span>
+<span class="font-body-sm text-body-sm">Website</span>
+</div>
+<a class="font-body-sm text-body-sm text-primary hover:underline" href="https://apexmedia.co" target="_blank">apexmedia.co</a>
+</div>
+<div class="flex items-center justify-between py-1 text-on-surface">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-rose-500">photo_camera</span>
+<span class="font-body-sm text-body-sm">Instagram</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface font-semibold">@apexmedia (32k)</span>
+</div>
+<div class="flex items-center justify-between py-1 text-on-surface">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-red-600">smart_display</span>
+<span class="font-body-sm text-body-sm">YouTube</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface font-semibold">85k subs</span>
+</div>
+</div>
+<!-- Action Quick-Trigger Buttons -->
+<div class="grid grid-cols-1 gap-2 pt-2">
+<button class="w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-primary-container text-on-primary hover:bg-primary transition-all font-label-md text-label-md font-semibold shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+<span>Book Calendar Event</span>
+</button>
+<div class="grid grid-cols-2 gap-2">
+<button class="flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-surface-container-low text-on-surface hover:bg-surface-container transition-colors font-label-sm text-label-sm" type="button">
+<span class="material-symbols-outlined text-[16px] text-error">close</span>
+<span>Not Interested</span>
+</button>
+<button class="flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-surface-container-low text-on-surface hover:bg-surface-container transition-colors font-label-sm text-label-sm" type="button">
+<span class="material-symbols-outlined text-[16px] text-secondary">pause_circle</span>
+<span>Pause Sequence</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Campaign Attribution Card -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm space-y-space-sm">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Campaign Attribution</span>
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low">
+<div class="min-w-0">
+<p class="font-label-md text-label-md text-on-surface font-semibold truncate">Video Editing Creator Engine #4819</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Step 1 of 3: Video Reel Teaser</p>
+</div>
+<span class="material-symbols-outlined text-[18px] text-primary">analytics</span>
+</div>
+<div class="grid grid-cols-2 gap-2 text-center pt-1">
+<div class="p-2 rounded-lg bg-surface-container-low/60">
+<div class="font-headline-sm text-headline-sm font-bold text-on-surface">54.2%</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">Campaign Open Rate</div>
+</div>
+<div class="p-2 rounded-lg bg-surface-container-low/60">
+<div class="font-headline-sm text-headline-sm font-bold text-emerald-600">28.4%</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">Reply Conversion</div>
+</div>
+</div>
+</div>
+<!-- Activity Timeline Card -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm space-y-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Interaction History</span>
+<span class="font-code-sm text-code-sm text-emerald-600 font-semibold">18h Latency</span>
+</div>
+<ul class="space-y-3 relative pl-4 before:content-[''] before:absolute before:left-1 before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-container-high">
+<li class="relative flex items-start gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 absolute -left-4 top-1 ring-2 ring-surface-container-lowest"></span>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">Reply received from Sarah</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Today at 10:14 AM (18h response time)</p>
+</div>
+</li>
+<li class="relative flex items-start gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary absolute -left-4 top-1 ring-2 ring-surface-container-lowest"></span>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">Vimeo reel link clicked 2x</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Yesterday at 7:42 PM • Desktop</p>
+</div>
+</li>
+<li class="relative flex items-start gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary absolute -left-4 top-1 ring-2 ring-surface-container-lowest"></span>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">Pitch email opened 4x</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Yesterday between 4:20 PM - 6:30 PM</p>
+</div>
+</li>
+<li class="relative flex items-start gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-outline absolute -left-4 top-1 ring-2 ring-surface-container-lowest"></span>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">Outreach campaign delivered</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Yesterday at 4:18 PM via Google Workspace</p>
+</div>
+</li>
+</ul>
+</div>
+</section>
+</div>
+</div>
+<script>
+  function setComposerText(textType) {
+    const input = document.getElementById('composerInput');
+    if (!input) return;
+    if (textType === 'Accept 3 PM Zoom') {
+      input.value = "Hi Sarah, thrilled to hear you liked the cut! Thursday at 3 PM EST works perfectly for me. Here is my calendar link to confirm: cal.com/shoaib/15min. Looking forward to talking through the 15-20 clip retainer.";
+    } else if (textType === 'Send Retainer Pricing Sheet') {
+      input.value = "Hi Sarah, appreciate the positive feedback! Our monthly tier for 15-20 shorts ranges between $2,500 - $3,200/mo including caption styling, audio mastering, and 48h revisions. I've attached our one-pager below.";
+    } else if (textType === 'Ask for Brand Guidelines') {
+      input.value = "Hi Sarah, glad you loved the sample! Before our Zoom, could you share ApexMedia's current brand kit or typography preferences so I can prepare a custom rollout roadmap for Thursday?";
+    }
+    input.focus();
+  }
+
+  function selectThread(id) {
+    const articles = document.querySelectorAll('#threadList article');
+    articles.forEach((art, idx) => {
+      if (idx === id - 1) {
+        art.classList.add('bg-surface-container-low/60', 'border-l-4', 'border-l-primary');
+      } else {
+        art.classList.remove('bg-surface-container-low/60', 'border-l-4', 'border-l-primary');
+      }
+    });
+  }
+
+  function filterThreads(tabName) {
+    console.log("Filtered tab by: " + tabName);
+  }
+</script></main></div></body></html>

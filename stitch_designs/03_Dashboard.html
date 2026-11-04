@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;display:inline-block;vertical-align:middle;line-height:1;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#faf8ff","surface-container-highest":"#dae2fd","on-error":"#ffffff","surface-container-lowest":"#ffffff","surface":"#faf8ff","tertiary-fixed":"#e1e0ff","error-container":"#ffdad6","on-tertiary-fixed":"#07006c","tertiary-container":"#4749d5","on-secondary-container":"#57657a","surface-tint":"#2151da","primary-container":"#1e4fd8","secondary":"#515f74","secondary-fixed":"#d5e3fc","primary-fixed":"#dce1ff","surface-container":"#eaedff","secondary-container":"#d5e3fc","outline":"#747686","tertiary":"#2d2bbd","surface-container-high":"#e2e7ff","on-tertiary-container":"#d3d2ff","on-primary":"#ffffff","primary-fixed-dim":"#b7c4ff","on-surface":"#131b2e","on-primary-fixed-variant":"#0039b4","on-tertiary":"#ffffff","inverse-surface":"#283044","secondary-fixed-dim":"#b9c7df","inverse-primary":"#b7c4ff","on-secondary-fixed":"#0d1c2e","inverse-on-surface":"#eef0ff","error":"#ba1a1a","surface-variant":"#dae2fd","on-error-container":"#93000a","surface-dim":"#d2d9f4","on-primary-container":"#cbd4ff","primary":"#0038b1","on-background":"#131b2e","tertiary-fixed-dim":"#c0c1ff","on-primary-fixed":"#001551","on-secondary":"#ffffff","surface-container-low":"#f2f3ff","outline-variant":"#c4c5d7","on-tertiary-fixed-variant":"#2f2ebe","surface-bright":"#faf8ff","on-surface-variant":"#434655","on-secondary-fixed-variant":"#3a485b"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"space-sm":"0.5rem","margin":"2rem","gutter-mobile":"1rem","space-md":"1rem","space-xs":"0.25rem","gutter":"1.5rem","space-xl":"2rem","space-lg":"1.5rem","margin-mobile":"1rem"},fontFamily:{"headline-xl":["Inter"],"label-sm":["Inter"],"headline-xl-mobile":["Inter"],"headline-sm":["Inter"],"label-md":["Inter"],"code-sm":["JetBrains Mono"],"body-lg":["Inter"],"headline-lg":["Inter"],"label-lg":["Inter"],"headline-md":["Inter"],"body-md":["Inter"],"body-sm":["Inter"]},fontSize:{"headline-xl":["36px",{lineHeight:"44px",letterSpacing:"-0.025em",fontWeight:"700"}],"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.03em",fontWeight:"600"}],"headline-xl-mobile":["28px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"700"}],"headline-sm":["16px",{lineHeight:"24px",letterSpacing:"-0.01em",fontWeight:"600"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.01em",fontWeight:"500"}],"code-sm":["12px",{lineHeight:"16px",letterSpacing:"0em",fontWeight:"400"}],"body-lg":["16px",{lineHeight:"24px",letterSpacing:"-0.005em",fontWeight:"400"}],"headline-lg":["24px",{lineHeight:"32px",letterSpacing:"-0.02em",fontWeight:"600"}],"label-lg":["14px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"500"}],"headline-md":["20px",{lineHeight:"28px",letterSpacing:"-0.015em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"400"}],"body-sm":["12px",{lineHeight:"16px",letterSpacing:"0em",fontWeight:"400"}]}}}};</script></head><body class="bg-surface font-body-md text-body-md text-on-surface"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between"><div class="flex flex-col"><div class="h-16 px-space-md flex items-center justify-between"><div class="flex items-center gap-space-sm"><img alt="ReachOut Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTWvHApa3kKTY0_zBb62vHZZMmKTP9Eixxa1r7zmqSbQtMqLHhqef22pXnLLrREa-0aAVUuL0OAGz1piuq4alEZ6zqP8BSRkcIkiJggeWP2-ygt1D9U5JX-iXim2FMNIo_zqJ363O7htdcCkn-sIfsNqAXJh1XFfWqIaM-J5eBKrRDpG0LvScMUDjqdvLnh_jA4N8VJsxMDeCqyhzZKCmFl68GNdw62wI7CKa3ZdFq"/><span class="font-headline-sm text-headline-sm text-on-surface">ReachOut</span></div><span class="font-label-sm text-label-sm px-space-xs py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed">v2.4</span></div><div class="px-space-md pt-space-xs pb-space-sm"><button class="w-full flex items-center justify-between px-space-sm py-2 rounded-lg bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" type="button"><div class="flex items-center gap-space-xs truncate"><span class="material-symbols-outlined text-[18px] text-primary">workspaces</span><span class="font-label-md text-label-md truncate text-on-surface">Shoaib's Outreach</span></div><span class="material-symbols-outlined text-[16px]">unfold_more</span></button></div><nav class="px-space-sm space-y-1 overflow-y-auto max-h-[calc(100vh-220px)]" data-active-classes="bg-primary-container text-on-primary font-label-lg font-bold rounded-lg shadow-sm"><a aria-current="page" class="flex items-center gap-space-sm px-space-sm py-2 transition-all bg-primary-container text-on-primary font-label-lg font-bold rounded-lg shadow-sm" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span>Dashboard</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="my-profile" href="#"><span class="material-symbols-outlined text-[20px]">account_circle</span><span>My Profile</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="lead-finder" href="#"><span class="material-symbols-outlined text-[20px]">person_search</span><span>Lead Finder</span></a><div class="pt-space-xs"><div class="flex items-center justify-between px-space-sm py-1.5 text-on-surface-variant"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">hub</span><span class="font-label-lg text-label-lg">Outreach Modules</span></div><span class="material-symbols-outlined text-[16px]">expand_more</span></div><div class="pl-8 pr-space-xs space-y-1 mt-0.5"><a class="block px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="module-social-media" href="#">Social Media</a><a class="block px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="module-video-editing" href="#">Video Editing</a><a class="block px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="module-ai-video" href="#">AI Video</a><a class="block px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="module-product-manager" href="#">Product Manager</a></div></div><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="email-composer" href="#"><span class="material-symbols-outlined text-[20px]">edit_note</span><span>Email Composer</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="inbox" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">inbox</span><span>Inbox</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-full bg-error-container text-on-error-container">3</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="analytics" href="#"><span class="material-symbols-outlined text-[20px]">bar_chart</span><span>Analytics</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span>Settings</span></a></nav></div><div class="p-space-sm"><div class="flex items-center justify-between p-space-sm rounded-xl bg-surface-container-low"><div class="flex items-center gap-space-sm min-w-0"><div class="relative flex-shrink-0"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMyZR23rxqC0ChraMUzMm31ejMvxcedHNHdArQjmtGxiyA1zb3dfEIlax7_oju-rwKnXI779JU76Y-AOpj8pWwH1HuAPO7zkV3qfvkbf8YgnuU34Utlnlxtp3coVsPDv1btY56Hqs0zo0Zrq-yr8YNVocElkrbe0at2_zbPVNHqVO_-Kj8Bbr0bb9-TmEfcDkKEgb5iakQR3fwR3f30aY2wo_Ptfta2tWh5lqIdu7z"/><span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-primary ring-2 ring-surface-container-lowest"></span></div><div class="min-w-0"><p class="font-label-md text-label-md text-on-surface truncate font-semibold">Shoaib ul Din</p><p class="font-body-sm text-body-sm text-on-surface-variant truncate">Freelancer</p></div></div><button class="text-on-surface-variant hover:text-on-surface p-1 rounded-lg hover:bg-surface-container" type="button"><span class="material-symbols-outlined text-[18px]">more_vert</span></button></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-gutter"><div class="flex items-center gap-space-md"><div class="relative w-64 md:w-80"><span class="material-symbols-outlined absolute left-3 top-2.5 text-[20px] text-outline">search</span><input class="w-full h-10 pl-10 pr-space-md rounded-lg bg-surface-container-low text-body-md font-body-md text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Quick search leads, campaigns..." type="text"/></div></div><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs px-space-sm py-1.5 rounded-full bg-surface-container text-on-surface-variant"><span class="material-symbols-outlined text-[16px] text-primary">auto_awesome</span><span class="font-label-sm text-label-sm font-semibold text-on-surface">840 / 1000 AI Credits</span></div><button class="relative p-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span></button><button class="flex items-center gap-space-xs px-space-md py-2 rounded-lg bg-primary-container text-on-primary hover:bg-primary transition-all font-label-lg text-label-lg" type="button"><span class="material-symbols-outlined text-[18px]">add</span><span>New Campaign</span></button><img alt="Profile" class="w-8 h-8 rounded-full object-cover ml-space-xs" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMyZR23rxqC0ChraMUzMm31ejMvxcedHNHdArQjmtGxiyA1zb3dfEIlax7_oju-rwKnXI779JU76Y-AOpj8pWwH1HuAPO7zkV3qfvkbf8YgnuU34Utlnlxtp3coVsPDv1btY56Hqs0zo0Zrq-yr8YNVocElkrbe0at2_zbPVNHqVO_-Kj8Bbr0bb9-TmEfcDkKEgb5iakQR3fwR3f30aY2wo_Ptfta2tWh5lqIdu7z"/></div></header><main class="relative pt-16 bg-surface min-h-screen w-full px-gutter py-space-xl"><div class="flex flex-col w-full gap-space-xl">
+<!-- Top Greeting & Header Bar -->
+<section class="flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight flex items-center gap-space-xs">
+        Welcome back, Shoaib <span class="inline-block hover:rotate-12 transition-transform cursor-default">👋</span>
+</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">
+        Here is your outreach activity and conversion metrics over the last 30 days.
+      </p>
+</div>
+<div class="flex items-center gap-space-sm self-start md:self-auto">
+<div class="relative">
+<button class="flex items-center gap-space-xs px-space-md py-2 rounded-xl bg-surface-container-lowest shadow-sm hover:bg-surface-container transition-colors text-on-surface font-label-md text-label-md" type="button">
+<span class="material-symbols-outlined text-[18px] text-primary">calendar_today</span>
+<span>Last 30 Days</span>
+<span class="material-symbols-outlined text-[16px] text-outline">expand_more</span>
+</button>
+</div>
+<button class="flex items-center gap-space-xs px-space-md py-2 rounded-xl bg-surface-container-lowest shadow-sm hover:bg-surface-container text-on-surface font-label-md text-label-md transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px] text-secondary">file_download</span>
+<span>Export CSV</span>
+</button>
+<button class="flex items-center gap-space-xs px-space-md py-2 rounded-xl bg-primary-container text-on-primary shadow-sm hover:bg-primary transition-all font-label-md text-label-md" type="button">
+<span class="material-symbols-outlined text-[18px]">bolt</span>
+<span>Run Pipeline</span>
+</button>
+</div>
+</section>
+<!-- 4 Top KPI Stat Cards -->
+<section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
+<!-- Stat 1 -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between transition-all hover:shadow-md group">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md uppercase tracking-wider text-outline font-semibold">Emails Sent</span>
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-primary group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[20px]">send</span>
+</div>
+</div>
+<div class="my-space-md">
+<div class="font-headline-xl text-headline-xl text-on-surface font-bold tracking-tight">2,480</div>
+</div>
+<div class="flex items-center justify-between font-body-sm text-body-sm">
+<div class="flex items-center gap-1 text-primary font-medium">
+<span class="material-symbols-outlined text-[16px]">arrow_upward</span>
+<span>+14.2%</span>
+</div>
+<span class="text-outline">vs last month</span>
+</div>
+</div>
+<!-- Stat 2 -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between transition-all hover:shadow-md group">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md uppercase tracking-wider text-outline font-semibold">Open Rate</span>
+<div class="w-10 h-10 rounded-xl bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[20px]">drafts</span>
+</div>
+</div>
+<div class="my-space-md">
+<div class="font-headline-xl text-headline-xl text-on-surface font-bold tracking-tight">68.4%</div>
+</div>
+<div class="flex items-center justify-between font-body-sm text-body-sm">
+<div class="flex items-center gap-1 text-primary font-medium">
+<span class="material-symbols-outlined text-[16px]">arrow_upward</span>
+<span>+5.1%</span>
+</div>
+<span class="text-outline">vs last month</span>
+</div>
+</div>
+<!-- Stat 3 -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between transition-all hover:shadow-md group">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md uppercase tracking-wider text-outline font-semibold">Replies Received</span>
+<div class="w-10 h-10 rounded-xl bg-tertiary-fixed flex items-center justify-center text-tertiary group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[20px]">forum</span>
+</div>
+</div>
+<div class="my-space-md">
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-xl text-headline-xl text-on-surface font-bold tracking-tight">312</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed font-semibold">12.6% rate</span>
+</div>
+</div>
+<div class="flex items-center justify-between font-body-sm text-body-sm">
+<div class="flex items-center gap-1 text-primary font-medium">
+<span class="material-symbols-outlined text-[16px]">arrow_upward</span>
+<span>+8.4%</span>
+</div>
+<span class="text-outline">vs last month</span>
+</div>
+</div>
+<!-- Stat 4 -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between transition-all hover:shadow-md group">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md uppercase tracking-wider text-outline font-semibold">Meetings Booked</span>
+<div class="w-10 h-10 rounded-xl bg-surface-container-highest flex items-center justify-center text-primary-container group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[20px]">event_available</span>
+</div>
+</div>
+<div class="my-space-md">
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-xl text-headline-xl text-on-surface font-bold tracking-tight">28</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container text-primary font-semibold">+$4.2k pipeline</span>
+</div>
+</div>
+<div class="flex items-center justify-between font-body-sm text-body-sm">
+<div class="flex items-center gap-1 text-primary font-medium">
+<span class="material-symbols-outlined text-[16px]">arrow_upward</span>
+<span>+18.0%</span>
+</div>
+<span class="text-outline">vs last month</span>
+</div>
+</div>
+</section>
+<!-- Middle Section: Analytics Trend & Recent High-Value Replies -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-stretch">
+<!-- Chart (8 cols) -->
+<div class="lg:col-span-8 p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm mb-space-md">
+<div>
+<div class="flex items-center gap-space-xs">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Replies &amp; Engagement Trend</h2>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container text-primary">Live Tracking</span>
+</div>
+<p class="font-body-sm text-body-sm text-outline mt-0.5">Rolling aggregated 30-day conversion cycle</p>
+</div>
+<!-- Metric Selector Toggles -->
+<div class="flex items-center bg-surface-container-low p-1 rounded-xl">
+<button class="px-space-md py-1.5 rounded-lg bg-surface-container-lowest text-primary font-label-sm text-label-sm shadow-sm font-semibold transition-all" id="toggleReplies">Replies (312)</button>
+<button class="px-space-md py-1.5 rounded-lg text-outline hover:text-on-surface font-label-sm text-label-sm font-medium transition-all" id="toggleOpens">Opens (1,696)</button>
+</div>
+</div>
+<!-- Key Callout Milestones Bar -->
+<div class="grid grid-cols-3 gap-space-md py-space-sm px-space-md bg-surface-container-low rounded-xl mb-space-lg">
+<div>
+<span class="font-label-sm text-label-sm text-outline uppercase">Peak Activity Day</span>
+<p class="font-headline-sm text-headline-sm text-on-surface mt-0.5 font-semibold">May 18 (24 Replies)</p>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-outline uppercase">Average Reply Time</span>
+<p class="font-headline-sm text-headline-sm text-on-surface mt-0.5 font-semibold">4.8 Hours</p>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-outline uppercase">Conversion to Call</span>
+<p class="font-headline-sm text-headline-sm text-primary mt-0.5 font-semibold">8.97%</p>
+</div>
+</div>
+<!-- Modern Interactive Area SVG Chart -->
+<div class="relative w-full h-64 select-none">
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 760 220">
+<defs>
+<lineargradient id="gradientReplies" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#1e4fd8" stop-opacity="0.35"></stop>
+<stop offset="100%" stop-color="#1e4fd8" stop-opacity="0.0"></stop>
+</lineargradient>
+<lineargradient id="gradientOpens" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#4749d5" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#4749d5" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<!-- Horizontal Grid Lines -->
+<line stroke="#eaedff" stroke-dasharray="4 4" stroke-width="1" x1="0" x2="760" y1="20" y2="20"></line>
+<line stroke="#eaedff" stroke-dasharray="4 4" stroke-width="1" x1="0" x2="760" y1="75" y2="75"></line>
+<line stroke="#eaedff" stroke-dasharray="4 4" stroke-width="1" x1="0" x2="760" y1="130" y2="130"></line>
+<line stroke="#eaedff" stroke-width="1" x1="0" x2="760" y1="185" y2="185"></line>
+<!-- Opens Area (Background layer) -->
+<path d="M0,160 Q60,140 120,130 T240,110 T360,70 T480,95 T600,60 T760,40 L760,185 L0,185 Z" fill="url(#gradientOpens)"></path>
+<path d="M0,160 Q60,140 120,130 T240,110 T360,70 T480,95 T600,60 T760,40" fill="none" stroke="#dae2fd" stroke-width="2"></path>
+<!-- Replies Area (Foreground primary layer) -->
+<path d="M0,170 C50,165 90,140 140,145 C190,150 220,115 270,120 C320,125 360,65 410,50 C460,35 500,110 550,85 C600,60 670,75 760,30 L760,185 L0,185 Z" fill="url(#gradientReplies)"></path>
+<path d="M0,170 C50,165 90,140 140,145 C190,150 220,115 270,120 C320,125 360,65 410,50 C460,35 500,110 550,85 C600,60 670,75 760,30" fill="none" stroke="#1e4fd8" stroke-linecap="round" stroke-width="3"></path>
+<!-- Highlight Nodes -->
+<circle class="hover:r-6 cursor-pointer" cx="270" cy="120" fill="#ffffff" r="4" stroke="#1e4fd8" stroke-width="2"></circle>
+<circle class="hover:r-7 cursor-pointer" cx="410" cy="50" fill="#ffffff" r="5" stroke="#1e4fd8" stroke-width="3"></circle>
+<circle class="hover:r-6 cursor-pointer" cx="550" cy="85" fill="#ffffff" r="4" stroke="#1e4fd8" stroke-width="2"></circle>
+<circle class="hover:r-7 cursor-pointer" cx="760" cy="30" fill="#ffffff" r="5" stroke="#1e4fd8" stroke-width="3"></circle>
+</svg>
+<!-- Floating Tooltip near Peak Milestone (May 18) -->
+<div class="absolute left-[51%] top-4 -translate-x-1/2 p-2 rounded-lg bg-inverse-surface text-inverse-on-surface shadow-xl pointer-events-none flex flex-col items-center">
+<span class="font-label-sm text-label-sm font-semibold text-primary-fixed">May 18 Peak Campaign</span>
+<span class="font-body-sm text-body-sm font-medium">24 Replies · 8 Meetings</span>
+<div class="w-2 h-2 bg-inverse-surface rotate-45 -mb-1 mt-1"></div>
+</div>
+</div>
+<!-- X-Axis Labels -->
+<div class="flex justify-between items-center text-outline font-label-sm text-label-sm pt-space-xs">
+<span>Day 1</span>
+<span>Day 5</span>
+<span>Day 10</span>
+<span>Day 15</span>
+<span class="font-semibold text-primary">Day 20 (Spike)</span>
+<span>Day 25</span>
+<span>Today</span>
+</div>
+</div>
+<!-- Recent High-Value Replies (4 cols) -->
+<div class="lg:col-span-4 p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-space-md">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Recent Replies</h2>
+<p class="font-body-sm text-body-sm text-outline">Action required on active leads</p>
+</div>
+<a class="font-label-sm text-label-sm font-semibold text-primary hover:underline" href="#">View All (18)</a>
+</div>
+<!-- Conversation List -->
+<div class="flex flex-col gap-space-sm flex-1 justify-around">
+<!-- Message 1 -->
+<div class="p-space-sm rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors">
+<div class="flex items-start justify-between gap-space-xs">
+<div class="flex items-center gap-space-sm min-w-0">
+<img class="w-10 h-10 rounded-full object-cover shrink-0" data-alt="Close up portrait photograph of professional creative director Sarah Lin looking confident in modern architectural studio with neutral lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTFZZJnA4TO1Q1Oj1WdNwKNfQUiv3tBwlo6r9d5ceEnDkIobJVB9uyz3ZiTqGLwFkHAVzD7UuK2RS2L0mjeEfvjNKE03LGU_psrYbbOLGMsyBbJEFcW8JasHgQcze30A9mZnfUmjAKXRLg7ng652RZ-wYo3a5bAygP8cwcCotkhOe6Na2iem9us_eKioZRlao9WjMCyHm6t_LsxaYWUHMqp3grw02-pch-7NFcWE8d"/>
+<div class="min-w-0">
+<div class="flex items-center gap-1.5">
+<h4 class="font-label-lg text-label-lg font-semibold text-on-surface truncate">Sarah Lin</h4>
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed shrink-0">High Intent</span>
+</div>
+<p class="font-body-sm text-body-sm text-outline truncate">Growth Lead at ApexMedia</p>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-outline whitespace-nowrap">12m ago</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 mt-2">
+            "Hey Shoaib, your sample cut was very impressive! Can we connect for 15 mins this Thursday to discuss retaining you for 8 videos/month?"
+          </p>
+<div class="mt-space-sm flex items-center justify-between pt-space-xs">
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-md bg-surface-container-highest text-primary font-semibold">Video Editing</span>
+<button class="flex items-center gap-1 font-label-sm text-label-sm px-space-sm py-1 rounded-lg bg-primary-container text-on-primary hover:bg-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-[14px]">reply</span>
+<span>Quick Reply</span>
+</button>
+</div>
+</div>
+<!-- Message 2 -->
+<div class="p-space-sm rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors">
+<div class="flex items-start justify-between gap-space-xs">
+<div class="flex items-center gap-space-sm min-w-0">
+<img class="w-10 h-10 rounded-full object-cover shrink-0" data-alt="Headshot of Marcus Vance founder in sharp navy blazer smiling in minimalist co-working space soft natural daylight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3MUIFySj79_uCdndY5XOF7mkIi89RRgMACUnf1ngsBRf6yfm6jLOOm5meLglm-X965U_zawye7c4LexYvvd1H8ksqcxkdR-eavveK0S7OPvAe985lo5DoHCcumPyRB4ZsfMjzpba4yUxgJQcf8L0BYiQvP39KZVdID8tE6C6r2YWfrl-BgZdKcB9e4nfeowKOU-yaormUYqpGjCW-sGP5CzyqcTA7sys3F5voRIJL"/>
+<div class="min-w-0">
+<div class="flex items-center gap-1.5">
+<h4 class="font-label-lg text-label-lg font-semibold text-on-surface truncate">Marcus Vance</h4>
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-full bg-surface-container-highest text-primary shrink-0">Negotiating</span>
+</div>
+<p class="font-body-sm text-body-sm text-outline truncate">Founder at PodFlow</p>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-outline whitespace-nowrap">2h ago</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 mt-2">
+            "Looked through the pitch deck. What is your turnaround time on weekly podcast shorts with captions?"
+          </p>
+<div class="mt-space-sm flex items-center justify-between pt-space-xs">
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-md bg-secondary-container text-on-secondary-container font-semibold">AI Video</span>
+<button class="flex items-center gap-1 font-label-sm text-label-sm px-space-sm py-1 rounded-lg bg-surface-container-lowest text-on-surface hover:bg-surface-container font-medium transition-colors" type="button">
+<span class="material-symbols-outlined text-[14px]">reply</span>
+<span>Quick Reply</span>
+</button>
+</div>
+</div>
+<!-- Message 3 -->
+<div class="p-space-sm rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors">
+<div class="flex items-start justify-between gap-space-xs">
+<div class="flex items-center gap-space-sm min-w-0">
+<img class="w-10 h-10 rounded-full object-cover shrink-0" data-alt="Portrait of Elena Rostova CMO with glasses wearing modern white turtleneck against clean minimal office backdrop" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfZcz48xaGFfOyori6pUr9hjNNAAtORiYHfdRiImeiYBurmSjgEUj3bspcqIrcVgpr4ldJP8FlH3Mot20DPiy1YSxYkqVodFtA9K-MIkbh7XWBeFIY4IhgFeZ2oDJnSWucvwOYHjj3_SB-mMMVbh2e5uH5kvnB60S15RcW3xCU9v5aCVfBLfOsYBF2ibm0MPgiaTkS6e_lgWxlorjm3UupIsFKPpvTflIaoL_JkEjM"/>
+<div class="min-w-0">
+<div class="flex items-center gap-1.5">
+<h4 class="font-label-lg text-label-lg font-semibold text-on-surface truncate">Elena Rostova</h4>
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed shrink-0">Discovery</span>
+</div>
+<p class="font-body-sm text-body-sm text-outline truncate">CMO at BloomBoutique</p>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-outline whitespace-nowrap">5h ago</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 mt-2">
+            "Your email caught my eye regarding our Instagram engagement drop. Let's schedule a brief diagnostic call."
+          </p>
+<div class="mt-space-sm flex items-center justify-between pt-space-xs">
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-md bg-tertiary-fixed text-on-tertiary-fixed-variant font-semibold">Social Media</span>
+<button class="flex items-center gap-1 font-label-sm text-label-sm px-space-sm py-1 rounded-lg bg-surface-container-lowest text-on-surface hover:bg-surface-container font-medium transition-colors" type="button">
+<span class="material-symbols-outlined text-[14px]">reply</span>
+<span>Quick Reply</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Bottom Section: Performance by Service -->
+<section class="flex flex-col gap-space-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface font-bold tracking-tight">Performance by Service</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Breakdown across your 4 active client acquisition engines</p>
+</div>
+<button class="self-start sm:self-auto flex items-center gap-space-xs font-label-md text-label-md text-primary font-semibold hover:underline" type="button">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span>Configure New Service Module</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter">
+<!-- Service 1: Video Editing -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between transition-all hover:shadow-md">
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">movie_filter</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-semibold">Top Performing</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Video Editing</h3>
+<p class="font-body-sm text-body-sm text-outline mt-0.5">High-ticket YouTube &amp; Shorts clients</p>
+<!-- Core stats list -->
+<div class="my-space-md grid grid-cols-2 gap-space-sm py-space-sm bg-surface-container-low rounded-xl px-space-sm">
+<div>
+<span class="font-label-sm text-label-sm text-outline">Sent</span>
+<p class="font-label-lg text-label-lg font-bold text-on-surface">1,120</p>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-outline">Replies</span>
+<p class="font-label-lg text-label-lg font-bold text-primary">142 <span class="font-label-sm font-normal text-outline">(12.7%)</span></p>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-outline">Booked Calls</span>
+<p class="font-label-lg text-label-lg font-bold text-on-surface">14 Mtgs</p>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-outline">Est. Value</span>
+<p class="font-label-lg text-label-lg font-bold text-primary">$5,600</p>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="w-full">
+<div class="flex justify-between font-label-sm text-label-sm text-outline mb-1">
+<span>Monthly Target</span>
+<span class="font-semibold text-on-surface">93%</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 93%;"></div>
+</div>
+</div>
+</div>
+<div class="mt-space-lg pt-space-sm flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">Updated 10m ago</span>
+<a class="flex items-center gap-1 font-label-md text-label-md font-semibold text-primary hover:text-on-primary-fixed-variant transition-colors" href="#">
+<span>View Module</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Service 2: Social Media Management -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between transition-all hover:shadow-md">
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">share</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-highest text-primary font-semibold">Active</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Social Media</h3>
+<p class="font-body-sm text-body-sm text-outline mt-0.5">SaaS &amp; Founder personal branding</p>
+<div class="my-space-md grid grid-cols-2 gap-space-sm py-space-sm bg-surface-container-low rounded-xl px-space-sm">
+<div>
+<span class="font-label-sm text-label-sm text-outline">Sent</span>
+<p class="font-label-lg text-label-lg font-bold text-on-surface">640</p>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-outline">Replies</span>
+<p class="font-label-lg text-label-lg font-bold text-primary">82 <span class="font-label-sm font-normal text-outline">(12.8%)</span></p>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-outline">Booked Calls</span>
+<p class="font-label-lg text-label-lg font-bold text-on-surface">7 Mtgs</p>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-outline">Est. Value</span>
+<p class="font-label-lg text-label-lg font-bold text-primary">$3,500</p>
+</div>
+</div>
+<div class="w-full">
+<div class="flex justify-between font-label-sm text-label-sm text-outline mb-1">
+<span>Monthly Target</span>
+<span class="font-semibold text-on-surface">68%</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 68%;"></div>
+</div>
+</div>
+</div>
+<div class="mt-space-lg pt-space-sm flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">Updated 1h ago</span>
+<a class="flex items-center gap-1 font-label-md text-label-md font-semibold text-primary hover:text-on-primary-fixed-variant transition-colors" href="#">
+<span>View Module</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Service 3: AI Video Creation -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between transition-all hover:shadow-md">
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<div class="w-10 h-10 rounded-xl bg-tertiary-fixed flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[20px]">smart_toy</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-tertiary-fixed text-tertiary font-semibold">High Interest</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">AI Video Creation</h3>
+<p class="font-body-sm text-body-sm text-outline mt-0.5">Automated UGC &amp; avatar campaigns</p>
+<div class="my-space-md grid grid-cols-2 gap-space-sm py-space-sm bg-surface-container-low rounded-xl px-space-sm">
+<div>
+<span class="font-label-sm text-label-sm text-outline">Sent</span>
+<p class="font-label-lg text-label-lg font-bold text-on-surface">420</p>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-outline">Replies</span>
+<p class="font-label-lg text-label-lg font-bold text-tertiary">56 <span class="font-label-sm font-normal text-outline">(13.3%)</span></p>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-outline">Booked Calls</span>
+<p class="font-label-lg text-label-lg font-bold text-on-surface">5 Mtgs</p>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-outline">Est. Value</span>
+<p class="font-label-lg text-label-lg font-bold text-tertiary">$2,800</p>
+</div>
+</div>
+<div class="w-full">
+<div class="flex justify-between font-label-sm text-label-sm text-outline mb-1">
+<span>Monthly Target</span>
+<span class="font-semibold text-on-surface">82%</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-tertiary rounded-full" style="width: 82%;"></div>
+</div>
+</div>
+</div>
+<div class="mt-space-lg pt-space-sm flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">Updated 3h ago</span>
+<a class="flex items-center gap-1 font-label-md text-label-md font-semibold text-tertiary hover:underline transition-colors" href="#">
+<span>View Module</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Service 4: Product Management -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between transition-all hover:shadow-md">
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">account_tree</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container text-on-surface font-semibold">Scaling Up</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Product Manager</h3>
+<p class="font-body-sm text-body-sm text-outline mt-0.5">Fractional leadership &amp; sprint specs</p>
+<div class="my-space-md grid grid-cols-2 gap-space-sm py-space-sm bg-surface-container-low rounded-xl px-space-sm">
+<div>
+<span class="font-label-sm text-label-sm text-outline">Sent</span>
+<p class="font-label-lg text-label-lg font-bold text-on-surface">300</p>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-outline">Replies</span>
+<p class="font-label-lg text-label-lg font-bold text-primary">32 <span class="font-label-sm font-normal text-outline">(10.7%)</span></p>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-outline">Booked Calls</span>
+<p class="font-label-lg text-label-lg font-bold text-on-surface">2 Mtgs</p>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-outline">Est. Value</span>
+<p class="font-label-lg text-label-lg font-bold text-primary">$3,000</p>
+</div>
+</div>
+<div class="w-full">
+<div class="flex justify-between font-label-sm text-label-sm text-outline mb-1">
+<span>Monthly Target</span>
+<span class="font-semibold text-on-surface">45%</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 45%;"></div>
+</div>
+</div>
+</div>
+<div class="mt-space-lg pt-space-sm flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">Updated 1d ago</span>
+<a class="flex items-center gap-1 font-label-md text-label-md font-semibold text-primary hover:text-on-primary-fixed-variant transition-colors" href="#">
+<span>View Module</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+</div>
+<script>
+  // Simple interactive toggle for chart metrics view
+  const btnReplies = document.getElementById('toggleReplies');
+  const btnOpens = document.getElementById('toggleOpens');
+
+  if(btnReplies && btnOpens) {
+    btnReplies.addEventListener('click', () => {
+      btnReplies.className = 'px-space-md py-1.5 rounded-lg bg-surface-container-lowest text-primary font-label-sm text-label-sm shadow-sm font-semibold transition-all';
+      btnOpens.className = 'px-space-md py-1.5 rounded-lg text-outline hover:text-on-surface font-label-sm text-label-sm font-medium transition-all';
+    });
+
+    btnOpens.addEventListener('click', () => {
+      btnOpens.className = 'px-space-md py-1.5 rounded-lg bg-surface-container-lowest text-primary font-label-sm text-label-sm shadow-sm font-semibold transition-all';
+      btnReplies.className = 'px-space-md py-1.5 rounded-lg text-outline hover:text-on-surface font-label-sm text-label-sm font-medium transition-all';
+    });
+  }
+</script></main></div></body></html>

@@ -1,0 +1,17 @@
+{
+  "name": "projects/13424969627060538107/screens/cc37feb6fc0d49c6923a6f4825326d7b",
+  "title": "ReachOut - Inbox",
+  "screenshot": {
+    "name": "projects/13424969627060538107/screens/cc37feb6fc0d49c6923a6f4825326d7b/fileEntries/screenshot",
+    "downloadUrl": "https://stitch.googleapis.com/v1/projects/13424969627060538107/files/screenshot_00065f78bccb7e1a044f515504228b40:download",
+    "mimeType": "image/png"
+  },
+  "htmlCode": {
+    "name": "projects/13424969627060538107/screens/cc37feb6fc0d49c6923a6f4825326d7b/fileEntries/html",
+    "downloadUrl": "https://stitch.googleapis.com/v1/projects/13424969627060538107/files/cc37feb6fc0d49c6923a6f4825326d7b:download",
+    "mimeType": "text/html"
+  },
+  "width": "2560",
+  "height": "2372",
+  "deviceType": "DESKTOP"
+}

@@ -1,0 +1,144 @@
+import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+
+export default function Login() {
+  const { signIn, signUp, isSupabaseConfigured } = useAuth();
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [email, setEmail] = useState('Mshoaibuldin371@gmail.com');
+  const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('Shoaib ul Din');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setMessage('');
+
+    try {
+      if (isSignUp) {
+        await signUp(email, password, fullName);
+        setMessage('Account created successfully! You can now log in.');
+      } else {
+        await signIn(email, password);
+      }
+    } catch (err) {
+      setError(err.message || 'Authentication failed. Please check your credentials.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-surface flex flex-col justify-center items-center p-4">
+      <div className="w-full max-w-md bg-surface-container-lowest p-space-xl rounded-2xl shadow-sm border border-surface-container-high">
+        {/* Brand Header */}
+        <div className="text-center mb-space-lg">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary-container text-on-primary mb-3 shadow-sm">
+            <span className="material-symbols-outlined text-[28px]">rocket_launch</span>
+          </div>
+          <h1 className="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">
+            ReachOut AI
+          </h1>
+          <p className="font-body-md text-body-md text-on-surface-variant mt-1">
+            Automated Cold-Outreach & Lead Growth System
+          </p>
+        </div>
+
+        {!isSupabaseConfigured && (
+          <div className="mb-space-md p-space-sm bg-secondary-fixed/50 border border-secondary-fixed text-on-secondary-fixed rounded-xl text-body-sm flex items-center gap-2">
+            <span className="material-symbols-outlined text-[18px]">info</span>
+            <span>Running in Local Mode. Enter credentials to enter the dashboard.</span>
+          </div>
+        )}
+
+        {error && (
+          <div className="mb-space-md p-space-sm bg-error-container text-on-error-container rounded-xl text-body-sm flex items-center gap-2">
+            <span className="material-symbols-outlined text-[18px]">error</span>
+            <span>{error}</span>
+          </div>
+        )}
+
+        {message && (
+          <div className="mb-space-md p-space-sm bg-primary-fixed text-on-primary-fixed rounded-xl text-body-sm flex items-center gap-2">
+            <span className="material-symbols-outlined text-[18px]">check_circle</span>
+            <span>{message}</span>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-space-md">
+          {isSignUp && (
+            <div>
+              <label className="block font-label-md text-label-md text-on-surface mb-1 font-medium">
+                Full Name
+              </label>
+              <input
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
+                className="w-full h-11 px-space-md rounded-xl bg-surface-container-low border border-outline-variant/60 text-on-surface text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                placeholder="Shoaib ul Din"
+              />
+            </div>
+          )}
+
+          <div>
+            <label className="block font-label-md text-label-md text-on-surface mb-1 font-medium">
+              Email Address
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full h-11 px-space-md rounded-xl bg-surface-container-low border border-outline-variant/60 text-on-surface text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              placeholder="Mshoaibuldin371@gmail.com"
+            />
+          </div>
+
+          <div>
+            <label className="block font-label-md text-label-md text-on-surface mb-1 font-medium">
+              Password
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full h-11 px-space-md rounded-xl bg-surface-container-low border border-outline-variant/60 text-on-surface text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              placeholder="••••••••••••"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full h-11 rounded-xl bg-primary-container text-on-primary hover:bg-primary font-label-lg text-label-lg font-semibold shadow-sm transition-all flex items-center justify-center gap-2 mt-space-md"
+          >
+            {loading ? (
+              <span className="material-symbols-outlined animate-spin text-[20px]">progress_activity</span>
+            ) : (
+              <>
+                <span>{isSignUp ? 'Create ReachOut Account' : 'Sign In to Dashboard'}</span>
+                <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+              </>
+            )}
+          </button>
+        </form>
+
+        <div className="mt-space-lg text-center pt-space-sm border-t border-surface-container-high/60">
+          <button
+            onClick={() => setIsSignUp(!isSignUp)}
+            className="font-label-md text-label-md text-primary hover:underline font-medium"
+            type="button"
+          >
+            {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Create one"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

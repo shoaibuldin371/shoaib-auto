@@ -1,0 +1,17 @@
+name: ReachOut Scheduled Reply & Bounce Sync
+
+on:
+  schedule:
+    # Runs every 10 minutes to poll Gmail IMAP for replies & bounces
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  sync-replies:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger IMAP Sync Endpoint
+        run: |
+          curl -s -X POST "${{ secrets.VERCEL_APP_URL }}/api/cron/replies" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json"
