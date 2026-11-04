@@ -2,6 +2,7 @@
   "name": "reachout-server",
   "version": "1.0.0",
   "description": "ReachOut AI Outreach Serverless & Local Backend",
+  "type": "module",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",

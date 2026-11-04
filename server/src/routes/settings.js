@@ -33,8 +33,8 @@ let localSettings = {
   approval_mode: true,
   pause_all: false,
   gmail_address: 'Mshoaibuldin371@gmail.com',
-  gmail_app_password_encrypted: '',
-  gmail_is_connected: false,
+  gmail_app_password_encrypted: process.env.GMAIL_APP_PASSWORD ? encrypt(process.env.GMAIL_APP_PASSWORD) : '',
+  gmail_is_connected: Boolean(process.env.GMAIL_APP_PASSWORD),
 };
 
 /**
@@ -241,3 +241,4 @@ router.post('/send-test-email', async (req, res) => {
 });
 
 export default router;
+

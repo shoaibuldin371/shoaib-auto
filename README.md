@@ -62,3 +62,4 @@ Located in `supabase/migrations/`:
   - Afternoon Run: 16:00 Asia/Karachi (11:00 UTC)
   - IMAP Reply Poller: Every 10 minutes (`*/10 * * * *`)
   - *Note: GitHub Actions cron may have minor queue delays. You can also configure a free monitor on [cron-job.org](https://cron-job.org) hitting `https://<your-domain>/api/cron/send` and `https://<your-domain>/api/cron/replies` with header `x-cron-secret: <CRON_SECRET>`.*
+

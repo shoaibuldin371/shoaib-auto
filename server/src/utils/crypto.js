@@ -37,3 +37,4 @@ export function decrypt(encryptedText) {
     return '';
   }
 }
+
