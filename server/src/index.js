@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import settingsRouter from './routes/settings.js';
 import servicesRouter from './routes/services.js';
 import cronRouter from './routes/cron.js';
+import leadsRouter from './routes/leads.js';
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use('/api/settings', settingsRouter);
 app.use('/api/services', servicesRouter);
 app.use('/api/cron', cronRouter);
+app.use('/api/leads', leadsRouter);
 
 // Health check
 app.get('/api/health', (req, res) => {

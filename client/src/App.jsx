@@ -6,6 +6,7 @@ import Header from './components/Header';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Settings from './pages/Settings';
+import LeadFinder from './pages/LeadFinder';
 
 // Fallback module component for other routes
 function ModulePlaceholder({ title, icon, subtitle }) {
@@ -101,11 +102,7 @@ export default function App() {
             path="/lead-finder"
             element={
               <ProtectedRoute>
-                <ModulePlaceholder
-                  title="Lead Finder & Enricher"
-                  icon="person_search"
-                  subtitle="Free OpenStreetMap Overpass search, CSV import, and website email extraction."
-                />
+                <LeadFinder />
               </ProtectedRoute>
             }
           />
