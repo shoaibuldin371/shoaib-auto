@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 export default function LeadFinder() {
+  const [scope, setScope] = useState('pakistan'); // 'pakistan' or 'worldwide'
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -61,6 +62,7 @@ export default function LeadFinder() {
         body: JSON.stringify({
           city: searchCity,
           industry: searchIndustry,
+          scope: scope,
           limit: parseInt(searchLimit),
         }),
       });
@@ -261,6 +263,40 @@ export default function LeadFinder() {
 
       {/* Controls Card: Search & Dimensional Filters */}
       <div className="bg-surface-container-lowest rounded-xl shadow-sm p-space-md space-y-space-md border border-surface-container-high/60">
+        {/* Scope Selector Tabs: Pakistan vs Worldwide */}
+        <div className="flex items-center gap-space-xs p-1 bg-surface-container-low rounded-xl w-fit border border-surface-container-high/60">
+          <button
+            type="button"
+            onClick={() => {
+              setScope('pakistan');
+              setSearchCity('Islamabad');
+            }}
+            className={`flex items-center gap-2 px-space-md py-2 rounded-lg font-label-md text-label-md transition-all font-semibold ${
+              scope === 'pakistan'
+                ? 'bg-emerald-600 text-white shadow-sm'
+                : 'text-on-surface-variant hover:text-on-surface'
+            }`}
+          >
+            <span>🇵🇰</span>
+            <span>Pakistan Outreach (Islamabad, LHE, KHI)</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setScope('worldwide');
+              setSearchCity('New York');
+            }}
+            className={`flex items-center gap-2 px-space-md py-2 rounded-lg font-label-md text-label-md transition-all font-semibold ${
+              scope === 'worldwide'
+                ? 'bg-primary-container text-on-primary shadow-sm'
+                : 'text-on-surface-variant hover:text-on-surface'
+            }`}
+          >
+            <span>🌍</span>
+            <span>Worldwide Outreach (US, UK, Dubai, Global)</span>
+          </button>
+        </div>
+
         <div className="flex flex-col md:flex-row gap-space-sm items-stretch md:items-center justify-between">
           <div className="relative flex-1">
             <span className="material-symbols-outlined absolute left-3.5 top-2.5 text-[20px] text-outline">
@@ -318,7 +354,7 @@ export default function LeadFinder() {
 
           <div>
             <label className="block font-label-sm text-label-sm text-on-surface-variant mb-1 font-medium">
-              Target City
+              Target City ({scope === 'pakistan' ? 'Pakistan' : 'Worldwide'})
             </label>
             <select
               value={selectedRegion}
@@ -326,10 +362,26 @@ export default function LeadFinder() {
               className="w-full h-9 px-space-sm rounded-lg bg-surface-container-low text-body-sm font-body-sm text-on-surface focus:outline-none cursor-pointer border border-outline-variant/40"
             >
               <option value="all">All Cities</option>
-              <option value="Islamabad">Islamabad, PK</option>
-              <option value="Rawalpindi">Rawalpindi, PK</option>
-              <option value="Lahore">Lahore, PK</option>
-              <option value="Karachi">Karachi, PK</option>
+              {scope === 'pakistan' ? (
+                <>
+                  <option value="Islamabad">Islamabad, PK</option>
+                  <option value="Rawalpindi">Rawalpindi, PK</option>
+                  <option value="Lahore">Lahore, PK</option>
+                  <option value="Karachi">Karachi, PK</option>
+                  <option value="Peshawar">Peshawar, PK</option>
+                  <option value="Faisalabad">Faisalabad, PK</option>
+                </>
+              ) : (
+                <>
+                  <option value="New York">New York, US</option>
+                  <option value="London">London, UK</option>
+                  <option value="Dubai">Dubai, UAE</option>
+                  <option value="Toronto">Toronto, CA</option>
+                  <option value="Sydney">Sydney, AU</option>
+                  <option value="Berlin">Berlin, DE</option>
+                  <option value="Singapore">Singapore</option>
+                </>
+              )}
             </select>
           </div>
 
@@ -601,14 +653,50 @@ export default function LeadFinder() {
             <form onSubmit={handleSearchOsm} className="space-y-space-md">
               <div>
                 <label className="block font-label-md text-label-md text-on-surface mb-1 font-semibold">
-                  Target City
+                  Outreach Scope
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setScope('pakistan');
+                      setSearchCity('Islamabad');
+                    }}
+                    className={`py-2 px-3 rounded-lg text-xs font-bold border transition-all ${
+                      scope === 'pakistan'
+                        ? 'bg-emerald-600 text-white border-emerald-600'
+                        : 'bg-surface-container-low text-on-surface border-outline-variant/60'
+                    }`}
+                  >
+                    🇵🇰 Pakistan (Local)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setScope('worldwide');
+                      setSearchCity('New York');
+                    }}
+                    className={`py-2 px-3 rounded-lg text-xs font-bold border transition-all ${
+                      scope === 'worldwide'
+                        ? 'bg-primary-container text-on-primary border-primary'
+                        : 'bg-surface-container-low text-on-surface border-outline-variant/60'
+                    }`}
+                  >
+                    🌍 Worldwide (Global)
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-label-md text-label-md text-on-surface mb-1 font-semibold">
+                  Target City ({scope === 'pakistan' ? 'Pakistan' : 'Worldwide'})
                 </label>
                 <input
                   type="text"
                   value={searchCity}
                   onChange={(e) => setSearchCity(e.target.value)}
                   required
-                  placeholder="e.g. Islamabad, Lahore, Karachi, London"
+                  placeholder={scope === 'pakistan' ? 'e.g. Islamabad, Lahore, Karachi' : 'e.g. New York, London, Dubai'}
                   className="w-full h-11 px-space-md rounded-xl bg-surface-container-low border border-outline-variant/60 text-body-md"
                 />
               </div>
@@ -730,3 +818,4 @@ export default function LeadFinder() {
     </div>
   );
 }
+

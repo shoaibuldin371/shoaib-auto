@@ -178,8 +178,8 @@ router.get('/', async (req, res) => {
  */
 router.post('/search-osm', async (req, res) => {
   try {
-    const { city = 'Islamabad', industry = 'restaurants', limit = 15 } = req.body;
-    const rawLeads = await searchOsmLeads({ city, industry, limit });
+    const { city = 'Islamabad', industry = 'restaurants', scope = 'pakistan', limit = 15 } = req.body;
+    const rawLeads = await searchOsmLeads({ city, industry, scope, limit });
 
     const processed = [];
     for (const raw of rawLeads) {
@@ -354,4 +354,75 @@ router.post('/:id/generate-hook', async (req, res) => {
   }
 });
 
+/**
+ * PATCH /api/leads/:id/status
+ * Update lead pipeline status (new, contacted, replied, interested, call_booked, won, lost)
+ */
+router.patch('/:id/status', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status, deal_value } = req.body;
+
+    const lead = localLeads.find(l => l.id === id);
+    if (lead) {
+      lead.status = status;
+      if (deal_value !== undefined) lead.deal_value = deal_value;
+      lead.updated_at = new Date().toISOString();
+    }
+
+    if (supabase) {
+      await supabase.from('leads').update({
+        status,
+        deal_value: deal_value || 0,
+        updated_at: new Date().toISOString(),
+      }).eq('id', id);
+    }
+
+    res.json({ success: true, lead: lead || { id, status } });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * POST /api/leads/:id/queue-email
+ * Queues an email for the scheduled 10:00 or 16:00 PKT dispatch
+ */
+router.post('/:id/queue-email', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { subject, body, service_id, scheduled_for, region = 'pakistan' } = req.body;
+
+    const lead = localLeads.find(l => l.id === id);
+    const queueItem = {
+      id: `queue-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      lead_id: id,
+      service_id: service_id || lead?.service_id || 'social-media',
+      subject: subject || `Quick question regarding ${lead?.business_name || 'your business'}`,
+      body: body || lead?.personal_hook || '',
+      status: 'queued',
+      scheduled_for: scheduled_for || new Date().toISOString(),
+      region,
+      created_at: new Date().toISOString(),
+      leads: lead || { id, email: req.body.email || 'lead@example.com', business_name: req.body.business_name || 'Business' }
+    };
+
+    if (supabase) {
+      await supabase.from('email_queue').insert({
+        lead_id: id,
+        service_id: queueItem.service_id,
+        subject: queueItem.subject,
+        body: queueItem.body,
+        status: 'queued',
+        scheduled_for: queueItem.scheduled_for,
+      });
+    }
+
+    res.json({ success: true, queueItem });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;
+

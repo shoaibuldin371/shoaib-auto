@@ -50,11 +50,15 @@ class GeminiProvider {
    * Generates a 1-sentence personalized opening hook
    */
   async generatePersonalHook(lead, serviceName) {
-    const prompt = `You are an expert cold outreach specialist. Write ONE concise, natural, professional opening sentence for an email to a business named "${lead.business_name}" in industry/category "${lead.target_industry || lead.city || 'local business'}".
+    const isPakistan = lead.scope === 'pakistan' || (lead.country || '').toLowerCase().includes('pakistan');
+    const locationContext = isPakistan
+      ? `Local Pakistani business in ${lead.city || 'Islamabad'}. Mention their local presence or city vibe.`
+      : `International business in ${lead.city || 'global city'}, ${lead.country || 'worldwide'}. Speak with clean global freelance/agency professionalism.`;
+
+    const prompt = `You are an expert cold outreach specialist. Write ONE concise, natural, professional opening sentence for an email to a business named "${lead.business_name}".
 Context:
 - Business: ${lead.business_name}
-- City: ${lead.city || 'Islamabad'}
-- Website/Info: ${lead.website || 'N/A'}
+- Location: ${locationContext}
 - Service pitched: ${serviceName}
 
 RULES:

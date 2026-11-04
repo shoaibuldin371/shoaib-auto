@@ -53,3 +53,4 @@ export function calculateLeadScore(lead, enrichment = {}) {
   // Cap between 15 and 99
   return Math.min(99, Math.max(15, score));
 }
+
