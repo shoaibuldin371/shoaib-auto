@@ -717,3 +717,4 @@ export default function ModuleServiceView({ slug }) {
     </div>
   );
 }
+
