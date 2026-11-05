@@ -52,6 +52,7 @@ The platform runs completely on cloud serverless infrastructure:
 
 | Variable | Description |
 | :--- | :--- |
+| `ADMIN_EMAIL` | Your admin email (`Mshoaibuldin371@gmail.com`). Grants exclusive access to protected API routes. |
 | `GMAIL_USER` | Your sending Gmail address (e.g. `Mshoaibuldin371@gmail.com`) |
 | `GMAIL_APP_PASSWORD` | 16-character Google App Password (e.g. `<YOUR_APP_PASSWORD>`) |
 | `GEMINI_API_KEY` | Google AI Studio developer API key (`<YOUR_GEMINI_API_KEY>`) |

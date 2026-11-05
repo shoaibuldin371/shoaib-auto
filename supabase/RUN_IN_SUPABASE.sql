@@ -25,25 +25,27 @@ create table if not exists public.settings (
     sender_email text default 'Mshoaibuldin371@gmail.com',
     sender_phone text default '03473547036',
     sender_location text default 'Islamabad, Pakistan',
-    facebook_url text default '',
-    video_portfolio_url text default 'https://video-portfolio-572m.vercel.app/',
+    facebook_url text default 'https://www.facebook.com/syedali.azzam',
+    tiktok_url text default 'https://www.tiktok.com/@syed_ali_azzam',
+    video_portfolio_url text default 'https://video-portfolio-self-eight.vercel.app/',
     ai_video_portfolio_url text default 'https://video-portfolio-572m.vercel.app/',
-    pm_case_study_url text default 'https://github.com/shoaib',
+    pm_case_study_url text default '',
+    service_pm_enabled boolean default false,
     calendly_link text default '',
     daily_manual_goal int default 20,
     warmup_start_limit int default 15,
     warmup_step int default 5,
     warmup_step_days int default 3,
-    warmup_max_limit int default 50,
-    send_window_start text default '09:00',
+    warmup_max_limit int default 40,
+    send_window_start text default '10:00',
     send_window_end text default '18:00',
     send_runs text[] default array['10:00', '16:00'],
     skip_sundays boolean default true,
-    min_delay_sec int default 45,
-    max_delay_sec int default 150,
+    min_delay_sec int default 15,
+    max_delay_sec int default 45,
     bcc_self boolean default false,
     dry_run_mode boolean default false,
-    approval_mode boolean default true,
+    approval_mode boolean default false,
     pause_all boolean default false,
     telegram_bot_token text default '',
     telegram_chat_id text default '',
@@ -54,6 +56,12 @@ create table if not exists public.settings (
     created_at timestamptz default timezone('utc'::text, now()) not null,
     updated_at timestamptz default timezone('utc'::text, now()) not null
 );
+
+-- Ensure newer columns exist if migrating an existing settings table
+alter table public.settings add column if not exists tiktok_url text default 'https://www.tiktok.com/@syed_ali_azzam';
+alter table public.settings add column if not exists service_pm_enabled boolean default false;
+alter table public.settings alter column approval_mode set default false;
+alter table public.settings alter column warmup_max_limit set default 40;
 
 -- 3. Services Table
 create table if not exists public.services (
