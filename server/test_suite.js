@@ -1,5 +1,6 @@
-import { validateAiHook, isAllowedBusinessEmail, composeEmail, evaluateBounceSafety } from './src/utils/guardrails.js';
+import { validateAiHook, validateManualDm, checkServiceRequirements, isAllowedBusinessEmail, composeEmail, evaluateBounceSafety } from './src/utils/guardrails.js';
 import { sendOutreachEmail, testImapConnection } from './src/services/gmail.js';
+import assert from 'assert';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -51,12 +52,14 @@ async function runTests() {
   // ---------------------------------------------------------------
   try {
     const mockSettings = {
-      facebook_url: 'https://facebook.com/shoaib.media',
+      facebook_url: 'https://www.facebook.com/syedali.azzam',
       tiktok_url: 'https://www.tiktok.com/@syed_ali_azzam',
-      video_portfolio_url: 'https://video-portfolio-572m.vercel.app/',
+      video_portfolio_url: 'https://video-portfolio-self-eight.vercel.app/',
       ai_video_portfolio_url: 'https://video-portfolio-572m.vercel.app/',
-      pm_case_study_url: 'https://github.com/shoaib',
-      calendly_link: 'https://calendly.com/shoaibuldin371/15min',
+      pm_case_study_url: '',
+      service_pm_enabled: false,
+      sender_phone: '03473547036',
+      calendly_link: '',
     };
 
     const services = ['social-media', 'video-editing', 'ai-video', 'product-manager'];
@@ -125,25 +128,28 @@ async function runTests() {
   }
 
   // ---------------------------------------------------------------
-  // TEST 4: IMAP Execution Time (< 8 seconds)
+  // TEST 4: IMAP & Cron Timing (Strictly < 8,000ms assertion)
   // ---------------------------------------------------------------
   try {
     if (appPassword) {
       const imapStart = Date.now();
       const imapRes = await testImapConnection(userEmail, appPassword);
       const imapElapsed = Date.now() - imapStart;
-      const imapFast = imapRes.success && imapElapsed < 9500;
+      
+      // Strict real timed assertion under 8 seconds (8,000ms)
+      assert(imapRes.success, 'IMAP connection failed');
+      assert(imapElapsed < 8000, `IMAP took ${imapElapsed}ms which exceeds the 8,000ms limit.`);
 
       recordTest(
-        'IMAP Connection & Time Limit',
-        imapFast,
-        `IMAP verified in ${imapElapsed}ms (well within serverless cron timeout).`
+        'IMAP Connection & Time Limit (< 8,000ms)',
+        true,
+        `IMAP verified in ${imapElapsed}ms (STRICT ASSERTION PASSED: < 8,000ms).`
       );
     } else {
-      recordTest('IMAP Connection & Time Limit', false, 'Missing GMAIL_APP_PASSWORD.');
+      recordTest('IMAP Connection & Time Limit (< 8,000ms)', false, 'Missing GMAIL_APP_PASSWORD.');
     }
   } catch (err) {
-    recordTest('IMAP Connection & Time Limit', false, err.message);
+    recordTest('IMAP Connection & Time Limit (< 8,000ms)', false, err.message);
   }
 
   // ---------------------------------------------------------------
@@ -241,6 +247,60 @@ async function runTests() {
     );
   } catch (err) {
     recordTest('DB Follow-Up Scheduler (Fast-Forward Dates)', false, err.message);
+  }
+
+  // ---------------------------------------------------------------
+  // TEST 8: Manual Outreach DMs (<60 words & 3 Fallbacks)
+  // ---------------------------------------------------------------
+  try {
+    const invalidDmWithLink = 'Hey check https://agency.com and 100k views guaranteed!';
+    const resInvalid = validateManualDm(invalidDmWithLink, 'Test Cafe', 'Instagram', 'Islamabad');
+    
+    // Confirms rejection and replacement with one of the 3 clean fallbacks
+    const isFallbackClean = resInvalid.valid === false &&
+      (resInvalid.dm.includes('Assalam o Alaikum') || resInvalid.dm.includes('Hi there')) &&
+      !resInvalid.dm.includes('http') &&
+      resInvalid.dm.split(/\s+/).length <= 60;
+
+    const validDm = 'Assalam o Alaikum! I came across Test Cafe in Islamabad. Would love to send 2 sample concepts.';
+    const resValid = validateManualDm(validDm, 'Test Cafe', 'WhatsApp', 'Islamabad');
+
+    recordTest(
+      'Manual Outreach DMs (<60 words & 3 Fallbacks)',
+      isFallbackClean && resValid.valid === true,
+      'Invalid DM with link/claims rejected and replaced with clean random fallback; valid clean DM accepted.'
+    );
+  } catch (err) {
+    recordTest('Manual Outreach DMs (<60 words & 3 Fallbacks)', false, err.message);
+  }
+
+  // ---------------------------------------------------------------
+  // TEST 9: Service Requirements & PM Disabled Check
+  // ---------------------------------------------------------------
+  try {
+    const settingsPmDisabled = {
+      facebook_url: 'https://www.facebook.com/syedali.azzam',
+      video_portfolio_url: 'https://video-portfolio-self-eight.vercel.app/',
+      ai_video_portfolio_url: 'https://video-portfolio-572m.vercel.app/',
+      pm_case_study_url: '',
+      service_pm_enabled: false,
+    };
+
+    const pmCheck = checkServiceRequirements('product-manager', settingsPmDisabled);
+    // When PM is disabled, warnings MUST be empty (no blocking error shown to user)
+    const pmDisabledClean = pmCheck.disabled === true && pmCheck.warnings.length === 0;
+
+    // When Video Editing portfolio is cleared, it MUST be blocked with a warning
+    const veCheck = checkServiceRequirements('video-editing', { video_portfolio_url: '' });
+    const veBlocked = veCheck.ready === false && veCheck.warnings.length > 0;
+
+    recordTest(
+      'Service Requirements (PM Disabled Cleanly & URL Blocks)',
+      pmDisabledClean && veBlocked,
+      'Product Management disabled with 0 warnings; clearing video_portfolio_url correctly blocks Video Editing.'
+    );
+  } catch (err) {
+    recordTest('Service Requirements (PM Disabled Cleanly & URL Blocks)', false, err.message);
   }
 
   console.log('\n====================================================');

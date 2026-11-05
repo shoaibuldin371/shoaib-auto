@@ -334,7 +334,11 @@ router.post('/import-csv', async (req, res) => {
       const hasSocial = Boolean(socials.instagram || socials.facebook || socials.tiktok || phone);
       if (!email && hasSocial) {
         const platform = socials.instagram ? 'Instagram' : (phone ? 'WhatsApp' : 'Social');
-        const dmMessage = `Assalam o Alaikum! I came across ${name} in ${city}. I offer short-form video and social media content creation. Would love to share 2 quick ideas for your page!`;
+        const dmMessage = await aiProvider.generateManualDm({
+          business_name: name,
+          city,
+          industry,
+        }, platform);
 
         createdManualTasks.push({ name, platform });
         if (supabase) {
@@ -466,6 +470,44 @@ router.post('/:id/generate-hook', async (req, res) => {
       success: true,
       service_id: matchedService,
       personal_hook: hook,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * POST /api/leads/reply-assistant
+ * Urdu/Roman Urdu to professional English reply drafter
+ */
+router.post('/reply-assistant', async (req, res) => {
+  try {
+    const { urduNotes, originalEmail } = req.body || {};
+    if (!urduNotes) {
+      return res.status(400).json({ error: 'Urdu notes are required.' });
+    }
+
+    const replyText = await aiProvider.translateUrduReply(urduNotes, originalEmail);
+    res.json({
+      success: true,
+      replyText,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * POST /api/leads/generate-manual-dm
+ * Generates and validates a platform-tailored DM (<60 words)
+ */
+router.post('/generate-manual-dm', async (req, res) => {
+  try {
+    const { lead, platform } = req.body || {};
+    const dm = await aiProvider.generateManualDm(lead || {}, platform || 'Instagram');
+    res.json({
+      success: true,
+      dm,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

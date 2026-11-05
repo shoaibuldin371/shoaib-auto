@@ -70,6 +70,58 @@ export function validateAiHook(hookText, businessName = 'your business') {
 }
 
 /**
+ * Validates an AI-generated manual outreach DM (max 60 words, platform-tailored).
+ * If invalid or fails guardrails, returns one of 3 clean fallback variants chosen randomly.
+ */
+export function validateManualDm(rawDm, businessName = 'your business', platform = 'Social', city = 'Islamabad') {
+  const fallbacks = [
+    `Assalam o Alaikum! I came across ${businessName} in ${city} and really liked your presence. I create short-form video and social media content. Would you be open to me sharing 2 quick creative ideas for your page?`,
+    `Assalam o Alaikum! I noticed ${businessName} in ${city}. I create short-form video reels and social media creatives. May I share 2 free concept ideas customized for your brand?`,
+    `Hi there! I came across ${businessName} in ${city}. I create short-form video content and would love to send over 2 quick sample concepts tailored for ${platform}. Open to taking a look?`,
+  ];
+
+  const randomFallback = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+
+  if (!rawDm || typeof rawDm !== 'string' || !rawDm.trim()) {
+    return { valid: false, dm: randomFallback, reason: 'Empty DM text' };
+  }
+
+  const cleaned = rawDm.trim().replace(/^["']|["']$/g, '');
+
+  // 1. Max 60 words
+  const words = cleaned.split(/\s+/).filter(Boolean);
+  if (words.length > 60) {
+    return { valid: false, dm: randomFallback, reason: 'Exceeds 60 words' };
+  }
+
+  // 2. No links or domains
+  const linkRegex = /(https?:\/\/|www\.|\.(com|pk|org|net|io|co|me|ai|app|dev)\b)/i;
+  if (linkRegex.test(cleaned)) {
+    return { valid: false, dm: randomFallback, reason: 'Contains web link or domain' };
+  }
+
+  // 3. No prices or currency symbols
+  const priceRegex = /(\$|\bpkr\b|\brs\b|\brs\.|\beuros?\b|\bdollars?\b|\bpricing\b|\brates?\b|\bcost\b|\bfee\b)/i;
+  if (priceRegex.test(cleaned)) {
+    return { valid: false, dm: randomFallback, reason: 'Contains pricing or currency' };
+  }
+
+  // 4. No numbers, metrics, ROI or client result claims
+  const resultsRegex = /(\b\d+([kKmM%]|x|X)\b|\b\d+\s*(clients?|leads?|calls?|views?|subscribers?|dollars?|rs|pkr|revenue)\b|\bresults?\b|\bguarantee\b|\broi\b|\bviews\b|\bscaled?\b)/i;
+  if (resultsRegex.test(cleaned)) {
+    return { valid: false, dm: randomFallback, reason: 'Contains claims or metrics' };
+  }
+
+  // 5. No experience claims
+  const expRegex = /(\b\d+\s*(years?|months?|yrs?|mos?)\b|\bexperience\b|\byears\b|\bmonths\b)/i;
+  if (expRegex.test(cleaned)) {
+    return { valid: false, dm: randomFallback, reason: 'Contains experience claim' };
+  }
+
+  return { valid: true, dm: cleaned };
+}
+
+/**
  * Checks if the email is a valid public business domain email.
  * Skips freemail addresses (gmail, yahoo, etc.) UNLESS from CSV import.
  */
@@ -143,7 +195,15 @@ export function evaluateBounceSafety(recentLogs = []) {
 export function checkServiceRequirements(serviceSlug, settings = {}, region = 'pakistan') {
   const warnings = [];
 
-  if (serviceSlug === 'social-media') {
+  // If Product Management is disabled by default, skip it cleanly without blocking warnings
+  if (serviceSlug === 'product-manager') {
+    if (settings.service_pm_enabled === false) {
+      return { ready: false, disabled: true, warnings: [] };
+    }
+    if (!settings.pm_case_study_url || !settings.pm_case_study_url.trim()) {
+      warnings.push('Product Management campaign blocked: pm_case_study_url is required in Settings.');
+    }
+  } else if (serviceSlug === 'social-media') {
     if (!settings.facebook_url || !settings.facebook_url.trim()) {
       warnings.push('Social Media campaign blocked: facebook_url is required in Settings.');
     }
@@ -155,13 +215,11 @@ export function checkServiceRequirements(serviceSlug, settings = {}, region = 'p
     if (!settings.ai_video_portfolio_url || !settings.ai_video_portfolio_url.trim()) {
       warnings.push('AI Video campaign blocked: ai_video_portfolio_url is required in Settings.');
     }
-  } else if (serviceSlug === 'product-manager') {
-    if (!settings.pm_case_study_url || !settings.pm_case_study_url.trim()) {
-      warnings.push('Product Management campaign blocked: pm_case_study_url is required in Settings.');
-    }
   }
 
-  if (region === 'worldwide') {
+  // calendly_link is NOT required for Pakistan mode, ONLY required if Worldwide mode is turned on
+  const isWorldwide = region === 'worldwide' || settings.reachout_scope === 'worldwide';
+  if (isWorldwide) {
     const booking = settings.calendly_link || settings.booking_link;
     if (!booking || !booking.trim()) {
       warnings.push('Worldwide campaign blocked: calendly_link is required in Settings.');
@@ -170,6 +228,7 @@ export function checkServiceRequirements(serviceSlug, settings = {}, region = 'p
 
   return {
     ready: warnings.length === 0,
+    disabled: serviceSlug === 'product-manager' && settings.service_pm_enabled === false,
     warnings,
   };
 }

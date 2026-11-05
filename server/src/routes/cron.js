@@ -26,6 +26,31 @@ let inMemoryAutoPaused = false;
 let inMemoryAutoPauseReason = '';
 let inMemoryBouncedList = [];
 
+// Ring-buffer for execution timing metrics
+export const cronDurationsLog = [];
+
+function recordCronExecution(endpoint, durationMs, status = 'success', info = {}) {
+  const entry = {
+    id: 'exec-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+    endpoint,
+    durationMs,
+    status,
+    timestamp: new Date().toISOString(),
+    isUnder8Sec: durationMs < 8000,
+    ...info,
+  };
+  cronDurationsLog.unshift(entry);
+  if (cronDurationsLog.length > 50) cronDurationsLog.pop();
+
+  if (supabase) {
+    supabase.from('activity_logs').insert({
+      event_type: 'cron_run',
+      description: `[CRON ${endpoint}] finished in ${durationMs}ms (${status})`,
+      metadata: entry,
+    }).catch(() => {});
+  }
+}
+
 // Middleware to verify CRON_SECRET
 function verifyCronAuth(req, res, next) {
   const secret = process.env.CRON_SECRET || 'reachout-cron-secret-2026';
@@ -89,6 +114,26 @@ async function sendShoaibAlert({ subject, html, text }) {
   try {
     const { settings, appPassword } = await resolveSettings();
     const recipient = settings.gmail_address || process.env.GMAIL_USER || 'Mshoaibuldin371@gmail.com';
+
+    // Telegram Bot notification if configured
+    const tgToken = settings.telegram_bot_token || process.env.TELEGRAM_BOT_TOKEN;
+    const tgChat = settings.telegram_chat_id || process.env.TELEGRAM_CHAT_ID;
+    if (tgToken && tgChat) {
+      try {
+        await fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: tgChat,
+            text: `🚨 *ReachOut Alert*\n\n*${subject}*\n\n${text}`,
+            parse_mode: 'Markdown',
+          }),
+        });
+      } catch (tgErr) {
+        console.error('[TELEGRAM ALERT FAILED]:', tgErr.message);
+      }
+    }
+
     if (!appPassword) return;
 
     await sendOutreachEmail({
@@ -118,6 +163,7 @@ router.all('/health', async (req, res) => {
       if (error) dbStatus = `warning: ${error.message}`;
     }
     const executionMs = Date.now() - startTime;
+    recordCronExecution('/api/cron/health', executionMs, 'success', { dbStatus });
     console.log(`[CRON HEALTH] Executed in ${executionMs}ms. DB: ${dbStatus}`);
     res.json({
       status: 'ok',
@@ -127,6 +173,8 @@ router.all('/health', async (req, res) => {
       timestamp: new Date().toISOString(),
     });
   } catch (err) {
+    const executionMs = Date.now() - startTime;
+    recordCronExecution('/api/cron/health', executionMs, 'error', { error: err.message });
     res.status(500).json({ error: err.message });
   }
 });
@@ -383,7 +431,11 @@ router.all('/send', verifyCronAuth, async (req, res) => {
           if (!hasEmail && hasSocialOrPhone) {
             const platform = item.socials?.instagram ? 'Instagram' : (item.phone ? 'WhatsApp' : 'Social');
             const contactTarget = item.phone || item.business_name;
-            const dmText = `Assalam o Alaikum! I came across ${item.business_name} in ${randomCity}. I create short-form videos and social media content. Would love to share 2 quick sample concepts for your page!`;
+            const dmText = await aiProvider.generateManualDm({
+              business_name: item.business_name,
+              city: randomCity,
+              industry: randomInd,
+            }, platform);
 
             if (supabase) {
               await supabase.from('manual_tasks').insert({
@@ -638,6 +690,9 @@ router.all('/send', verifyCronAuth, async (req, res) => {
 
     cronSendLockUntil = null;
     const executionMs = Date.now() - startTime;
+    recordCronExecution('/api/cron/send', executionMs, 'success', {
+      sentCount: results.filter(r => !r.error && !r.skipped).length,
+    });
     console.log(`[CRON SEND] Executed in ${executionMs}ms. Sent: ${results.filter(r => !r.error && !r.skipped).length}`);
 
     res.json({
@@ -650,8 +705,10 @@ router.all('/send', verifyCronAuth, async (req, res) => {
     });
   } catch (err) {
     cronSendLockUntil = null;
+    const executionMs = Date.now() - startTime;
+    recordCronExecution('/api/cron/send', executionMs, 'error', { error: err.message });
     console.error('[CRON SEND FATAL]:', err);
-    res.status(500).json({ error: err.message, executionMs: Date.now() - startTime });
+    res.status(500).json({ error: err.message, executionMs });
   }
 });
 
@@ -769,6 +826,9 @@ router.all('/replies', verifyCronAuth, async (req, res) => {
     }
 
     const executionMs = Date.now() - startTime;
+    recordCronExecution('/api/cron/replies', executionMs, 'success', {
+      processedCount: processedReplies.length,
+    });
     console.log(`[CRON REPLIES] Executed in ${executionMs}ms. Processed: ${processedReplies.length}`);
 
     res.json({
@@ -778,8 +838,10 @@ router.all('/replies', verifyCronAuth, async (req, res) => {
       replies: processedReplies,
     });
   } catch (err) {
+    const executionMs = Date.now() - startTime;
+    recordCronExecution('/api/cron/replies', executionMs, 'error', { error: err.message });
     console.error('[CRON REPLIES ERROR]:', err);
-    res.status(500).json({ error: err.message, executionMs: Date.now() - startTime });
+    res.status(500).json({ error: err.message, executionMs });
   }
 });
 
@@ -895,11 +957,23 @@ router.get('/status', async (req, res) => {
         videoEditing: checkServiceRequirements('video-editing', settings).warnings,
         aiVideo: checkServiceRequirements('ai-video', settings).warnings,
         productManager: checkServiceRequirements('product-manager', settings).warnings,
-      }
+      },
+      recentDurations: cronDurationsLog.slice(0, 10),
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+});
+
+/**
+ * GET /api/cron/durations
+ * Returns recent cron execution durations for System Health monitoring
+ */
+router.get('/durations', (req, res) => {
+  res.json({
+    success: true,
+    durations: cronDurationsLog.slice(0, 10),
+  });
 });
 
 export default router;

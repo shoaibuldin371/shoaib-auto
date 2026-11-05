@@ -17,17 +17,26 @@ begin
     -- 2. Create Default Settings
     insert into public.settings (
         user_id, sender_name, sender_phone, sender_location,
-        facebook_url, video_portfolio_url, ai_video_portfolio_url, pm_case_study_url,
-        daily_manual_goal, warmup_start_limit, warmup_step, warmup_step_days, warmup_max_limit,
+        facebook_url, tiktok_url, video_portfolio_url, ai_video_portfolio_url, pm_case_study_url,
+        service_pm_enabled, daily_manual_goal, warmup_start_limit, warmup_step, warmup_step_days, warmup_max_limit,
         send_window_start, send_window_end, send_runs, skip_sundays,
         min_delay_sec, max_delay_sec, approval_mode
     ) values (
         new.id, 'Shoaib ul Din', '03473547036', 'Islamabad, Pakistan',
-        'https://facebook.com/shoaib.media', 'https://video-portfolio-572m.vercel.app/', 'https://video-portfolio-572m.vercel.app/', 'https://github.com/shoaib',
-        20, 15, 5, 3, 50,
-        '09:00', '18:00', array['10:00', '16:00'], true,
-        45, 150, true
-    ) on conflict (user_id) do nothing;
+        'https://www.facebook.com/syedali.azzam', 'https://www.tiktok.com/@syed_ali_azzam',
+        'https://video-portfolio-self-eight.vercel.app/', 'https://video-portfolio-572m.vercel.app/', '',
+        false, 20, 15, 5, 3, 40,
+        '10:00', '18:00', array['10:00', '16:00'], true,
+        15, 45, false
+    ) on conflict (user_id) do update set
+        facebook_url = excluded.facebook_url,
+        tiktok_url = excluded.tiktok_url,
+        video_portfolio_url = excluded.video_portfolio_url,
+        ai_video_portfolio_url = excluded.ai_video_portfolio_url,
+        pm_case_study_url = excluded.pm_case_study_url,
+        service_pm_enabled = excluded.service_pm_enabled,
+        approval_mode = false,
+        warmup_max_limit = 40;
 
     -- 3. Create the 4 Services
     -- Service 1: Social Media Management (4 months)

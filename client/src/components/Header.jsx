@@ -20,11 +20,11 @@ export default function Header({ title = 'ReachOut' }) {
       </div>
 
       <div className="flex items-center gap-space-md">
-        {/* AI Credits Pill */}
-        <div className="flex items-center gap-space-xs px-space-sm py-1.5 rounded-full bg-surface-container text-on-surface-variant">
-          <span className="material-symbols-outlined text-[16px] text-primary">auto_awesome</span>
-          <span className="font-label-sm text-label-sm font-semibold text-on-surface">
-            840 / 1000 AI Credits
+        {/* System Status Pill */}
+        <div className="flex items-center gap-space-xs px-space-sm py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span className="font-label-sm text-label-sm font-semibold">
+            Cloud Outreach Active
           </span>
         </div>
 

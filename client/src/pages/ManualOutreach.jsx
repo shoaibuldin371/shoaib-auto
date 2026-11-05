@@ -1,68 +1,11 @@
 import React, { useState } from 'react';
 
-const MOCK_MANUAL_LEADS = [
-  {
-    id: 'm-1',
-    business_name: 'Oxygen Lounge & Cafe',
-    contact_name: 'Bilal Ahmed',
-    city: 'Islamabad',
-    country: 'Pakistan',
-    service: 'Social Media Management',
-    platform: 'WhatsApp',
-    platformIcon: 'chat',
-    link: 'https://wa.me/92512654321',
-    score: 84,
-    status: 'pending',
-    dmText: `Assalam o Alaikum Bilal bhai! I saw the amazing evening buzz at Oxygen Lounge in Blue Area Islamabad. I help local cafes scale footfall with viral TikTok & Instagram reels. Would love to send you 2 sample clips I conceptualized for Oxygen Lounge!`
-  },
-  {
-    id: 'm-2',
-    business_name: 'BurnOut Islamabad Restaurant',
-    contact_name: 'Zeeshan Malik',
-    city: 'Islamabad',
-    country: 'Pakistan',
-    service: 'Video Editing',
-    platform: 'Instagram',
-    platformIcon: 'photo_camera',
-    link: 'https://instagram.com/burnoutcafe',
-    score: 88,
-    status: 'pending',
-    dmText: `Hey Zeeshan! Loved the live music setup at BurnOut F-7. I am an Islamabad-based video editor. I noticed your reels could get 3x higher retention with dynamic sound pacing. Can I send you a 15-second sample cut for your page?`
-  },
-  {
-    id: 'm-3',
-    business_name: 'Apex Motion Labs',
-    contact_name: 'Liam Scott',
-    city: 'Manchester',
-    country: 'United Kingdom',
-    service: 'AI Video Creation',
-    platform: 'LinkedIn',
-    platformIcon: 'business',
-    link: 'https://linkedin.com/company/apexmotion',
-    score: 86,
-    status: 'pending',
-    dmText: `Hey Liam, saw Apex Motion's recent product launch. We build scalable generative AI product video showcases that cut studio costs by 70%. Portfolio: https://video-portfolio-572m.vercel.app/ — open to a quick 5-min review?`
-  },
-  {
-    id: 'm-4',
-    business_name: 'Studio Zenith NYC',
-    contact_name: 'Chloe Rivera',
-    city: 'New York',
-    country: 'United States',
-    service: 'Video Editing',
-    platform: 'TikTok',
-    platformIcon: 'music_note',
-    link: 'https://tiktok.com/@studiozenith',
-    score: 91,
-    status: 'pending',
-    dmText: `Hey Chloe! Your podcast clips are fire. I noticed you could keep 70%+ retention by adding pattern interrupts around second 18. Sample cuts: https://video-portfolio-572m.vercel.app/ — want me to edit 1 free test clip?`
-  }
-];
+const MOCK_MANUAL_LEADS = [];
 
 export default function ManualOutreach() {
   const [leads, setLeads] = useState(MOCK_MANUAL_LEADS);
   const [regionFilter, setRegionFilter] = useState('all'); // 'all', 'pakistan', 'worldwide'
-  const [completedCount, setCompletedCount] = useState(6);
+  const [completedCount, setCompletedCount] = useState(0);
   const [copiedId, setCopiedId] = useState(null);
   const dailyGoal = 20;
 
@@ -171,7 +114,16 @@ export default function ManualOutreach() {
 
       {/* Manual Task Leads List */}
       <div className="space-y-space-md">
-        {filteredLeads.map(lead => {
+        {filteredLeads.length === 0 ? (
+          <div className="p-12 text-center bg-surface-container-lowest rounded-2xl border border-surface-container-high/60 space-y-3">
+            <span className="material-symbols-outlined text-[48px] text-on-surface-variant">send_to_mobile</span>
+            <h3 className="font-headline-sm text-headline-sm font-semibold text-on-surface">No Pending Manual Tasks</h3>
+            <p className="font-body-sm text-body-sm text-on-surface-variant max-w-md mx-auto">
+              Leads discovered via OpenStreetMap or imported via CSV that only have social media or WhatsApp links instead of public emails will automatically appear here with AI-written DMs.
+            </p>
+          </div>
+        ) : (
+          filteredLeads.map(lead => {
           const isPak = (lead.country || '').toLowerCase().includes('pakistan');
 
           return (
@@ -290,7 +242,8 @@ export default function ManualOutreach() {
               </div>
             </div>
           );
-        })}
+        })
+        )}
       </div>
     </div>
   );

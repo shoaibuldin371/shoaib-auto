@@ -23,7 +23,7 @@ const SERVICE_CONFIGS = {
         'Noticed your walk-in buzz in {city} — 3 ideas for viral short-form',
         'Can we boost {business_name}\'s weekend traffic with 15 reels/month?'
       ],
-      day0Body: `Hi {first_name},\n\nI was looking through {business_name} in {city} and loved your customer vibe. {personal_hook}\n\nI run organic social media campaigns and short-form reels for businesses in Pakistan. Over the past 4 months, I helped local brands scale to 100k+ views on TikTok.\n\nHere is a quick live sample of the reels I produce: {portfolio_url}\n\nWould you be open to me sending 3 free reel ideas custom-made for {business_name} over WhatsApp?\n\nBest regards,\nShoaib ul Din\nIslamabad, Pakistan | 03473547036`,
+      day0Body: `Hi {first_name},\n\nI was looking through {business_name} in {city} and loved your customer vibe. {personal_hook}\n\nHere is some social media content I have worked on: {portfolio_url}\n\nWould you be open to me sending 3 free reel ideas custom-made for {business_name} over WhatsApp?\n\nBest regards,\nShoaib ul Din\nIslamabad, Pakistan | 03473547036`,
       day3Subject: 'Re: 3 viral reel concepts for {business_name}',
       day3Body: `Hi {first_name},\n\nFollowing up on my note earlier. With {city}\'s market getting more competitive on TikTok and Instagram reels, short-form content is currently the highest ROI channel.\n\nLet me know if you would like to test 1 free sample reel for your page this week!\n\nShoaib ul Din | 03473547036`,
       day7Subject: 'Last note from Shoaib regarding {business_name}',
@@ -42,7 +42,7 @@ const SERVICE_CONFIGS = {
       ],
       day0Body: `Hey {first_name},\n\nCame across {business_name} and was really impressed by your brand positioning. {personal_hook}\n\nI manage end-to-end short-form organic distribution (TikTok, Reels, Shorts), turning podcasts, long-form videos, and product demos into high-retention clips.\n\nSample portfolio: {portfolio_url}\n\nAre you free for a quick 15-minute call this Thursday to see 3 sample angles I prepared for {business_name}?\n\nBest,\nShoaib ul Din\nSocial Growth Strategist`,
       day3Subject: 'Re: 3 sample angles for {business_name}',
-      day3Body: `Hey {first_name},\n\nQuick follow-up on my note from Tuesday. We recently achieved over 500k impressions on short-form content by optimizing the first 3-second hook.\n\nWould love to show you how this applies to {business_name}. Here is my calendar if you have 10 minutes: https://calendly.com/shoaibuldin371/15min\n\nBest,\nShoaib`,
+      day3Body: `Hey {first_name},\n\nQuick follow-up on my note from Tuesday. Here are recent work samples for your review.\n\nWould love to show you how this applies to {business_name}. Here is my calendar if you have 10 minutes: https://calendly.com/shoaibuldin371/15min\n\nBest,\nShoaib`,
       day7Subject: 'Closing the loop on {business_name}\'s short-form pipeline',
       day7Body: `Hey {first_name},\n\nI know your schedule is packed. Just closing the loop here. If you ever need a reliable operator to take over your short-form video creation and daily community growth, my door is open.\n\nPortfolio: {portfolio_url}\n\nCheers,\nShoaib ul Din`,
     }
@@ -117,7 +117,7 @@ const SERVICE_CONFIGS = {
       ],
       day0Body: `Hi {first_name},\n\nI was looking at {business_name} in {city} and saw great potential for automated video ads. {personal_hook}\n\nInstead of paying for expensive cameras, studio rentals, and actors, I create cinematic AI-generated product promos, voiceovers, and avatar explainers in both Urdu and English.\n\nSee our AI video showcase: {portfolio_url}\n\nCan I send you a 15-second AI video teaser made specifically for {business_name} over WhatsApp?\n\nBest regards,\nShoaib ul Din\n03473547036`,
       day3Subject: 'Re: AI video teaser for {business_name}',
-      day3Body: `Hi {first_name},\n\nJust checking back. AI video workflows allow us to produce 10 high-converting video variations in the time it usually takes to shoot one traditional video.\n\nLet me know if you would like to see a custom mockup for {business_name}!\n\nShoaib | 03473547036`,
+      day3Body: `Hi {first_name},\n\nJust checking back. I produce customized AI-assisted promotional videos and explainers.\n\nLet me know if you would like to see a custom mockup for {business_name}!\n\nShoaib | 03473547036`,
       day7Subject: 'Last note on AI video for {business_name}',
       day7Body: `Hi {first_name},\n\nI'll let you be! If you ever want to scale your marketing videos with AI, feel free to reach out anytime on WhatsApp: https://wa.me/923473547036\n\nBest,\nShoaib`,
     },
@@ -130,11 +130,11 @@ const SERVICE_CONFIGS = {
       subjects: [
         'Scaling {business_name}\'s ad creative with generative AI video',
         'AI product demos & avatar explainers for {business_name}',
-        'Cut video production costs by 70% with AI workflows'
+        'AI video promos and product explainers'
       ],
       day0Body: `Hey {first_name},\n\nCame across {business_name} and love what you are building. {personal_hook}\n\nI build scalable AI video production pipelines for software and e-commerce companies — generating photorealistic product showcases, synthetic avatar explainers, and localized ad creatives without the overhead of physical studios.\n\nAI Video Portfolio: {portfolio_url}\n\nWould you be open to a 15-min call to see a sample AI concept tailored to {business_name}?\n\nBest,\nShoaib ul Din\nAI Video Producer`,
       day3Subject: 'Re: AI concept for {business_name}',
-      day3Body: `Hey {first_name},\n\nQuick follow-up on my note regarding AI video automation. Here is a recent case study where we generated 20 ad variations in 48 hours: {portfolio_url}\n\nFeel free to grab a time here if you'd like a quick preview: https://calendly.com/shoaibuldin371/15min\n\nCheers,\nShoaib`,
+      day3Body: `Hey {first_name},\n\nQuick follow-up on my note regarding AI video automation. Here is a recent case study where we created sample video concepts: {portfolio_url}\n\nFeel free to grab a time here if you'd like a quick preview: https://calendly.com/shoaibuldin371/15min\n\nCheers,\nShoaib`,
       day7Subject: 'Closing the loop on {business_name} AI video pipeline',
       day7Body: `Hey {first_name},\n\nI know you're busy, so this is my final note. If you ever want to test generative AI video creatives for your funnel, my portfolio is always accessible at {portfolio_url}.\n\nAll the best,\nShoaib`,
     }

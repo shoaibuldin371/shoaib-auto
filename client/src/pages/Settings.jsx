@@ -10,11 +10,14 @@ export default function Settings() {
     gmail_app_password: '',
     has_app_password: false,
     gmail_is_connected: false,
-    facebook_url: 'https://facebook.com/shoaib.media',
-    video_portfolio_url: 'https://video-portfolio-572m.vercel.app/',
+    facebook_url: 'https://www.facebook.com/syedali.azzam',
+    tiktok_url: 'https://www.tiktok.com/@syed_ali_azzam',
+    video_portfolio_url: 'https://video-portfolio-self-eight.vercel.app/',
     ai_video_portfolio_url: 'https://video-portfolio-572m.vercel.app/',
-    pm_case_study_url: 'https://github.com/shoaib',
+    pm_case_study_url: '',
+    service_pm_enabled: false,
     calendly_link: '',
+    reachout_scope: 'pakistan',
     warmup_start_limit: 15,
     warmup_step: 5,
     warmup_step_days: 3,
@@ -28,7 +31,11 @@ export default function Settings() {
     dry_run_mode: false,
     approval_mode: false, // OFF by default
     pause_all: false,
+    telegram_bot_token: '',
+    telegram_chat_id: '',
   });
+
+  const [cronDurations, setCronDurations] = useState([]);
 
   const [services, setServices] = useState([
     { id: 'sm', slug: 'social-media', name: 'Social Media Management', experience_text: '4 months' },
@@ -48,7 +55,18 @@ export default function Settings() {
   useEffect(() => {
     fetchSettings();
     fetchServices();
+    fetchCronDurations();
   }, []);
+
+  const fetchCronDurations = async () => {
+    try {
+      const res = await fetch('/api/cron/durations');
+      if (res.ok) {
+        const data = await res.json();
+        setCronDurations(data.durations || []);
+      }
+    } catch (e) {}
+  };
 
   const fetchSettings = async () => {
     try {
@@ -659,22 +677,74 @@ export default function Settings() {
                   type="url"
                   value={settings.video_portfolio_url}
                   onChange={(e) => setSettings({ ...settings, video_portfolio_url: e.target.value })}
-                  placeholder="https://video-portfolio-572m.vercel.app/"
+                  placeholder="https://video-portfolio-self-eight.vercel.app/"
                   className="w-full h-10 px-space-md rounded-xl bg-surface-container-low border border-outline-variant/60 text-body-sm font-mono"
                 />
               </div>
 
-              <div>
-                <label className="block font-label-md text-label-md text-on-surface mb-1 font-semibold">
-                  Product Manager Case Study URL
-                </label>
-                <input
-                  type="url"
-                  value={settings.pm_case_study_url}
-                  onChange={(e) => setSettings({ ...settings, pm_case_study_url: e.target.value })}
-                  placeholder="https://github.com/shoaib"
-                  className="w-full h-10 px-space-md rounded-xl bg-surface-container-low border border-outline-variant/60 text-body-sm font-mono"
-                />
+              {/* Product Management Toggle & URL */}
+              <div className="pt-2 border-t border-surface-container-high/60">
+                <div className="flex items-center justify-between p-space-sm rounded-lg bg-surface-container-low mb-2">
+                  <div>
+                    <p className="font-label-md text-label-md text-on-surface font-semibold">Enable Product Management Outreach</p>
+                    <p className="font-body-sm text-body-sm text-on-surface-variant">Disabled by default. When turned off, missing case study link does not trigger warnings.</p>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={Boolean(settings.service_pm_enabled)}
+                    onChange={(e) => setSettings({ ...settings, service_pm_enabled: e.target.checked })}
+                    className="w-5 h-5 accent-primary cursor-pointer"
+                  />
+                </div>
+
+                {settings.service_pm_enabled && (
+                  <div>
+                    <label className="block font-label-md text-label-md text-on-surface mb-1 font-semibold">
+                      Product Manager Case Study URL
+                    </label>
+                    <input
+                      type="url"
+                      value={settings.pm_case_study_url}
+                      onChange={(e) => setSettings({ ...settings, pm_case_study_url: e.target.value })}
+                      placeholder="https://github.com/shoaib"
+                      className="w-full h-10 px-space-md rounded-xl bg-surface-container-low border border-outline-variant/60 text-body-sm font-mono"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Telegram Instant Reply Alerts */}
+              <div className="pt-2 border-t border-surface-container-high/60 space-y-3">
+                <p className="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-[18px] text-primary">send</span>
+                  Telegram Instant Reply Notifications (Optional)
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-label-sm text-label-sm text-on-surface-variant mb-1">
+                      Telegram Bot Token
+                    </label>
+                    <input
+                      type="password"
+                      value={settings.telegram_bot_token || ''}
+                      onChange={(e) => setSettings({ ...settings, telegram_bot_token: e.target.value })}
+                      placeholder="e.g. 123456789:ABCdefGhI..."
+                      className="w-full h-10 px-space-md rounded-xl bg-surface-container-low border border-outline-variant/60 text-body-sm font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-label-sm text-label-sm text-on-surface-variant mb-1">
+                      Telegram Chat ID
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.telegram_chat_id || ''}
+                      onChange={(e) => setSettings({ ...settings, telegram_chat_id: e.target.value })}
+                      placeholder="e.g. 987654321"
+                      className="w-full h-10 px-space-md rounded-xl bg-surface-container-low border border-outline-variant/60 text-body-sm font-mono"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </section>
@@ -754,6 +824,72 @@ export default function Settings() {
                 )}
               </button>
             </div>
+          </section>
+
+          {/* SECTION 7: System Health & Cron Durations */}
+          <section className="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-surface-container-high/60 space-y-space-md">
+            <div className="flex items-center justify-between pb-space-xs">
+              <div className="flex items-center gap-space-sm">
+                <span className="p-2 rounded-lg bg-surface-container-low text-primary flex items-center justify-center">
+                  <span className="material-symbols-outlined text-[20px]">timer</span>
+                </span>
+                <div>
+                  <h2 className="font-headline-sm text-headline-sm text-on-surface font-semibold">
+                    System Health &amp; Cron Durations
+                  </h2>
+                  <p className="font-body-sm text-body-sm text-on-surface-variant">
+                    Real execution times for background cloud jobs (target: &lt; 8,000ms)
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={fetchCronDurations}
+                className="px-3 py-1.5 rounded-lg border border-outline-variant/60 hover:bg-surface-container-low text-body-sm flex items-center gap-1.5"
+              >
+                <span className="material-symbols-outlined text-[16px]">refresh</span>
+                <span>Refresh</span>
+              </button>
+            </div>
+
+            {cronDurations.length === 0 ? (
+              <div className="p-6 text-center text-on-surface-variant font-body-sm bg-surface-container-low rounded-xl">
+                No recent cron runs recorded yet. They will appear here automatically when GitHub Actions or cron-job.org fires.
+              </div>
+            ) : (
+              <div className="overflow-x-auto rounded-xl border border-surface-container-high">
+                <table className="w-full text-left font-body-sm">
+                  <thead className="bg-surface-container-low text-on-surface-variant text-label-sm uppercase font-semibold">
+                    <tr>
+                      <th className="px-4 py-2.5">Endpoint</th>
+                      <th className="px-4 py-2.5">Duration</th>
+                      <th className="px-4 py-2.5">Status</th>
+                      <th className="px-4 py-2.5">Timestamp</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-surface-container-high/60">
+                    {cronDurations.map((item, idx) => (
+                      <tr key={item.id || idx} className="hover:bg-surface-container-low/50">
+                        <td className="px-4 py-2.5 font-mono text-body-sm font-semibold text-on-surface">
+                          {item.endpoint}
+                        </td>
+                        <td className="px-4 py-2.5 font-mono">
+                          <span className={`px-2 py-0.5 rounded text-label-sm font-semibold ${item.durationMs < 8000 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
+                            {item.durationMs}ms
+                          </span>
+                        </td>
+                        <td className="px-4 py-2.5 capitalize font-medium text-body-sm">
+                          {item.status}
+                        </td>
+                        <td className="px-4 py-2.5 text-on-surface-variant text-body-sm">
+                          {new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </section>
         </div>
       </div>

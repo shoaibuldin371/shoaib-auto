@@ -2,11 +2,9 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
-  const { signIn, signUp, isSupabaseConfigured } = useAuth();
-  const [isSignUp, setIsSignUp] = useState(false);
+  const { signIn, isSupabaseConfigured } = useAuth();
   const [email, setEmail] = useState('Mshoaibuldin371@gmail.com');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('Shoaib ul Din');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -18,12 +16,7 @@ export default function Login() {
     setMessage('');
 
     try {
-      if (isSignUp) {
-        await signUp(email, password, fullName);
-        setMessage('Account created successfully! You can now log in.');
-      } else {
-        await signIn(email, password);
-      }
+      await signIn(email, password);
     } catch (err) {
       setError(err.message || 'Authentication failed. Please check your credentials.');
     } finally {
@@ -122,7 +115,7 @@ export default function Login() {
               <span className="material-symbols-outlined animate-spin text-[20px]">progress_activity</span>
             ) : (
               <>
-                <span>{isSignUp ? 'Create ReachOut Account' : 'Sign In to Dashboard'}</span>
+                <span>Sign In to Dashboard</span>
                 <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
               </>
             )}
@@ -130,13 +123,10 @@ export default function Login() {
         </form>
 
         <div className="mt-space-lg text-center pt-space-sm border-t border-surface-container-high/60">
-          <button
-            onClick={() => setIsSignUp(!isSignUp)}
-            className="font-label-md text-label-md text-primary hover:underline font-medium"
-            type="button"
-          >
-            {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Create one"}
-          </button>
+          <p className="font-label-sm text-label-sm text-on-surface-variant flex items-center justify-center gap-1">
+            <span className="material-symbols-outlined text-[16px] text-primary">lock</span>
+            Private single-user workspace. Public sign-ups are disabled.
+          </p>
         </div>
       </div>
     </div>

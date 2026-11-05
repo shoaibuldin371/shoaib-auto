@@ -57,6 +57,7 @@ The platform runs completely on cloud serverless infrastructure:
 | `GEMINI_API_KEY` | Google AI Studio developer API key (`<YOUR_GEMINI_API_KEY>`) |
 | `SUPABASE_URL` | Supabase project URL (`https://<YOUR_PROJECT_REF>.supabase.co`) |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase secret key (`sb_secret_<YOUR_SECRET_KEY>`) |
+| `ENCRYPTION_KEY` | 32-byte hex key for AES-256 encryption. Generate with: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` |
 | `CRON_SECRET` | Secret token used to protect cron endpoints (e.g. `<YOUR_CRON_SECRET>`) |
 
 ### In GitHub (`Repo Settings > Secrets and variables > Actions`):

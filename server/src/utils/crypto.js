@@ -1,9 +1,19 @@
 import crypto from 'crypto';
 
 const ALGORITHM = 'aes-256-gcm';
-const SECRET_KEY = process.env.ENCRYPTION_SECRET 
-  ? crypto.createHash('sha256').update(String(process.env.ENCRYPTION_SECRET)).digest()
-  : crypto.createHash('sha256').update('reachout-default-secret-key-2026').digest();
+
+const rawKey = process.env.ENCRYPTION_KEY || process.env.ENCRYPTION_SECRET;
+if (!rawKey) {
+  console.error('\n========================================================================');
+  console.error('FATAL: ENCRYPTION_KEY environment variable is missing.');
+  console.error('Generate a secure 32-byte key using this command:');
+  console.error('  node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"');
+  console.error('Then add ENCRYPTION_KEY=<generated_key> to your .env or Vercel Environment Variables.');
+  console.error('========================================================================\n');
+  throw new Error('FATAL: Missing ENCRYPTION_KEY environment variable.');
+}
+
+const SECRET_KEY = crypto.createHash('sha256').update(String(rawKey)).digest();
 
 /**
  * Encrypt a plain text string into a combined IV + AuthTag + Ciphertext hex string

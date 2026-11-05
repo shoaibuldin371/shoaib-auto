@@ -1,3 +1,5 @@
+import { validateAiHook, validateManualDm } from '../utils/guardrails.js';
+
 /**
  * AI Provider Interface
  * Uses Google Gemini API (gemini-2.5-flash) with clean fallback and provider isolation
@@ -144,6 +146,60 @@ Output ONLY the category name.`;
     if (/interested|call|book|meet|schedule|sounds good|yes/i.test(normalized)) return 'Interested';
     if (/no thanks|not interested|pass|not for us/i.test(normalized)) return 'Not interested';
     return 'Question';
+  }
+
+  /**
+   * Generates a platform-specific manual DM tailored for Instagram, Facebook, WhatsApp, or TikTok.
+   */
+  async generateManualDm(lead, platform = 'Instagram') {
+    const city = lead.city || 'Islamabad';
+    const businessName = lead.business_name || lead.name || 'your business';
+    const industry = lead.industry || 'Local Business';
+
+    const prompt = `Write ONE polite, concise direct message (DM) for ${platform} to ${businessName} in ${city} (${industry}).
+Service offered: Short-form video editing and social media content creation.
+
+RULES:
+- Maximum 45 words.
+- Natural, professional tone with polite greeting.
+- Strictly use only real collected facts: business name, city, industry.
+- NO links, NO prices, NO results, NO claims about past clients or views, NO experience claims.
+- Ask if you can share 2 free creative concept ideas for their page.
+- Return ONLY the raw DM text. No quotes.`;
+
+    const raw = await this.callGemini(prompt);
+    const { dm } = validateManualDm(raw, businessName, platform, city);
+    return dm;
+  }
+
+  /**
+   * Urdu-to-English reply assistant.
+   * Converts Urdu notes or rough points from Shoaib into a clean, professional, concise English outreach reply.
+   */
+  async translateUrduReply(urduNotes, originalEmail = '') {
+    const prompt = `You are an executive assistant for Shoaib ul Din, a professional video editor and digital creator based in Islamabad, Pakistan.
+Shoaib received this email from a prospective client:
+"${originalEmail || 'Inquiry about video editing services'}"
+
+Shoaib wrote these rough notes/reply points in Roman Urdu or Urdu:
+"${urduNotes}"
+
+Task: Translate and refine Shoaib's rough notes into a concise, polite, professional English email response.
+RULES:
+- Keep it under 100 words.
+- Natural, professional tone.
+- Friendly, humble, and clear.
+- Sign off with:
+Best regards,
+Shoaib ul Din
+03473547036
+
+Output ONLY the final email body.`;
+
+    const drafted = await this.callGemini(prompt);
+    if (drafted) return drafted.replace(/^["']|["']$/g, '').trim();
+
+    return `Hi,\n\nThank you for reaching out! I would love to assist you. Let me share some custom sample concepts for your review.\n\nBest regards,\nShoaib ul Din\n03473547036`;
   }
 }
 

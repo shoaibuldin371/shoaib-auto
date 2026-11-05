@@ -1,46 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const INITIAL_QUEUE = [
-  {
-    id: 'q-101',
-    lead_name: 'Salman Khan',
-    business_name: 'Chaaye Khana F-6',
-    email: 'contact@chaayekhana.com',
-    city: 'Islamabad',
-    region: 'pakistan',
-    service: 'Social Media Management',
-    subject: 'Quick idea for Chaaye Khana F-6\'s TikTok & Instagram reels',
-    scheduled_for: 'Today, 10:00 AM PKT',
-    status: 'pending_approval',
-    body: `Hi Salman,\n\nI was looking through Chaaye Khana in Islamabad and loved your customer vibe. Loved seeing your evening footfall in Islamabad — short-form video could easily double it.\n\nOver the past 4 months, I helped local Pakistani brands scale to 100k+ views on TikTok.\n\nHere is a quick live sample of the reels I produce: https://www.tiktok.com/@syed_ali_azzam\n\nWould you be open to me sending 3 free reel ideas custom-made for Chaaye Khana over WhatsApp?\n\nBest regards,\nShoaib ul Din\n03473547036`
-  },
-  {
-    id: 'q-102',
-    lead_name: 'Hamza Tariq',
-    business_name: 'FitFusion Elite Gym F-10',
-    email: 'info@fitfusion.pk',
-    city: 'Islamabad',
-    region: 'pakistan',
-    service: 'Video Editing',
-    subject: 'Dynamic captions & sound design for FitFusion',
-    scheduled_for: 'Today, 10:00 AM PKT',
-    status: 'pending_approval',
-    body: `Hi Hamza,\n\nI noticed your high-energy trainer transformations at FitFusion and had an idea for fast-paced workout reels.\n\nPortfolio: https://video-portfolio-572m.vercel.app/\n\nLet me know if you would like me to edit 1 free test reel for your trainers!\n\nShoaib ul Din | 03473547036`
-  },
-  {
-    id: 'q-103',
-    lead_name: 'Marcus Brody',
-    business_name: 'Apex Horizon Studios',
-    email: 'marcus@apexhorizon.com',
-    city: 'Austin, TX',
-    region: 'worldwide',
-    service: 'AI Video Creation',
-    subject: 'Scaling ad creative with generative AI video for Apex Horizon',
-    scheduled_for: 'Today, 04:00 PM PKT',
-    status: 'approved',
-    body: `Hey Marcus,\n\nCame across Apex Horizon and love what you are building. Cut video production costs by 70% with AI workflows.\n\nPortfolio: https://video-portfolio-572m.vercel.app/\n\nFree for 15-min call this Thursday? https://calendly.com/shoaibuldin371/15min\n\nBest,\nShoaib`
-  }
-];
+const INITIAL_QUEUE = [];
 
 export default function Campaigns() {
   const [queue, setQueue] = useState(INITIAL_QUEUE);

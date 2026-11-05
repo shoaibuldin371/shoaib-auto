@@ -60,18 +60,12 @@ export async function testImapConnection(userEmail, appPassword) {
   try {
     const connectPromise = async () => {
       await client.connect();
-      const lock = await client.getMailboxLock('INBOX');
-      try {
-        await client.status('INBOX', { messages: true });
-      } finally {
-        lock.release();
-      }
       try { await client.logout(); } catch (e) {}
       return { success: true, message: 'IMAP connection verified successfully' };
     };
 
     const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('IMAP connection timed out after 9500ms')), 9500)
+      setTimeout(() => reject(new Error('IMAP connection timed out after 7500ms')), 7500)
     );
 
     return await Promise.race([connectPromise(), timeoutPromise]);

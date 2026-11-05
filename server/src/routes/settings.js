@@ -5,17 +5,20 @@ import { testSmtpConnection, testImapConnection, sendOutreachEmail } from '../se
 
 const router = express.Router();
 
-// Fallback in-memory settings for local testing before Supabase credentials are wired
+// Default settings matching live freelancing profile
 let localSettings = {
   user_id: 'default-user',
   sender_name: 'Shoaib ul Din',
   sender_email: 'Mshoaibuldin371@gmail.com',
   sender_phone: '03473547036',
   sender_location: 'Islamabad, Pakistan',
-  facebook_url: 'https://facebook.com/shoaib.media',
-  video_portfolio_url: 'https://video-portfolio-572m.vercel.app/',
+  facebook_url: 'https://www.facebook.com/syedali.azzam',
+  tiktok_url: 'https://www.tiktok.com/@syed_ali_azzam',
+  video_portfolio_url: 'https://video-portfolio-self-eight.vercel.app/',
   ai_video_portfolio_url: 'https://video-portfolio-572m.vercel.app/',
-  pm_case_study_url: 'https://github.com/shoaib',
+  pm_case_study_url: '',
+  service_pm_enabled: false, // Product Management disabled by default
+  reachout_scope: 'pakistan', // Pakistan only by default
   calendly_link: '',
   daily_manual_goal: 20,
   warmup_start_limit: 15,
@@ -34,6 +37,8 @@ let localSettings = {
   pause_all: false,
   auto_paused: false,
   auto_pause_reason: '',
+  telegram_bot_token: process.env.TELEGRAM_BOT_TOKEN || '',
+  telegram_chat_id: process.env.TELEGRAM_CHAT_ID || '',
   gmail_address: 'Mshoaibuldin371@gmail.com',
   gmail_app_password_encrypted: process.env.GMAIL_APP_PASSWORD ? encrypt(process.env.GMAIL_APP_PASSWORD) : '',
   gmail_is_connected: Boolean(process.env.GMAIL_APP_PASSWORD),
