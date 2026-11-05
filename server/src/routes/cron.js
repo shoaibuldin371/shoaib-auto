@@ -3,6 +3,8 @@ import { supabase } from '../config/supabase.js';
 import { decrypt } from '../utils/crypto.js';
 import { sendOutreachEmail } from '../services/gmail.js';
 import { aiProvider } from '../services/ai.js';
+import { searchOsmLeads } from '../services/leadSearch.js';
+import { calculateLeadScore } from '../services/scoring.js';
 import { ImapFlow } from 'imapflow';
 import { simpleParser } from 'mailparser';
 
@@ -70,6 +72,54 @@ router.all('/send', verifyCronAuth, async (req, res) => {
         .lte('scheduled_for', now.toISOString())
         .limit(5); // Small batch safe for serverless timeout
       emailsToSend = data || [];
+
+      // AUTONOMOUS LEAD DISCOVERY & SOURCING IF QUEUE IS EMPTY
+      if (emailsToSend.length === 0) {
+        console.log('[CRON SEND] Queue empty. Looking for new uncontacted leads in DB...');
+        const { data: newLeads } = await supabase
+          .from('leads')
+          .select('*')
+          .eq('status', 'new')
+          .neq('email', '')
+          .order('lead_score', { ascending: false })
+          .limit(3);
+
+        if (newLeads && newLeads.length > 0) {
+          for (const nl of newLeads) {
+            const isPak = (nl.country || '').toLowerCase().includes('pakistan') || 
+              ['islamabad', 'lahore', 'karachi', 'rawalpindi'].some(c => (nl.city || '').toLowerCase().includes(c));
+
+            const serviceName = nl.service_id === 'video-editing' ? 'Video Editing' : 'Social Media Management';
+            let hook = nl.personal_hook;
+            if (!hook) {
+              try {
+                hook = await aiProvider.generatePersonalHook(nl, serviceName);
+              } catch (e) {
+                hook = `I came across ${nl.business_name} in ${nl.city || 'Islamabad'} and loved your work.`;
+              }
+            }
+
+            const subject = isPak 
+              ? `Quick idea for ${nl.business_name}'s short-form content in ${nl.city || 'Islamabad'}`
+              : `Scaling ${nl.business_name}'s short-form video content pipeline`;
+
+            const cta = isPak
+              ? 'WhatsApp: https://wa.me/923473547036 (Text me anytime)'
+              : 'Book a 15-min call: https://calendly.com/shoaibuldin371/15min';
+
+            const body = `Hi ${nl.first_name || nl.contact_name || 'there'},\n\n${hook}\n\nOver the past few months, I helped businesses scale their short-form content on TikTok and Instagram.\n\nPortfolio: https://video-portfolio-572m.vercel.app/\n\nWould you be open to me sending over 2 sample ideas custom-made for ${nl.business_name}?\n\n${cta}\n\nBest regards,\nShoaib ul Din\n03473547036`;
+
+            emailsToSend.push({
+              id: `auto-${Date.now()}-${nl.id}`,
+              lead_id: nl.id,
+              service_id: nl.service_id || 'social-media',
+              subject,
+              body,
+              leads: nl,
+            });
+          }
+        }
+      }
     }
 
     const results = [];
@@ -83,16 +133,19 @@ router.all('/send', verifyCronAuth, async (req, res) => {
           continue;
         }
 
+        const sender = settings?.gmail_address || process.env.GMAIL_USER || 'Mshoaibuldin371@gmail.com';
+        const senderName = settings?.sender_name || 'Shoaib ul Din';
+
         const sendRes = await sendOutreachEmail({
-          userEmail: settings.gmail_address || 'Mshoaibuldin371@gmail.com',
+          userEmail: sender,
           appPassword: appPassword,
-          fromName: settings.sender_name || 'Shoaib ul Din',
+          fromName: senderName,
           to: item.leads.email,
           subject: item.subject,
           text: item.body,
           inReplyTo: item.in_reply_to,
           references: item.thread_id,
-          bcc: settings.bcc_self ? settings.gmail_address : null,
+          bcc: settings?.bcc_self ? sender : null,
         });
 
         results.push({ id: item.id, recipient: item.leads.email, messageId: sendRes.messageId });
@@ -104,7 +157,7 @@ router.all('/send', verifyCronAuth, async (req, res) => {
           }).eq('id', item.id);
 
           await supabase.from('email_logs').insert({
-            user_id: item.user_id,
+            user_id: item.user_id || settings?.user_id || 'default-user',
             lead_id: item.lead_id,
             service_id: item.service_id,
             message_id: sendRes.messageId,

@@ -176,14 +176,14 @@ router.post('/test-gmail', async (req, res) => {
 });
 
 /**
- * POST /api/settings/send-test-email
+ * POST /api/settings/send-test-email & /api/settings/test-email
  * Sends a live test email via Gmail SMTP
  */
-router.post('/send-test-email', async (req, res) => {
+const handleSendTestEmail = async (req, res) => {
   try {
-    const { toEmail, customSubject } = req.body;
-    const recipient = toEmail || localSettings.sender_email || 'Mshoaibuldin371@gmail.com';
-    const senderEmail = localSettings.gmail_address || 'Mshoaibuldin371@gmail.com';
+    const { toEmail, recipientEmail, customSubject } = req.body;
+    const recipient = toEmail || recipientEmail || localSettings.sender_email || 'Mshoaibuldin371@gmail.com';
+    const senderEmail = localSettings.gmail_address || process.env.GMAIL_USER || 'Mshoaibuldin371@gmail.com';
 
     let pass = '';
     if (localSettings.gmail_app_password_encrypted) {
@@ -231,6 +231,7 @@ router.post('/send-test-email', async (req, res) => {
 
     res.json({
       success: true,
+      messageId: sendResult.messageId,
       message: `Test email dispatched successfully to ${recipient}! Check your inbox and your Gmail "Sent" folder.`,
       details: sendResult,
     });
@@ -238,7 +239,10 @@ router.post('/send-test-email', async (req, res) => {
     console.error('Send test email error:', err);
     res.status(500).json({ success: false, error: err.message });
   }
-});
+};
+
+router.post('/send-test-email', handleSendTestEmail);
+router.post('/test-email', handleSendTestEmail);
 
 export default router;
 
