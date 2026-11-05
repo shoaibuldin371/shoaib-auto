@@ -4,6 +4,7 @@ import { searchOsmLeads } from '../services/leadSearch.js';
 import { enrichWebsite } from '../services/enricher.js';
 import { calculateLeadScore } from '../services/scoring.js';
 import { aiProvider } from '../services/ai.js';
+import { extractDomain, validateAiHook } from '../utils/guardrails.js';
 
 const router = express.Router();
 
@@ -227,6 +228,9 @@ router.post('/search-osm', async (req, res) => {
 
 /**
  * POST /api/leads/import-csv
+ * Supports columns: name, email, website, instagram, facebook, tiktok, phone, city, industry
+ * Enforces duplicate checks (by email and domain) and suppression list checks.
+ * If no email but has social/phone, auto-creates a Manual Outreach Task.
  */
 router.post('/import-csv', async (req, res) => {
   try {
@@ -236,30 +240,76 @@ router.post('/import-csv', async (req, res) => {
     }
 
     const imported = [];
-    for (const r of rows) {
-      const name = r.business_name || r.name || r.Company || 'Imported Business';
-      const email = r.email || r.Email || '';
-      const website = r.website || r.Website || r.url || '';
-      const phone = r.phone || r.Phone || '';
-      const city = r.city || r.City || 'Islamabad';
+    const skippedDuplicates = [];
+    const skippedSuppressed = [];
+    const createdManualTasks = [];
 
+    // Pre-fetch suppression list
+    let suppressionSet = new Set();
+    if (supabase) {
+      const { data: supp } = await supabase.from('suppression_list').select('email');
+      if (supp) supp.forEach(s => suppressionSet.add(s.email.toLowerCase()));
+    }
+
+    for (const r of rows) {
+      const name = r.name || r.business_name || r.Company || 'Imported Business';
+      const email = (r.email || r.Email || '').trim().toLowerCase();
+      const website = (r.website || r.Website || r.url || '').trim();
+      const phone = (r.phone || r.Phone || '').trim();
+      const city = r.city || r.City || 'Islamabad';
+      const industry = r.industry || r.Industry || 'General';
+
+      const socials = {
+        instagram: r.instagram || r.Instagram || '',
+        facebook: r.facebook || r.Facebook || '',
+        tiktok: r.tiktok || r.TikTok || '',
+      };
+
+      // 1. Suppression Check
+      if (email && suppressionSet.has(email)) {
+        skippedSuppressed.push(email);
+        continue;
+      }
+
+      // 2. Duplicate Check (Check existing email and domain)
+      const domain = extractDomain(email) || extractDomain(website);
+      const isDuplicateLocal = localLeads.some(l => 
+        (email && l.email && l.email.toLowerCase() === email) ||
+        (domain && l.website && extractDomain(l.website) === domain)
+      );
+
+      if (isDuplicateLocal) {
+        skippedDuplicates.push(email || name);
+        continue;
+      }
+
+      if (supabase && email) {
+        const { data: existing } = await supabase.from('leads').select('id').eq('email', email).limit(1);
+        if (existing && existing.length > 0) {
+          skippedDuplicates.push(email);
+          continue;
+        }
+      }
+
+      // 3. Lead Object
       const lead = {
         id: `csv-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
         business_name: name,
         contact_name: r.contact_name || r.Contact || '',
-        first_name: (r.contact_name || '').split(' ')[0] || '',
+        first_name: (r.contact_name || r.Contact || '').split(' ')[0] || '',
         email,
         phone,
         website,
         city,
         country: 'Pakistan',
+        industry,
         rating: parseFloat(r.rating || 4.5),
         review_count: parseInt(r.review_count || 25),
         source: 'csv_import',
         status: 'new',
         lead_score: calculateLeadScore({ email, website, phone, review_count: 25, rating: 4.5 }),
-        personal_hook: `I came across ${name} and was impressed by your presence in ${city}.`,
-        socials: {},
+        personal_hook: `I came across ${name} in ${city} and was really impressed by your brand.`,
+        socials,
       };
 
       imported.push(lead);
@@ -276,11 +326,79 @@ router.post('/import-csv', async (req, res) => {
           city: lead.city,
           lead_score: lead.lead_score,
           source: 'csv_import',
+          personal_hook: lead.personal_hook,
         });
+      }
+
+      // 4. If lead has NO email but has phone/whatsapp/instagram/tiktok/facebook, create Manual Task!
+      const hasSocial = Boolean(socials.instagram || socials.facebook || socials.tiktok || phone);
+      if (!email && hasSocial) {
+        const platform = socials.instagram ? 'Instagram' : (phone ? 'WhatsApp' : 'Social');
+        const dmMessage = `Assalam o Alaikum! I saw ${name} in ${city}. I help local brands scale with high-retention video reels. Would love to send 2 custom ideas for your page!`;
+
+        createdManualTasks.push({ name, platform });
+        if (supabase) {
+          await supabase.from('manual_tasks').insert({
+            user_id: 'default-user',
+            lead_id: lead.id,
+            platform,
+            profile_url: socials.instagram || socials.facebook || socials.tiktok || (phone ? `https://wa.me/${phone.replace(/[^0-9]/g, '')}` : ''),
+            suggested_service: 'social-media',
+            dm_message: dmMessage,
+            status: 'pending',
+          });
+        }
       }
     }
 
-    res.json({ success: true, count: imported.length, leads: imported });
+    res.json({
+      success: true,
+      importedCount: imported.length,
+      skippedDuplicatesCount: skippedDuplicates.length,
+      skippedSuppressedCount: skippedSuppressed.length,
+      manualTasksCreated: createdManualTasks.length,
+      leads: imported,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * GET /api/leads/telemetry-stats
+ * Returns: leadsWithEmail, leadsOnlySocial, pendingManualTasksToday, totalLeads
+ */
+router.get('/telemetry-stats', async (req, res) => {
+  try {
+    let leadsWithEmail = 0;
+    let leadsOnlySocial = 0;
+    let pendingManualTasksToday = 0;
+    let totalLeads = 0;
+
+    if (supabase) {
+      const { count: withEmail } = await supabase.from('leads').select('*', { count: 'exact', head: true }).neq('email', '');
+      leadsWithEmail = withEmail || 0;
+
+      const { count: total } = await supabase.from('leads').select('*', { count: 'exact', head: true });
+      totalLeads = total || 0;
+      leadsOnlySocial = Math.max(0, totalLeads - leadsWithEmail);
+
+      const { count: tasks } = await supabase.from('manual_tasks').select('*', { count: 'exact', head: true }).eq('status', 'pending');
+      pendingManualTasksToday = tasks || 0;
+    } else {
+      totalLeads = localLeads.length;
+      leadsWithEmail = localLeads.filter(l => Boolean(l.email)).length;
+      leadsOnlySocial = localLeads.filter(l => !l.email && (l.phone || (l.socials && Object.keys(l.socials).length > 0))).length;
+      pendingManualTasksToday = 4;
+    }
+
+    res.json({
+      success: true,
+      totalLeads,
+      leadsWithEmail,
+      leadsOnlySocial,
+      pendingManualTasksToday,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

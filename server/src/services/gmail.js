@@ -49,21 +49,32 @@ export async function testImapConnection(userEmail, appPassword) {
       pass: cleanPassword,
     },
     logger: false,
+    clientInfo: { name: 'ReachOut' },
+    connectionTimeout: 5000,
+    greetingTimeout: 5000,
   });
 
   try {
-    await client.connect();
-    const lock = await client.getMailboxLock('INBOX');
-    try {
-      // Verify inbox access
-      await client.status('INBOX', { messages: true });
-    } finally {
-      lock.release();
-    }
-    await client.logout();
-    return { success: true, message: 'IMAP connection verified successfully' };
+    const connectPromise = async () => {
+      await client.connect();
+      const lock = await client.getMailboxLock('INBOX');
+      try {
+        await client.status('INBOX', { messages: true });
+      } finally {
+        lock.release();
+      }
+      await client.logout();
+      return { success: true, message: 'IMAP connection verified successfully' };
+    };
+
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('IMAP connection timed out after 5000ms')), 5000)
+    );
+
+    return await Promise.race([connectPromise(), timeoutPromise]);
   } catch (err) {
-    console.error('IMAP test error:', err);
+    try { await client.logout(); } catch (e) {}
+    console.error('IMAP test error:', err.message);
     return { success: false, error: err.message || 'Failed to authenticate with Gmail IMAP' };
   }
 }
@@ -92,7 +103,9 @@ export async function sendOutreachEmail({
     subject: subject,
     text: text,
     html: html,
-    headers: {},
+    headers: {
+      'List-Unsubscribe': `<mailto:${userEmail}?subject=unsubscribe>`,
+    },
   };
 
   if (inReplyTo) {

@@ -21,16 +21,8 @@
   },
   "crons": [
     {
-      "path": "/api/cron/send",
-      "schedule": "*/30 5-13 * * 1-6"
-    },
-    {
-      "path": "/api/cron/replies",
-      "schedule": "*/15 * * * *"
-    },
-    {
-      "path": "/api/cron/daily-summary",
-      "schedule": "0 15 * * *"
+      "path": "/api/cron/health",
+      "schedule": "0 4 * * *"
     }
   ],
   "rewrites": [

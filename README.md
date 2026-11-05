@@ -1,65 +1,78 @@
-# ReachOut — AI Cold-Outreach Automation Dashboard
+# ReachOut — Autonomous AI Cold-Outreach System
 
-A full-stack cold-outreach automation system built for **Shoaib ul Din** (Islamabad, Pakistan), featuring multi-channel sequence management, personalized AI hooks via Google Gemini, personal Gmail SMTP/IMAP integration with automatic Sent folder archiving, and deliverability monitoring.
-
----
-
-## Tech Stack & Architecture
-
-- **Frontend**: React 19, Vite, Tailwind CSS with the **Kinetic Blue SaaS** design tokens extracted from Stitch (`stitch_designs/DESIGN.md`), Inter typography, and Material Symbols.
-- **Backend**: Node.js & Express configured for local development and Vercel Serverless Functions (`/api`).
-- **Database & Auth**: Supabase (PostgreSQL with Row Level Security enabled on all 14 tables, Supabase Auth).
-- **Email Delivery**: Personal Gmail SMTP (`smtp.gmail.com:465` SSL) via `nodemailer`. All sent emails are automatically saved in the user's Gmail "Sent" folder. Threading maintained with `In-Reply-To` and `References` headers.
-- **Reply & Bounce Tracking**: Gmail IMAP (`imap.gmail.com:993`) via `imapflow` and `mailparser`.
-- **AI Personalization**: Google Gemini API (`@google/generative-ai`) for personalized opening hooks, smart service matching, and reply classification (Interested / Not interested / Question / Out of office / Unsubscribe).
-- **Scheduler**: Zero-cost serverless triggers using GitHub Actions scheduled workflows (`.github/workflows/cron-send.yml` and `cron-replies.yml`) calling protected endpoints `/api/cron/send` and `/api/cron/replies`.
+A full-stack cold-outreach automation system built for **Shoaib ul Din** (Islamabad, Pakistan), designed to operate **100% autonomously in the cloud** without requiring an open laptop or local execution.
 
 ---
 
-## The 4 Outreach Services
+## 1. Cloud Architecture & Zero-Cost Scheduling
 
-Each service has its own dedicated campaign pipeline, email templates (initial + 2 follow-ups), and editable experience claims:
+The platform runs completely on cloud serverless infrastructure:
 
-1. **Social Media Management**
-   - Default Experience: `4 months` (editable in Settings)
-   - Mandatory Proof-of-Work: TikTok (`https://www.tiktok.com/@syed_ali_azzam`) and Facebook page URL (`facebook_url` in Settings)
-2. **Video Editing (Short-Form & Reels)**
-   - Default Experience: `3 years` (editable in Settings)
-   - Portfolio: `https://video-portfolio-572m.vercel.app/`
-3. **AI Video Creation**
-   - Default Experience: `4 months` (editable in Settings)
-   - Portfolio: `https://video-portfolio-572m.vercel.app/`
-4. **Product Management & Coordination**
-   - Default Experience: `4 months` (editable in Settings)
-   - Portfolio / Case Study: `https://github.com/shoaib`
+```
+[cron-job.org] (Every 15m) ──► /api/cron/replies  (IMAP reply & bounce tracker)
+[GitHub Actions] (Every 30m) ──► /api/cron/send     (Dispatches 1-2 emails, 10-18 PKT)
+[GitHub Actions] (Daily 20:00) ──► /api/cron/daily-summary (Summary email to Shoaib)
+[Vercel Crons] (Daily 04:00) ──► /api/cron/health   (Supabase keep-alive ping)
+```
 
----
-
-## Database Migrations (Supabase)
-
-Located in `supabase/migrations/`:
-- `20261105000000_initial_schema.sql`: 14 tables with Row Level Security (RLS) policies:
-  - `profiles`, `settings`, `services`, `leads`, `lead_channels`, `campaigns`, `templates`, `email_queue`, `email_logs`, `replies`, `manual_tasks`, `link_clicks`, `suppression_list`, `activity_log`.
-- `20261105000001_seed_data.sql`: Seeds user setup trigger, the 4 services with exact experience defaults, campaigns, and initial email templates with 3 A/B test subject line variants.
+- **Vercel Hobby Plan Compliance**: Vercel Hobby strictly enforces daily-only crons. Therefore, `vercel.json` contains only one daily cron (`/api/cron/health` at `0 4 * * *`) to keep your free Supabase instance active.
+- **GitHub Actions Usage**: Scheduled in `.github/workflows/cron-send.yml` (`*/30 5-13 * * 1-6` PKT 10:00–18:00 Mon–Sat) and `.github/workflows/cron-summary.yml`. Total monthly execution is ~120 minutes, well within the 2,000 free minutes/month limit.
+- **cron-job.org Setup (for IMAP Replies)**:
+  1. Create a free account at [cron-job.org](https://cron-job.org).
+  2. Click **Create Cronjob**.
+  3. **Title**: `ReachOut IMAP Replies`
+  4. **URL**: `https://<YOUR_VERCEL_DOMAIN>/api/cron/replies`
+  5. **Schedule**: Every 15 minutes (`*/15 * * * *`).
+  6. Under **Advanced / Headers**, add:
+     - Header Name: `x-cron-secret`
+     - Header Value: `<YOUR_CRON_SECRET>`
+  7. Save. This polls Gmail IMAP every 15 minutes, classifies incoming responses with Gemini AI, halts follow-ups, and alerts you instantly for hot leads.
 
 ---
 
-## Gmail App Password Setup
+## 2. Server-Side Safety Guardrails
 
-1. Enable 2-Step Verification on your Google Account (`Mshoaibuldin371@gmail.com`).
-2. Visit [Google App Passwords](https://myaccount.google.com/apppasswords).
-3. Create an app named **ReachOut** and copy the 16-character code.
-4. Ensure IMAP is enabled in **Gmail Settings > Forwarding and POP/IMAP > Enable IMAP**.
-5. In ReachOut Settings, enter your App Password, click **Test Connection**, and click **Send Test Email**.
+- **Approval Mode OFF by Default**: Outreach operates autonomously. Manual approval remains available as an optional toggle in Settings.
+- **AI Hook Validation**: Opening lines are strictly limited to 25 words with no URLs, no prices/currency (`$`, `PKR`, `Rs`), no client/result claims (`100k`, `10x`, `ROI`), and no hardcoded experience claims. If any check fails, the clean generic opener is used.
+- **Freemail Filter**: Skips `@gmail.com`, `@yahoo.com`, `@hotmail.com`, etc., and only reaches public business domain emails (unless imported via CSV).
+- **Bounce Rate Auto-Pause**: Evaluated after at least 20 sent emails. If bounce rate exceeds 5% (>1 bounce in 20) or if SMTP returns an authentication/quota error:
+  - All automated sending is halted immediately.
+  - An emergency alert email is sent to your inbox.
+  - A red alert banner displaying the exact bounced addresses appears in the Dashboard.
+- **Warm-Up Pacing**: Server-side enforced using database logs (15 emails/day, +5 every 3 days, max 40/day). Each cron invocation sends at most 1–2 emails to keep execution times under 8 seconds.
+- **Deliverability**:
+  - The first email in any sequence contains **NO tracking redirect links**. The plain portfolio URL is used directly.
+  - Plain-text format, under 120 words, 1 clear call-to-action, and a standard `List-Unsubscribe` header.
 
 ---
 
-## Deployment & Cron Triggering
+## 3. Required Environment Variables
 
-- **Vercel**: Deploy the repo to Vercel (`https://vercel.com/mshoaibawan371`).
-- **GitHub Secrets**: Set `VERCEL_APP_URL` and `CRON_SECRET` in repo secrets.
-  - Morning Run: 10:00 Asia/Karachi (05:00 UTC)
-  - Afternoon Run: 16:00 Asia/Karachi (11:00 UTC)
-  - IMAP Reply Poller: Every 10 minutes (`*/10 * * * *`)
-  - *Note: GitHub Actions cron may have minor queue delays. You can also configure a free monitor on [cron-job.org](https://cron-job.org) hitting `https://<your-domain>/api/cron/send` and `https://<your-domain>/api/cron/replies` with header `x-cron-secret: <CRON_SECRET>`.*
+### In Vercel (`Project Settings > Environment Variables`):
 
+| Variable | Description |
+| :--- | :--- |
+| `GMAIL_USER` | Your sending Gmail address (e.g. `Mshoaibuldin371@gmail.com`) |
+| `GMAIL_APP_PASSWORD` | 16-character Google App Password (e.g. `<YOUR_APP_PASSWORD>`) |
+| `GEMINI_API_KEY` | Google AI Studio developer API key (`<YOUR_GEMINI_API_KEY>`) |
+| `SUPABASE_URL` | Supabase project URL (`https://<YOUR_PROJECT_REF>.supabase.co`) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase secret key (`sb_secret_<YOUR_SECRET_KEY>`) |
+| `CRON_SECRET` | Secret token used to protect cron endpoints (e.g. `<YOUR_CRON_SECRET>`) |
+
+### In GitHub (`Repo Settings > Secrets and variables > Actions`):
+
+| Secret Name | Value |
+| :--- | :--- |
+| `VERCEL_APP_URL` | `https://<YOUR_PROJECT_NAME>.vercel.app` (without trailing slash) |
+| `CRON_SECRET` | Matches the `CRON_SECRET` set in Vercel |
+
+---
+
+## 4. CSV Import Format
+
+Upload a CSV file in **Lead Finder** with the following standard column headers:
+```csv
+name,email,website,instagram,facebook,tiktok,phone,city,industry
+The Monal,info@themonal.com,https://themonal.com,,https://facebook.com/themonal,,0512898044,Islamabad,Hospitality
+```
+Leads without an email address but containing a social link or phone number are automatically converted into **Manual Outreach Tasks** with an AI-crafted platform DM (<60 words).

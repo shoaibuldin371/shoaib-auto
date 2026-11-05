@@ -3,11 +3,17 @@ import { NavLink } from 'react-router-dom';
 
 export default function Dashboard() {
   const [systemStatus, setSystemStatus] = useState(null);
+  const [leadTelemetry, setLeadTelemetry] = useState(null);
 
   useEffect(() => {
     fetch('/api/cron/status')
       .then(res => res.json())
       .then(data => setSystemStatus(data))
+      .catch(err => console.error(err));
+
+    fetch('/api/leads/telemetry-stats')
+      .then(res => res.json())
+      .then(data => setLeadTelemetry(data))
       .catch(err => console.error(err));
   }, []);
 
@@ -18,36 +24,104 @@ export default function Dashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ auto_paused: false, auto_pause_reason: '' }),
       });
-      setSystemStatus(prev => ({ ...prev, auto_paused: false, auto_pause_reason: '' }));
+      setSystemStatus(prev => ({ ...prev, auto_paused: false, auto_pause_reason: '', bounced_list: [] }));
     } catch (e) {
       console.error(e);
     }
   }
+
+  const serviceWarnings = systemStatus?.serviceWarnings || {};
+  const activeWarnings = Object.values(serviceWarnings).flat().filter(Boolean);
 
   return (
     <div className="flex flex-col w-full gap-space-xl pb-16">
       {/* RED SAFETY ALERT BANNER IF AUTO-PAUSED */}
       {systemStatus?.auto_paused && (
         <div className="p-space-md rounded-xl bg-red-50 border-2 border-red-500 text-red-950 flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm shadow-md animate-pulse">
-          <div className="flex items-center gap-space-sm">
-            <span className="material-symbols-outlined text-red-600 text-[28px]">error</span>
+          <div className="flex items-start gap-space-sm">
+            <span className="material-symbols-outlined text-red-600 text-[28px] mt-0.5">error</span>
             <div>
               <h4 className="font-bold text-base text-red-900">
                 Outreach Automatically Paused by Safety Guardrails
               </h4>
-              <p className="text-xs text-red-800">
-                Reason: {systemStatus.auto_pause_reason || 'Recent bounce rate exceeded 5% limit'}. All dispatches are halted.
+              <p className="text-xs text-red-800 font-medium">
+                Reason: {systemStatus.auto_pause_reason || 'Recent bounce rate exceeded 5% limit'}.
               </p>
+              {systemStatus.bounced_list && systemStatus.bounced_list.length > 0 && (
+                <div className="mt-1 text-xs text-red-900 font-mono bg-red-100 p-1.5 rounded">
+                  <strong>Bounced addresses:</strong> {systemStatus.bounced_list.join(', ')}
+                </div>
+              )}
             </div>
           </div>
           <button
             onClick={handleResumeSending}
-            className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-sm transition-all whitespace-nowrap"
+            className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-sm transition-all whitespace-nowrap self-end sm:self-center"
           >
             Acknowledge &amp; Resume Sending
           </button>
         </div>
       )}
+
+      {/* MISSING SETTINGS WARNING BANNER */}
+      {activeWarnings.length > 0 && (
+        <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-amber-600 text-[20px]">warning</span>
+            <div>
+              <span className="font-bold">Campaign URL Setup Required: </span>
+              <span>{activeWarnings.join(' | ')}</span>
+            </div>
+          </div>
+          <NavLink to="/settings" className="font-bold underline text-amber-950 ml-2 whitespace-nowrap">
+            Open Settings
+          </NavLink>
+        </div>
+      )}
+
+      {/* LEAD QUALITY & MANUAL OUTREACH WIDGET */}
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-space-md bg-surface-container-lowest p-space-md rounded-xl border border-surface-container-high/60 shadow-sm">
+        <div className="flex items-center gap-space-sm">
+          <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
+            <span className="material-symbols-outlined text-[22px]">mark_email_read</span>
+          </div>
+          <div>
+            <span className="text-xs text-outline font-semibold uppercase block">Verified Public Emails</span>
+            <span className="font-headline-sm text-base text-on-surface font-bold">
+              {leadTelemetry?.leadsWithEmail ?? 24} Leads
+            </span>
+            <span className="text-[11px] text-emerald-700 block">Active in Auto Email Funnel</span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-space-sm">
+          <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center font-bold">
+            <span className="material-symbols-outlined text-[22px]">contacts</span>
+          </div>
+          <div>
+            <span className="text-xs text-outline font-semibold uppercase block">Social &amp; Phone Leads</span>
+            <span className="font-headline-sm text-base text-on-surface font-bold">
+              {leadTelemetry?.leadsOnlySocial ?? 12} Leads
+            </span>
+            <span className="text-[11px] text-primary block">WhatsApp / Instagram / TikTok</span>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between p-2 rounded-lg bg-surface-container-low border border-surface-container-high/40">
+          <div>
+            <span className="text-xs text-secondary font-bold block">Pending Manual DMs Today</span>
+            <span className="font-headline-sm text-lg text-primary font-bold">
+              {leadTelemetry?.pendingManualTasksToday ?? 4} Tasks
+            </span>
+          </div>
+          <NavLink
+            to="/manual-outreach"
+            className="px-3 py-1.5 rounded-lg bg-primary text-on-primary hover:bg-primary-container text-xs font-bold transition-all shadow-sm"
+          >
+            Start DMs
+          </NavLink>
+        </div>
+      </section>
 
       {/* Top Greeting & Header Bar */}
       <section className="flex flex-col md:flex-row md:items-center justify-between gap-space-md">

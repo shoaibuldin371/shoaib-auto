@@ -39,7 +39,7 @@ export async function enrichWebsite(websiteUrl) {
 
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 6000); // 6s timeout
+    const timeout = setTimeout(() => controller.abort(), 4000); // 4s strict timeout for Vercel limit
 
     const res = await fetch(url, {
       signal: controller.signal,

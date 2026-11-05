@@ -16,3 +16,4 @@ jobs:
           curl -s -X POST "${{ secrets.VERCEL_APP_URL }}/api/cron/send" \
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json"
+
