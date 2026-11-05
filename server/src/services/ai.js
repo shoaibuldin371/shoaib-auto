@@ -173,33 +173,101 @@ RULES:
   }
 
   /**
+   * Explains an incoming prospect email in Roman Urdu and suggests the best next action.
+   */
+  async explainInUrdu(emailBody, subject = '') {
+    const prompt = `You are an executive assistant for Shoaib ul Din. A prospective client sent this email:
+Subject: ${subject}
+Message:
+"${emailBody}"
+
+Task:
+1. Explain what the client is saying in simple, natural Roman Urdu (2 sentences).
+2. Suggest the recommended next step for Shoaib in Roman Urdu (1 sentence).
+
+Format your output as:
+Khulasa: [Roman Urdu summary]
+Agla Qadam: [Suggested action in Roman Urdu]`;
+
+    const res = await this.callGemini(prompt);
+    if (res) {
+      let text = res.replace(/\*\*/g, '').trim();
+      if (!/Khulasa:/i.test(text)) text = `Khulasa: ${text}`;
+      if (!/Agla Qadam:/i.test(text)) text = `${text}\nAgla Qadam: Inko portfolio link share karein ya direct phone call karein.`;
+      return text;
+    }
+
+    return `Khulasa: Client ne aapki email ka jawab diya hai aur mazeed maloomat mangi hain.\nAgla Qadam: Inko WhatsApp par sample portfolio bhejein ya quick call schedule karein.`;
+  }
+
+  /**
    * Urdu-to-English reply assistant.
-   * Converts Urdu notes or rough points from Shoaib into a clean, professional, concise English outreach reply.
+   * Converts Urdu notes into a professional English response, with a Roman Urdu explanation
+   * and warning if the client asked for price/date that Shoaib did not provide.
    */
   async translateUrduReply(urduNotes, originalEmail = '') {
-    const prompt = `You are an executive assistant for Shoaib ul Din, a professional video editor and digital creator based in Islamabad, Pakistan.
-Shoaib received this email from a prospective client:
+    const prompt = `You are an executive assistant for Shoaib ul Din, an outreach specialist in Islamabad.
+A prospect sent this email:
 "${originalEmail || 'Inquiry about video editing services'}"
 
-Shoaib wrote these rough notes/reply points in Roman Urdu or Urdu:
+Shoaib wrote these notes in Roman Urdu:
 "${urduNotes}"
 
-Task: Translate and refine Shoaib's rough notes into a concise, polite, professional English email response.
 RULES:
-- Keep it under 100 words.
-- Natural, professional tone.
-- Friendly, humble, and clear.
-- Sign off with:
-Best regards,
-Shoaib ul Din
-03473547036
+- Draft a concise, polite English outreach email (<80 words).
+- STRICT FORBIDDEN: Do NOT invent prices, rates, specific delivery dates, or claims not mentioned by Shoaib.
+- Check if the prospect asked for price, rates, or timeline, but Shoaib did not specify them:
+  If so, flag this in Roman Urdu as a warning.
+- Provide a 1-sentence Roman Urdu note explaining what the English draft says.
 
-Output ONLY the final email body.`;
+Return ONLY a valid JSON object matching this schema:
+{
+  "englishDraft": "Hi [Name],\\n\\n...\\n\\nBest regards,\\nShoaib ul Din\\n03473547036",
+  "urduExplanation": "Is draft mein client ko bataya gaya hai k...",
+  "warning": "Khabardar: Client ne rate ya date mangi thi lekin aapne nahi batayi..." (or null if no warning)
+}`;
 
     const drafted = await this.callGemini(prompt);
-    if (drafted) return drafted.replace(/^["']|["']$/g, '').trim();
+    let result = null;
 
-    return `Hi,\n\nThank you for reaching out! I would love to assist you. Let me share some custom sample concepts for your review.\n\nBest regards,\nShoaib ul Din\n03473547036`;
+    if (drafted) {
+      try {
+        const jsonMatch = drafted.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const parsed = JSON.parse(jsonMatch[0]);
+          result = {
+            englishDraft: parsed.englishDraft || drafted,
+            urduExplanation: parsed.urduExplanation || 'English draft ready.',
+            warning: parsed.warning || null,
+          };
+        }
+      } catch (e) {
+        // Fallback to text parsing
+      }
+    }
+
+    if (!result) {
+      result = {
+        englishDraft: drafted ? drafted.replace(/^["']|["']$/g, '').trim() : `Hi,\n\nThank you for reaching out! I would love to assist you. Let me share some custom sample concepts for your review.\n\nBest regards,\nShoaib ul Din\n03473547036`,
+        urduExplanation: 'Draft mein client ka shukriya ada kiya gaya hai aur sample concepts offer kiye gaye hain.',
+        warning: null,
+      };
+    }
+
+    // Server-side safety guardrail: detect if prospect asked for price/rates or date/timeline
+    // and Shoaib did not provide them in his notes. Warn in Roman Urdu.
+    const priceAsked = /pricing|price|rate|cost|budget|charges|quote|package/i.test(originalEmail);
+    const priceProvided = /\b\d+\s*(pkr|rs|usd|\$|dollars?|rupees?)\b|\b\d{3,}\b/i.test(urduNotes);
+    const dateAsked = /timeline|deadline|turnaround|delivery date|how fast|when can you/i.test(originalEmail);
+    const dateProvided = /days?|hours?|kal|hafta|month|din|date|waqt|monday|friday/i.test(urduNotes);
+
+    if (priceAsked && !priceProvided && !result.warning) {
+      result.warning = '⚠️ Khabardar: Client ne package rate / qeemat mangi thi lekin aapke notes mein koi rate shamil nahi hai. Draft mein koi farzi price shamil nahi ki gayi.';
+    } else if (dateAsked && !dateProvided && !result.warning) {
+      result.warning = '⚠️ Khabardar: Client ne delivery timeline mangi thi lekin aapke notes mein koi date shamil nahi hai.';
+    }
+
+    return result;
   }
 }
 

@@ -47,23 +47,43 @@ function recordCronExecution(endpoint, durationMs, status = 'success', info = {}
       event_type: 'cron_run',
       description: `[CRON ${endpoint}] finished in ${durationMs}ms (${status})`,
       metadata: entry,
-    }).catch(() => {});
+    }).then(() => {}, () => {});
   }
 }
 
-// Middleware to verify CRON_SECRET
+// Middleware to verify CRON_SECRET or authenticated Admin session
 function verifyCronAuth(req, res, next) {
   const secret = process.env.CRON_SECRET || 'reachout-cron-secret-2026';
-  const authHeader = req.headers['authorization'];
   const cronHeader = req.headers['x-cron-secret'];
   const querySecret = req.query.secret;
+  const authHeader = req.headers['authorization'];
 
-  const token = authHeader?.replace(/^Bearer\s+/i, '') || cronHeader || querySecret;
-
-  if (process.env.NODE_ENV === 'production' && token !== secret) {
-    return res.status(401).json({ error: 'Unauthorized: Invalid CRON_SECRET' });
+  if (cronHeader === secret || querySecret === secret) {
+    return next();
   }
-  next();
+
+  // Permit Bearer token if it matches secret directly
+  if (authHeader && authHeader.replace(/^Bearer\s+/i, '') === secret) {
+    return next();
+  }
+
+  // Permit authenticated admin session from frontend
+  if (authHeader && authHeader.startsWith('Bearer ') && supabase) {
+    const jwt = authHeader.split(' ')[1];
+    supabase.auth.getUser(jwt).then(({ data: { user }, error }) => {
+      const adminEmail = (process.env.ADMIN_EMAIL || process.env.GMAIL_USER || 'Mshoaibuldin371@gmail.com').toLowerCase().trim();
+      if (!error && user && (user.email || '').toLowerCase().trim() === adminEmail) {
+        req.user = user;
+        return next();
+      }
+      return res.status(401).json({ error: 'Unauthorized: Invalid CRON_SECRET or session token.' });
+    }).catch(() => {
+      return res.status(401).json({ error: 'Unauthorized: Invalid CRON_SECRET' });
+    });
+    return;
+  }
+
+  return res.status(401).json({ error: 'Unauthorized: Invalid or missing x-cron-secret header.' });
 }
 
 /**
@@ -154,7 +174,7 @@ async function sendShoaibAlert({ subject, html, text }) {
  * /api/cron/health
  * Daily Supabase keep-alive endpoint (Triggered daily by Vercel Hobby cron)
  */
-router.all('/health', async (req, res) => {
+router.all('/health', verifyCronAuth, async (req, res) => {
   const startTime = Date.now();
   try {
     let dbStatus = 'ok';
@@ -812,13 +832,16 @@ router.all('/replies', verifyCronAuth, async (req, res) => {
           }).eq('email', fromEmail.toLowerCase());
         }
 
-        // Send alert for "Interested" replies
-        if (classification === 'Interested') {
-          await sendShoaibAlert({
-            subject: `🔥 [HOT LEAD ALERT] ${fromName} replied "Interested" to your outreach!`,
-            text: `Assalam o Alaikum Shoaib,\n\n${fromName} (${fromEmail}) responded with interest!\n\nSubject: ${subject}\n\nMessage snippet:\n"${bodyText.slice(0, 300)}..."\n\nLog in to ReachOut Inbox or reply directly from your Gmail.`,
-          });
-        }
+        // Send instant alert on EVERY reply (with HOT marking for Interested)
+        const isHot = classification === 'Interested';
+        const alertBadge = isHot ? '🔥 [HOT LEAD ALERT]' : `📥 [NEW REPLY - ${classification}]`;
+        const alertSubject = `${alertBadge} ${fromName} (${fromEmail})`;
+        const alertBody = `Assalam o Alaikum Shoaib,\n\n${isHot ? '🔥 HOT INTERESTED LEAD DETECTED!\n\n' : ''}Prospect: ${fromName}\nEmail: ${fromEmail}\nCategory: ${classification}\nSubject: ${subject}\n\nMessage Preview:\n"${bodyText.slice(0, 300)}..."\n\nOpen ReachOut Inbox to review or reply with AI Assistant.`;
+
+        await sendShoaibAlert({
+          subject: alertSubject,
+          text: alertBody,
+        });
       }
     } finally {
       lock.release();

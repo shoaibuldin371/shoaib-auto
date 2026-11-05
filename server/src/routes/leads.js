@@ -5,6 +5,8 @@ import { enrichWebsite } from '../services/enricher.js';
 import { calculateLeadScore } from '../services/scoring.js';
 import { aiProvider } from '../services/ai.js';
 import { extractDomain, validateAiHook } from '../utils/guardrails.js';
+import { sendOutreachEmail } from '../services/gmail.js';
+import { decrypt } from '../utils/crypto.js';
 
 const router = express.Router();
 
@@ -478,7 +480,7 @@ router.post('/:id/generate-hook', async (req, res) => {
 
 /**
  * POST /api/leads/reply-assistant
- * Urdu/Roman Urdu to professional English reply drafter
+ * Urdu/Roman Urdu to professional English reply drafter with Roman Urdu explanation and missing details warning
  */
 router.post('/reply-assistant', async (req, res) => {
   try {
@@ -487,10 +489,99 @@ router.post('/reply-assistant', async (req, res) => {
       return res.status(400).json({ error: 'Urdu notes are required.' });
     }
 
-    const replyText = await aiProvider.translateUrduReply(urduNotes, originalEmail);
+    const result = await aiProvider.translateUrduReply(urduNotes, originalEmail);
     res.json({
       success: true,
-      replyText,
+      ...result,
+      replyText: result.englishDraft,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * POST /api/leads/explain-in-urdu
+ * Roman Urdu summary + suggested next action for incoming email
+ */
+router.post('/explain-in-urdu', async (req, res) => {
+  try {
+    const { emailBody, subject } = req.body || {};
+    if (!emailBody) {
+      return res.status(400).json({ error: 'Email body is required.' });
+    }
+
+    const explanation = await aiProvider.explainInUrdu(emailBody, subject);
+    res.json({
+      success: true,
+      explanation,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * POST /api/leads/send-thread-reply
+ * Sends an email reply via Gmail SMTP in the SAME thread (In-Reply-To + References headers)
+ */
+router.post('/send-thread-reply', async (req, res) => {
+  try {
+    const { toEmail, subject, text, inReplyTo, references, leadId } = req.body || {};
+
+    if (!toEmail || !text) {
+      return res.status(400).json({ error: 'Recipient email and text are required.' });
+    }
+
+    // Resolve credentials from settings
+    let appPassword = process.env.GMAIL_APP_PASSWORD || '';
+    let senderEmail = process.env.GMAIL_USER || 'Mshoaibuldin371@gmail.com';
+    let senderName = 'Shoaib ul Din';
+
+    if (supabase) {
+      const { data: set } = await supabase.from('settings').select('*').limit(1).single();
+      if (set) {
+        if (set.gmail_address) senderEmail = set.gmail_address;
+        if (set.sender_name) senderName = set.sender_name;
+        if (set.gmail_app_password_encrypted) {
+          appPassword = decrypt(set.gmail_app_password_encrypted);
+        }
+      }
+    }
+
+    if (!appPassword) {
+      return res.status(400).json({ error: 'Gmail App Password is not configured.' });
+    }
+
+    const result = await sendOutreachEmail({
+      userEmail: senderEmail,
+      appPassword,
+      fromName: senderName,
+      to: toEmail,
+      subject: subject?.startsWith('Re:') ? subject : `Re: ${subject || 'Outreach'}`,
+      text,
+      inReplyTo,
+      references: references || inReplyTo,
+    });
+
+    if (supabase && leadId) {
+      await supabase.from('email_logs').insert({
+        user_id: 'default-user',
+        lead_id: leadId,
+        recipient: toEmail,
+        subject: subject || 'Outreach Reply',
+        status: 'sent',
+        message_id: result.messageId,
+        thread_id: inReplyTo || result.messageId,
+        sent_at: new Date().toISOString(),
+      }).catch(() => {});
+    }
+
+    res.json({
+      success: true,
+      messageId: result.messageId,
+      sentTo: toEmail,
+      inThread: Boolean(inReplyTo),
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

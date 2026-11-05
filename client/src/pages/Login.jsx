@@ -9,16 +9,55 @@ export default function Login() {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
 
+  const checkRateLimit = () => {
+    try {
+      const attempts = JSON.parse(localStorage.getItem('reachout_login_attempts') || '[]');
+      const fifteenMinAgo = Date.now() - 15 * 60 * 1000;
+      const recentAttempts = attempts.filter((t) => t > fifteenMinAgo);
+      if (recentAttempts.length >= 5) {
+        const remainingMin = Math.ceil((recentAttempts[0] + 15 * 60 * 1000 - Date.now()) / 60000);
+        return { locked: true, remainingMin: Math.max(1, remainingMin) };
+      }
+      return { locked: false, count: recentAttempts.length };
+    } catch {
+      return { locked: false };
+    }
+  };
+
+  const recordFailedAttempt = () => {
+    try {
+      const attempts = JSON.parse(localStorage.getItem('reachout_login_attempts') || '[]');
+      const fifteenMinAgo = Date.now() - 15 * 60 * 1000;
+      const recentAttempts = attempts.filter((t) => t > fifteenMinAgo);
+      recentAttempts.push(Date.now());
+      localStorage.setItem('reachout_login_attempts', JSON.stringify(recentAttempts));
+    } catch {}
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     setMessage('');
 
+    const rateCheck = checkRateLimit();
+    if (rateCheck.locked) {
+      setError(`Too many failed login attempts (5 max). Locked for security. Try again in ${rateCheck.remainingMin} minute(s).`);
+      setLoading(false);
+      return;
+    }
+
     try {
       await signIn(email, password);
+      localStorage.removeItem('reachout_login_attempts');
     } catch (err) {
-      setError(err.message || 'Authentication failed. Please check your credentials.');
+      recordFailedAttempt();
+      const updatedCheck = checkRateLimit();
+      if (updatedCheck.locked) {
+        setError(`5 failed login attempts reached. Account locked for 15 minutes.`);
+      } else {
+        setError(err.message || 'Authentication failed. Please check your credentials.');
+      }
     } finally {
       setLoading(false);
     }

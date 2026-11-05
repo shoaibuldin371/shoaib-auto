@@ -1,0 +1,16 @@
+{
+  "short_name": "ReachOut",
+  "name": "ReachOut AI Outreach Automation",
+  "description": "Automated cold-outreach & inbound deal flow system for Shoaib ul Din",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb",
+  "display": "standalone"
+}

@@ -35,7 +35,9 @@ export default function Header({ title = 'ReachOut' }) {
           title="Notifications"
         >
           <span className="material-symbols-outlined text-[20px]">notifications</span>
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span>
+          {parseInt(localStorage.getItem('reachout_unread_inbox_count') || '0', 10) > 0 && (
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error animate-ping"></span>
+          )}
         </button>
 
         {/* New Campaign Button */}

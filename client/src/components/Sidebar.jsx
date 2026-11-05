@@ -114,9 +114,11 @@ export default function Sidebar() {
               <span className="material-symbols-outlined text-[20px]">inbox</span>
               <span>Inbox</span>
             </div>
-            <span className="font-label-sm text-label-sm px-1.5 py-0.5 rounded-full bg-error-container text-on-error-container font-bold">
-              3
-            </span>
+            {parseInt(localStorage.getItem('reachout_unread_inbox_count') || '0', 10) > 0 && (
+              <span className="font-label-sm text-label-sm px-1.5 py-0.5 rounded-full bg-error-container text-on-error-container font-bold">
+                {localStorage.getItem('reachout_unread_inbox_count')}
+              </span>
+            )}
           </NavLink>
 
           <NavLink to="/pipeline" className={navClass}>

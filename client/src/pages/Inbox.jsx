@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
 
 const INITIAL_THREADS = [];
 
@@ -9,28 +10,131 @@ export default function Inbox() {
   const [searchQuery, setSearchQuery] = useState('');
   const [replyText, setReplyText] = useState('');
   const [syncingImap, setSyncingImap] = useState(false);
+  const [sendingReply, setSendingReply] = useState(false);
   const [syncMessage, setSyncMessage] = useState('');
   const [showUrduModal, setShowUrduModal] = useState(false);
   const [urduNotes, setUrduNotes] = useState('');
   const [draftingReply, setDraftingReply] = useState(false);
+  const [urduExplanation, setUrduExplanation] = useState('');
+  const [urduWarning, setUrduWarning] = useState('');
+  const [threadExplanations, setThreadExplanations] = useState({});
+  const [explainingThreadId, setExplainingThreadId] = useState(null);
+
+  const [settings, setSettings] = useState({
+    sender_phone: '03473547036',
+    calendly_link: '',
+    video_portfolio_url: 'https://video-portfolio-self-eight.vercel.app/',
+    ai_video_portfolio_url: 'https://video-portfolio-572m.vercel.app/',
+  });
+
+  useEffect(() => {
+    fetchSettings();
+
+    // Supabase Realtime updates on email_logs or leads
+    if (supabase) {
+      const channel = supabase
+        .channel('inbox-realtime')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'email_logs' }, () => {
+          handleSyncImap(true);
+        })
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }
+  }, []);
+
+  const fetchSettings = async () => {
+    try {
+      const res = await fetch('/api/settings');
+      if (res.ok) {
+        const data = await res.json();
+        setSettings(data);
+      }
+    } catch (e) {}
+  };
 
   const activeThread = threads.find(t => t.id === selectedThreadId) || threads[0] || null;
+
+  const portfolioUrl = settings.video_portfolio_url || settings.ai_video_portfolio_url || '';
+
+  const filteredThreads = threads.filter(t => {
+    const matchCat = filterCategory === 'all' || 
+      (filterCategory === 'interested' && t.category === 'Interested') ||
+      (filterCategory === 'question' && t.category === 'Question') ||
+      (filterCategory === 'booked' && t.category === 'Booked Calls');
+    
+    const matchSearch = (t.lead_name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (t.business_name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (t.subject || '').toLowerCase().includes(searchQuery.toLowerCase());
+
+    return matchCat && matchSearch;
+  });
+
+  async function handleSyncImap(silent = false) {
+    if (!silent) setSyncingImap(true);
+    setSyncMessage('');
+    try {
+      const res = await fetch('/api/cron/replies');
+      const data = await res.json();
+      if (res.ok) {
+        if (!silent) setSyncMessage(`Synced with Gmail IMAP. ${data.processedCount || 0} messages scanned.`);
+      }
+    } catch (e) {
+      if (!silent) setSyncMessage('Gmail IMAP checked.');
+    } finally {
+      if (!silent) setSyncingImap(false);
+      setTimeout(() => setSyncMessage(''), 5000);
+    }
+  }
+
+  function toggleReadStatus(threadId) {
+    setThreads(prev => {
+      const updated = prev.map(t => t.id === threadId ? { ...t, isRead: !t.isRead } : t);
+      const unreadCount = updated.filter(t => !t.isRead).length;
+      localStorage.setItem('reachout_unread_inbox_count', unreadCount.toString());
+      return updated;
+    });
+  }
+
+  async function handleExplainInUrdu(threadId, emailText, subject) {
+    setExplainingThreadId(threadId);
+    try {
+      const res = await fetch('/api/leads/explain-in-urdu', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ emailBody: emailText, subject }),
+      });
+      const data = await res.json();
+      if (data.explanation) {
+        setThreadExplanations(prev => ({ ...prev, [threadId]: data.explanation }));
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setExplainingThreadId(null);
+    }
+  }
 
   async function handleDraftUrduReply() {
     if (!urduNotes.trim()) return;
     setDraftingReply(true);
     try {
+      const lastMsg = activeThread?.messages?.[activeThread.messages.length - 1];
       const res = await fetch('/api/leads/reply-assistant', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           urduNotes,
-          originalEmail: activeThread?.messages?.[activeThread.messages.length - 1]?.text || '',
+          originalEmail: lastMsg?.text || activeThread?.subject || '',
         }),
       });
       const data = await res.json();
       if (data.replyText) {
         setReplyText(data.replyText);
+        setUrduExplanation(data.urduExplanation || '');
+        setUrduWarning(data.warning || '');
         setShowUrduModal(false);
         setUrduNotes('');
       }
@@ -41,60 +145,59 @@ export default function Inbox() {
     }
   }
 
-  const filteredThreads = threads.filter(t => {
-    const matchCat = filterCategory === 'all' || 
-      (filterCategory === 'interested' && t.category === 'Interested') ||
-      (filterCategory === 'question' && t.category === 'Question') ||
-      (filterCategory === 'booked' && t.category === 'Booked Calls');
-    
-    const matchSearch = t.lead_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.business_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.subject.toLowerCase().includes(searchQuery.toLowerCase());
-
-    return matchCat && matchSearch;
-  });
-
-  async function handleSyncImap() {
-    setSyncingImap(true);
-    setSyncMessage('');
+  async function handleSendReply() {
+    if (!replyText.trim() || !activeThread) return;
+    setSendingReply(true);
     try {
-      const res = await fetch('/api/cron/replies');
+      const lastMsg = activeThread.messages?.[activeThread.messages.length - 1];
+      const res = await fetch('/api/leads/send-thread-reply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          leadId: activeThread.leadId || activeThread.id,
+          toEmail: activeThread.email,
+          subject: activeThread.subject,
+          text: replyText,
+          inReplyTo: lastMsg?.messageId || activeThread.messageId || '',
+          references: lastMsg?.messageId || activeThread.messageId || '',
+        }),
+      });
+
       const data = await res.json();
-      if (res.ok) {
-        setSyncMessage(`Synced with Gmail IMAP. ${data.detectedCount || 0} new replies scanned & classified by Gemini.`);
+      if (data.success) {
+        const newMsg = {
+          from: 'Shoaib ul Din',
+          to: activeThread.email,
+          time: 'Just now',
+          isMe: true,
+          text: replyText,
+          messageId: data.messageId,
+        };
+
+        setThreads(prev => prev.map(t => {
+          if (t.id === activeThread.id) {
+            return {
+              ...t,
+              isRead: true,
+              messages: [...(t.messages || []), newMsg],
+            };
+          }
+          return t;
+        }));
+
+        setReplyText('');
+        setUrduExplanation('');
+        setUrduWarning('');
+        setSyncMessage(`Reply dispatched in thread via Gmail SMTP (Appears in Gmail Sent folder).`);
       } else {
-        setSyncMessage('Gmail IMAP connected and up to date.');
+        setSyncMessage(`SMTP Error: ${data.error}`);
       }
     } catch (e) {
-      setSyncMessage('Gmail IMAP checked. No unread messages.');
+      setSyncMessage(`Network Error: ${e.message}`);
     } finally {
-      setSyncingImap(false);
+      setSendingReply(false);
       setTimeout(() => setSyncMessage(''), 5000);
     }
-  }
-
-  function handleSendReply() {
-    if (!replyText.trim()) return;
-    const newMsg = {
-      from: 'Shoaib ul Din',
-      to: activeThread.email,
-      time: 'Just now',
-      isMe: true,
-      text: replyText
-    };
-
-    setThreads(prev => prev.map(t => {
-      if (t.id === activeThread.id) {
-        return {
-          ...t,
-          messages: [...t.messages, newMsg]
-        };
-      }
-      return t;
-    }));
-    setReplyText('');
-    setSyncMessage(`Reply sent to ${activeThread.email} via Gmail SMTP.`);
-    setTimeout(() => setSyncMessage(''), 4000);
   }
 
   return (
@@ -114,132 +217,120 @@ export default function Inbox() {
           </h1>
         </div>
 
-        {/* Action & Filter Tabs */}
+        {/* Action Controls */}
         <div className="flex items-center gap-space-sm flex-wrap">
-          <button
-            onClick={handleSyncImap}
-            disabled={syncingImap}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-all shadow-sm"
-          >
-            <span className={`material-symbols-outlined text-[18px] ${syncingImap ? 'animate-spin text-primary' : 'text-primary'}`}>
-              refresh
+          {syncMessage && (
+            <span className="text-xs px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 font-medium animate-fade-in">
+              {syncMessage}
             </span>
-            <span>{syncingImap ? 'Checking IMAP...' : 'Check New Replies'}</span>
-          </button>
+          )}
 
-          <div className="inline-flex p-1 rounded-xl bg-surface-container-low shadow-sm">
-            <button
-              onClick={() => setFilterCategory('all')}
-              className={`px-3 py-1 rounded-lg font-label-md text-label-md transition-all ${
-                filterCategory === 'all' ? 'bg-surface-container-lowest text-primary font-bold shadow-sm' : 'text-on-surface-variant'
-              }`}
-            >
-              All ({threads.length})
-            </button>
-            <button
-              onClick={() => setFilterCategory('interested')}
-              className={`px-3 py-1 rounded-lg font-label-md text-label-md transition-all flex items-center gap-1.5 ${
-                filterCategory === 'interested' ? 'bg-surface-container-lowest text-emerald-700 font-bold shadow-sm' : 'text-on-surface-variant'
-              }`}
-            >
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              Interested
-            </button>
-            <button
-              onClick={() => setFilterCategory('question')}
-              className={`px-3 py-1 rounded-lg font-label-md text-label-md transition-all flex items-center gap-1.5 ${
-                filterCategory === 'question' ? 'bg-surface-container-lowest text-amber-700 font-bold shadow-sm' : 'text-on-surface-variant'
-              }`}
-            >
-              <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-              Questions
-            </button>
-            <button
-              onClick={() => setFilterCategory('booked')}
-              className={`px-3 py-1 rounded-lg font-label-md text-label-md transition-all flex items-center gap-1.5 ${
-                filterCategory === 'booked' ? 'bg-surface-container-lowest text-primary font-bold shadow-sm' : 'text-on-surface-variant'
-              }`}
-            >
-              <span className="w-2 h-2 rounded-full bg-primary"></span>
-              Booked Calls
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => handleSyncImap(false)}
+            disabled={syncingImap}
+            className="flex items-center gap-space-xs px-space-md py-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface text-body-sm font-medium border border-surface-container-high transition-all"
+          >
+            <span className={`material-symbols-outlined text-[18px] ${syncingImap ? 'animate-spin' : ''}`}>
+              sync
+            </span>
+            <span>{syncingImap ? 'Scanning Gmail...' : 'Sync IMAP Now'}</span>
+          </button>
         </div>
       </div>
 
-      {syncMessage && (
-        <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-body-sm flex items-center justify-between">
-          <span>{syncMessage}</span>
-          <button onClick={() => setSyncMessage('')}>✕</button>
-        </div>
-      )}
-
-      {/* Main 3-Column Responsive Grid */}
+      {/* Main 3-Column Inbox Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-space-md items-start">
         
-        {/* COLUMN 1: Threads List (3.5 cols) */}
+        {/* COLUMN 1: Conversation Threads List (4 cols) */}
         <section className="xl:col-span-4 flex flex-col bg-surface-container-lowest rounded-xl shadow-sm border border-surface-container-high/50 overflow-hidden h-[760px]">
-          {/* Search bar */}
-          <div className="p-space-md bg-surface-container-lowest flex flex-col gap-space-xs border-b border-surface-container-high/40">
-            <div className="relative w-full">
-              <span className="material-symbols-outlined absolute left-3 top-2.5 text-[18px] text-outline">search</span>
+          {/* Filter Bar */}
+          <div className="p-space-sm border-b border-surface-container-high/40 space-y-2">
+            <div className="relative">
+              <span className="material-symbols-outlined absolute left-2.5 top-2 text-[18px] text-on-surface-variant">
+                search
+              </span>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search leads, businesses..."
-                className="w-full h-9 pl-9 pr-3 rounded-lg bg-surface-container-low text-body-sm text-on-surface focus:outline-none focus:bg-surface-container-lowest border border-surface-container-high"
+                placeholder="Search leads, domains, replies..."
+                className="w-full h-8 pl-8 pr-3 bg-surface-container-low rounded-lg text-body-sm border border-transparent focus:border-outline-variant focus:outline-none"
               />
+            </div>
+
+            <div className="flex gap-1 overflow-x-auto pb-1 text-xs">
+              {['all', 'interested', 'question', 'booked'].map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setFilterCategory(cat)}
+                  className={`px-2.5 py-1 rounded-lg capitalize font-medium transition-all ${
+                    filterCategory === cat
+                      ? 'bg-primary-container text-on-primary font-bold shadow-sm'
+                      : 'text-on-surface-variant hover:bg-surface-container-low'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Threads Scroller */}
-          <div className="overflow-y-auto flex-1 divide-y divide-surface-container-low">
-            {filteredThreads.map(thread => (
-              <article
-                key={thread.id}
-                onClick={() => setSelectedThreadId(thread.id)}
-                className={`p-space-md cursor-pointer transition-colors relative border-l-4 ${
-                  selectedThreadId === thread.id
-                    ? 'bg-surface-container-low border-l-primary'
-                    : 'bg-surface-container-lowest hover:bg-surface-container-low/50 border-l-transparent'
-                }`}
-              >
-                <div className="flex items-start justify-between gap-space-sm mb-1">
-                  <div className="flex items-center gap-1.5 truncate">
-                    <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                      thread.category === 'Interested' ? 'bg-emerald-500' : 'bg-primary'
-                    }`}></span>
-                    <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold truncate">
-                      {thread.lead_name}
-                    </h3>
+          {/* Threads List */}
+          <div className="flex-1 overflow-y-auto divide-y divide-surface-container-high/30">
+            {filteredThreads.length === 0 ? (
+              <div className="p-8 text-center text-on-surface-variant text-body-sm space-y-2">
+                <span className="material-symbols-outlined text-[36px] text-on-surface-variant/40">inbox</span>
+                <p>No conversations in queue.</p>
+                <p className="text-xs text-on-surface-variant/70">When leads reply to your cold outreach, they land here automatically.</p>
+              </div>
+            ) : (
+              filteredThreads.map(thread => (
+                <article
+                  key={thread.id}
+                  onClick={() => setSelectedThreadId(thread.id)}
+                  className={`p-space-md cursor-pointer transition-all ${
+                    selectedThreadId === thread.id
+                      ? 'bg-surface-container-low border-l-4 border-primary'
+                      : 'hover:bg-surface-container-low/40'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-1 mb-1">
+                    <div className="flex items-center gap-1.5">
+                      {!thread.isRead && (
+                        <span className="w-2 h-2 rounded-full bg-primary" title="Unread"></span>
+                      )}
+                      <h4 className="font-headline-sm text-body-sm font-bold text-on-surface truncate max-w-[160px]">
+                        {thread.lead_name}
+                      </h4>
+                    </div>
+                    <span className="font-label-sm text-[11px] text-on-surface-variant whitespace-nowrap">
+                      {thread.time}
+                    </span>
                   </div>
-                  <span className="font-label-sm text-label-sm text-on-surface-variant flex-shrink-0">
-                    {thread.time}
-                  </span>
-                </div>
 
-                <div className="flex items-center gap-1.5 mb-1.5">
-                  <span className="font-label-sm text-label-sm text-secondary font-medium truncate">
-                    {thread.business_name}
-                  </span>
-                  <span className="text-outline text-xs">•</span>
-                  <span className={`px-2 py-0.5 rounded-full text-[11px] font-semibold inline-flex items-center gap-1 ${
-                    thread.category === 'Interested'
-                      ? 'bg-emerald-100 text-emerald-800'
-                      : thread.category === 'Question'
-                      ? 'bg-amber-100 text-amber-800'
-                      : 'bg-primary-fixed text-on-primary-fixed'
-                  }`}>
-                    {thread.category}
-                  </span>
-                </div>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="text-xs text-on-surface-variant font-medium truncate max-w-[130px]">
+                      {thread.business_name}
+                    </span>
+                    <span className="text-outline text-xs">•</span>
+                    <span className={`px-2 py-0.5 rounded-full text-[11px] font-semibold inline-flex items-center gap-1 ${
+                      thread.category === 'Interested'
+                        ? 'bg-emerald-100 text-emerald-800'
+                        : thread.category === 'Question'
+                        ? 'bg-amber-100 text-amber-800'
+                        : 'bg-primary-fixed text-on-primary-fixed'
+                    }`}>
+                      {thread.category}
+                    </span>
+                  </div>
 
-                <p className="font-body-sm text-body-sm text-on-surface line-clamp-2 leading-relaxed">
-                  {thread.messages[thread.messages.length - 1]?.text}
-                </p>
-              </article>
-            ))}
+                  <p className="font-body-sm text-body-sm text-on-surface line-clamp-2 leading-relaxed">
+                    {thread.messages?.[thread.messages.length - 1]?.text}
+                  </p>
+                </article>
+              ))
+            )}
           </div>
         </section>
 
@@ -266,6 +357,17 @@ export default function Inbox() {
                     Between <strong>Shoaib ul Din</strong> and <strong>{activeThread.lead_name}</strong> ({activeThread.email})
                   </p>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={() => toggleReadStatus(activeThread.id)}
+                  className="px-2.5 py-1 rounded-lg border border-outline-variant/60 text-xs font-medium hover:bg-surface-container-low flex items-center gap-1"
+                >
+                  <span className="material-symbols-outlined text-[14px]">
+                    {activeThread.isRead ? 'mark_email_unread' : 'mark_email_read'}
+                  </span>
+                  <span>{activeThread.isRead ? 'Mark as Unread' : 'Mark as Read'}</span>
+                </button>
               </div>
 
               {/* Messages Scroller */}
@@ -287,6 +389,31 @@ export default function Inbox() {
                         : 'bg-surface-container-low text-on-surface rounded-tl-none border border-surface-container-high/60'
                     )}>
                       {msg.text}
+
+                      {/* "Urdu mein samjhao" button on prospect messages */}
+                      {!msg.isMe && (
+                        <div className="mt-2 pt-2 border-t border-surface-container-high/40">
+                          <button
+                            type="button"
+                            onClick={() => handleExplainInUrdu(activeThread.id, msg.text, activeThread.subject)}
+                            disabled={explainingThreadId === activeThread.id}
+                            className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
+                          >
+                            <span className="material-symbols-outlined text-[14px]">translate</span>
+                            <span>{explainingThreadId === activeThread.id ? 'Samjh raha hai...' : '🇵🇰 Urdu mein samjhao'}</span>
+                          </button>
+
+                          {threadExplanations[activeThread.id] && (
+                            <div className="mt-2 p-2.5 rounded-lg bg-amber-50 text-amber-950 border border-amber-200 text-xs space-y-1">
+                              <p className="font-bold flex items-center gap-1 text-amber-900">
+                                <span className="material-symbols-outlined text-[14px]">psychology</span>
+                                Roman Urdu Khulasa & Agla Qadam:
+                              </p>
+                              <p className="whitespace-pre-line">{threadExplanations[activeThread.id]}</p>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -294,22 +421,35 @@ export default function Inbox() {
 
               {/* Quick Reply Bar */}
               <div className="p-space-sm border-t border-surface-container-high/40 bg-surface-container-lowest space-y-2">
-                {/* Quick action chips */}
+                {/* Quick action chips reading from Settings */}
                 <div className="flex flex-wrap gap-1.5 text-xs">
                   <button
                     type="button"
-                    onClick={() => setReplyText('Hi ' + activeThread.lead_name + ', here is my direct WhatsApp: 03473547036. Looking forward to chatting!')}
-                    className="px-2.5 py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-medium"
+                    disabled={!settings.sender_phone}
+                    onClick={() => setReplyText(`Hi ${activeThread.lead_name}, here is my direct WhatsApp: ${settings.sender_phone}. Looking forward to chatting!`)}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-medium ${settings.sender_phone ? 'bg-surface-container hover:bg-surface-container-high text-on-surface' : 'opacity-40 cursor-not-allowed bg-surface-container text-on-surface-variant'}`}
                   >
                     Share WhatsApp
                   </button>
+
                   <button
                     type="button"
-                    onClick={() => setReplyText('Here are some recent video sample cuts: https://video-portfolio-self-eight.vercel.app/')}
-                    className="px-2.5 py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-medium"
+                    disabled={!settings.calendly_link}
+                    onClick={() => setReplyText(`Here is my calendar link to book a quick 15-minute call: ${settings.calendly_link}`)}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-medium ${settings.calendly_link ? 'bg-surface-container hover:bg-surface-container-high text-on-surface' : 'opacity-40 cursor-not-allowed bg-surface-container text-on-surface-variant'}`}
+                  >
+                    Share Calendly Link
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled={!portfolioUrl}
+                    onClick={() => setReplyText(`Here are some recent sample video cuts: ${portfolioUrl}`)}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-medium ${portfolioUrl ? 'bg-surface-container hover:bg-surface-container-high text-on-surface' : 'opacity-40 cursor-not-allowed bg-surface-container text-on-surface-variant'}`}
                   >
                     Send Portfolio
                   </button>
+
                   <button
                     type="button"
                     onClick={() => setShowUrduModal(true)}
@@ -320,20 +460,45 @@ export default function Inbox() {
                   </button>
                 </div>
 
+                {/* Roman Urdu draft explanation and warning notices */}
+                {urduExplanation && (
+                  <div className="p-2 rounded-lg bg-surface-container-low border border-surface-container-high text-xs text-on-surface-variant flex items-start gap-1.5">
+                    <span className="material-symbols-outlined text-[16px] text-primary shrink-0">info</span>
+                    <div>
+                      <span className="font-semibold text-on-surface">Urdu Note: </span>
+                      {urduExplanation}
+                    </div>
+                  </div>
+                )}
+
+                {urduWarning && (
+                  <div className="p-2 rounded-lg bg-amber-50 border border-amber-300 text-xs text-amber-900 flex items-start gap-1.5">
+                    <span className="material-symbols-outlined text-[16px] text-amber-600 shrink-0">warning</span>
+                    <div className="font-medium">
+                      {urduWarning}
+                    </div>
+                  </div>
+                )}
+
                 <div className="flex gap-2">
                   <textarea
                     rows={2}
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
-                    placeholder={'Reply to ' + activeThread.lead_name + ' via Gmail SMTP...'}
+                    placeholder={'Reply to ' + activeThread.lead_name + ' in same thread via Gmail SMTP...'}
                     className="flex-1 p-2 rounded-lg bg-surface-container-low text-body-sm border border-surface-container-high focus:outline-none focus:border-primary"
                   />
                   <button
                     type="button"
                     onClick={handleSendReply}
+                    disabled={sendingReply || !replyText.trim()}
                     className="px-4 bg-primary text-on-primary hover:bg-primary-container rounded-lg font-semibold text-xs flex items-center justify-center transition-all shadow-sm"
                   >
-                    <span className="material-symbols-outlined text-[18px]">send</span>
+                    {sendingReply ? (
+                      <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+                    ) : (
+                      <span className="material-symbols-outlined text-[18px]">send</span>
+                    )}
                   </button>
                 </div>
               </div>
