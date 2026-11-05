@@ -266,37 +266,57 @@ alter table public.suppression_list enable row level security;
 alter table public.activity_log enable row level security;
 
 -- Policies (Users can access only their own rows)
+drop policy if exists "Users can view their own profile" on public.profiles;
 create policy "Users can view their own profile" on public.profiles for select using (auth.uid() = id);
+
+drop policy if exists "Users can update their own profile" on public.profiles;
 create policy "Users can update their own profile" on public.profiles for update using (auth.uid() = id);
 
+drop policy if exists "Users can view their own settings" on public.settings;
 create policy "Users can view their own settings" on public.settings for select using (auth.uid() = user_id);
+
+drop policy if exists "Users can insert/update their own settings" on public.settings;
 create policy "Users can insert/update their own settings" on public.settings for all using (auth.uid() = user_id);
 
+drop policy if exists "Users can view their own services" on public.services;
 create policy "Users can view their own services" on public.services for select using (auth.uid() = user_id);
+
+drop policy if exists "Users can manage their own services" on public.services;
 create policy "Users can manage their own services" on public.services for all using (auth.uid() = user_id);
 
+drop policy if exists "Users can manage their own leads" on public.leads;
 create policy "Users can manage their own leads" on public.leads for all using (auth.uid() = user_id);
 
+drop policy if exists "Users can manage lead channels through lead ownership" on public.lead_channels;
 create policy "Users can manage lead channels through lead ownership" on public.lead_channels for all using (
     exists (select 1 from public.leads where leads.id = lead_channels.lead_id and leads.user_id = auth.uid())
 );
 
+drop policy if exists "Users can manage their own campaigns" on public.campaigns;
 create policy "Users can manage their own campaigns" on public.campaigns for all using (auth.uid() = user_id);
 
+drop policy if exists "Users can manage templates through service ownership" on public.templates;
 create policy "Users can manage templates through service ownership" on public.templates for all using (
     exists (select 1 from public.services where services.id = templates.service_id and services.user_id = auth.uid())
 );
 
+drop policy if exists "Users can manage their email queue" on public.email_queue;
 create policy "Users can manage their email queue" on public.email_queue for all using (auth.uid() = user_id);
 
+drop policy if exists "Users can manage their email logs" on public.email_logs;
 create policy "Users can manage their email logs" on public.email_logs for all using (auth.uid() = user_id);
 
+drop policy if exists "Users can manage their replies" on public.replies;
 create policy "Users can manage their replies" on public.replies for all using (auth.uid() = user_id);
 
+drop policy if exists "Users can manage their manual tasks" on public.manual_tasks;
 create policy "Users can manage their manual tasks" on public.manual_tasks for all using (auth.uid() = user_id);
 
+drop policy if exists "Users can manage their link clicks" on public.link_clicks;
 create policy "Users can manage their link clicks" on public.link_clicks for all using (auth.uid() = user_id);
 
+drop policy if exists "Users can manage their suppression list" on public.suppression_list;
 create policy "Users can manage their suppression list" on public.suppression_list for all using (auth.uid() = user_id);
 
+drop policy if exists "Users can view their activity log" on public.activity_log;
 create policy "Users can view their activity log" on public.activity_log for all using (auth.uid() = user_id);
