@@ -334,7 +334,7 @@ router.post('/import-csv', async (req, res) => {
       const hasSocial = Boolean(socials.instagram || socials.facebook || socials.tiktok || phone);
       if (!email && hasSocial) {
         const platform = socials.instagram ? 'Instagram' : (phone ? 'WhatsApp' : 'Social');
-        const dmMessage = `Assalam o Alaikum! I saw ${name} in ${city}. I help local brands scale with high-retention video reels. Would love to send 2 custom ideas for your page!`;
+        const dmMessage = `Assalam o Alaikum! I came across ${name} in ${city}. I offer short-form video and social media content creation. Would love to share 2 quick ideas for your page!`;
 
         createdManualTasks.push({ name, platform });
         if (supabase) {

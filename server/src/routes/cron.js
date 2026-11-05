@@ -383,7 +383,7 @@ router.all('/send', verifyCronAuth, async (req, res) => {
           if (!hasEmail && hasSocialOrPhone) {
             const platform = item.socials?.instagram ? 'Instagram' : (item.phone ? 'WhatsApp' : 'Social');
             const contactTarget = item.phone || item.business_name;
-            const dmText = `Assalam o Alaikum! I came across ${item.business_name} in ${randomCity} and really liked your presence. I help local brands scale with short-form video reels. Would love to share 2 quick concepts with you!`;
+            const dmText = `Assalam o Alaikum! I came across ${item.business_name} in ${randomCity}. I create short-form videos and social media content. Would love to share 2 quick sample concepts for your page!`;
 
             if (supabase) {
               await supabase.from('manual_tasks').insert({

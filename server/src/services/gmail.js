@@ -50,9 +50,12 @@ export async function testImapConnection(userEmail, appPassword) {
     },
     logger: false,
     clientInfo: { name: 'ReachOut' },
-    connectionTimeout: 5000,
-    greetingTimeout: 5000,
+    connectionTimeout: 9500,
+    greetingTimeout: 9500,
   });
+
+  // Attach error handler to prevent unhandled EventEmitter exception
+  client.on('error', () => {});
 
   try {
     const connectPromise = async () => {
@@ -63,17 +66,17 @@ export async function testImapConnection(userEmail, appPassword) {
       } finally {
         lock.release();
       }
-      await client.logout();
+      try { await client.logout(); } catch (e) {}
       return { success: true, message: 'IMAP connection verified successfully' };
     };
 
     const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('IMAP connection timed out after 5000ms')), 5000)
+      setTimeout(() => reject(new Error('IMAP connection timed out after 9500ms')), 9500)
     );
 
     return await Promise.race([connectPromise(), timeoutPromise]);
   } catch (err) {
-    try { await client.logout(); } catch (e) {}
+    try { client.close(); } catch (e) {}
     console.error('IMAP test error:', err.message);
     return { success: false, error: err.message || 'Failed to authenticate with Gmail IMAP' };
   }
