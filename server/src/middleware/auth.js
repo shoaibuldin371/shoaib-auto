@@ -56,3 +56,4 @@ export async function requireAdminAuth(req, res, next) {
     return res.status(500).json({ error: `Auth validation failed: ${err.message}` });
   }
 }
+
