@@ -18,15 +18,15 @@ export default function Settings() {
     warmup_start_limit: 15,
     warmup_step: 5,
     warmup_step_days: 3,
-    warmup_max_limit: 50,
-    send_window_start: '09:00',
+    warmup_max_limit: 40,
+    send_window_start: '10:00',
     send_window_end: '18:00',
     skip_sundays: true,
-    min_delay_sec: 45,
-    max_delay_sec: 150,
+    min_delay_sec: 15,
+    max_delay_sec: 45,
     bcc_self: false,
     dry_run_mode: false,
-    approval_mode: true,
+    approval_mode: false, // OFF by default
     pause_all: false,
   });
 

@@ -1,0 +1,17 @@
+name: Daily Executive Summary (20:00 PKT / 15:00 UTC)
+
+on:
+  schedule:
+    # 15:00 UTC corresponds to 20:00 Asia/Karachi
+    - cron: '0 15 * * *'
+  workflow_dispatch:
+
+jobs:
+  daily-summary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Daily Summary Email
+        run: |
+          curl -s -X POST "${{ secrets.VERCEL_APP_URL }}/api/cron/daily-summary" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json"

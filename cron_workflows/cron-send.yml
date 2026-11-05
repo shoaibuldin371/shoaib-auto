@@ -1,18 +1,16 @@
-name: ReachOut Scheduled Send Trigger
+name: Scheduled Send (Every 30m, 10-18 PKT, Mon-Sat)
 
 on:
   schedule:
-    # 05:00 UTC and 11:00 UTC corresponds to 10:00 and 16:00 Asia/Karachi
-    - cron: '0 5,11 * * *'
+    - cron: '*/30 5-13 * * 1-6'
   workflow_dispatch:
 
 jobs:
-  trigger-send:
+  outreach-send:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Outreach Send Endpoint
+      - name: Trigger Send Batch
         run: |
           curl -s -X POST "${{ secrets.VERCEL_APP_URL }}/api/cron/send" \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json"
-

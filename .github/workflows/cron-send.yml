@@ -1,0 +1,18 @@
+name: Scheduled Send (Every 30m, 10-18 PKT, Mon-Sat)
+
+on:
+  schedule:
+    # Every 30 minutes from 05:00 to 13:30 UTC corresponds to 10:00 to 18:30 Asia/Karachi
+    # 1-6 = Monday to Saturday (Skip Sunday)
+    - cron: '*/30 5-13 * * 1-6'
+  workflow_dispatch:
+
+jobs:
+  outreach-send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Send Batch
+        run: |
+          curl -s -X POST "${{ secrets.VERCEL_APP_URL }}/api/cron/send" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json"

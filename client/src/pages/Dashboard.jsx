@@ -1,9 +1,54 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 
 export default function Dashboard() {
+  const [systemStatus, setSystemStatus] = useState(null);
+
+  useEffect(() => {
+    fetch('/api/cron/status')
+      .then(res => res.json())
+      .then(data => setSystemStatus(data))
+      .catch(err => console.error(err));
+  }, []);
+
+  async function handleResumeSending() {
+    try {
+      await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ auto_paused: false, auto_pause_reason: '' }),
+      });
+      setSystemStatus(prev => ({ ...prev, auto_paused: false, auto_pause_reason: '' }));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   return (
     <div className="flex flex-col w-full gap-space-xl pb-16">
+      {/* RED SAFETY ALERT BANNER IF AUTO-PAUSED */}
+      {systemStatus?.auto_paused && (
+        <div className="p-space-md rounded-xl bg-red-50 border-2 border-red-500 text-red-950 flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm shadow-md animate-pulse">
+          <div className="flex items-center gap-space-sm">
+            <span className="material-symbols-outlined text-red-600 text-[28px]">error</span>
+            <div>
+              <h4 className="font-bold text-base text-red-900">
+                Outreach Automatically Paused by Safety Guardrails
+              </h4>
+              <p className="text-xs text-red-800">
+                Reason: {systemStatus.auto_pause_reason || 'Recent bounce rate exceeded 5% limit'}. All dispatches are halted.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={handleResumeSending}
+            className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-sm transition-all whitespace-nowrap"
+          >
+            Acknowledge &amp; Resume Sending
+          </button>
+        </div>
+      )}
+
       {/* Top Greeting & Header Bar */}
       <section className="flex flex-col md:flex-row md:items-center justify-between gap-space-md">
         <div>
