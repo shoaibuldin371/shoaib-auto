@@ -101,22 +101,6 @@ export default function Login() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-space-md">
-          {isSignUp && (
-            <div>
-              <label className="block font-label-md text-label-md text-on-surface mb-1 font-medium">
-                Full Name
-              </label>
-              <input
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                required
-                className="w-full h-11 px-space-md rounded-xl bg-surface-container-low border border-outline-variant/60 text-on-surface text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                placeholder="Shoaib ul Din"
-              />
-            </div>
-          )}
-
           <div>
             <label className="block font-label-md text-label-md text-on-surface mb-1 font-medium">
               Email Address

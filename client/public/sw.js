@@ -1,35 +1,17 @@
 // ReachOut Service Worker
-const CACHE_NAME = 'reachout-v1';
-
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(['/']);
-    })
-  );
+self.addEventListener('install', () => {
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
-      );
-    })
+    caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k))))
   );
   self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
-  // Let network handle /api/ requests directly
-  if (event.request.url.includes('/api/') || event.request.url.includes('/r/')) {
-    return;
-  }
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    })
-  );
+  // Always fetch fresh network response
+  event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));
 });
 
