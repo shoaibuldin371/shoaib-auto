@@ -1,13 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
-  const { signIn, isSupabaseConfigured } = useAuth();
+  const { user, signIn, isSupabaseConfigured } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('Mshoaibuldin371@gmail.com');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    if (user) {
+      navigate('/', { replace: true });
+    }
+  }, [user, navigate]);
 
   const checkRateLimit = () => {
     try {
@@ -50,6 +58,7 @@ export default function Login() {
     try {
       await signIn(email, password);
       localStorage.removeItem('reachout_login_attempts');
+      navigate('/', { replace: true });
     } catch (err) {
       recordFailedAttempt();
       const updatedCheck = checkRateLimit();
