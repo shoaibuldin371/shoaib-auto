@@ -211,19 +211,40 @@ export default function ManualOutreach() {
                 {/* Right: Actions */}
                 <div className="flex flex-col gap-2 min-w-[200px] flex-shrink-0">
                   {/* Platform link */}
-                  <a
-                    href={lead.link}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={`py-2 px-3 rounded-lg font-label-md text-label-md font-semibold transition-all flex items-center justify-center gap-1.5 shadow-sm ${
-                      lead.platform === 'WhatsApp'
-                        ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                        : 'bg-primary-container hover:bg-primary text-white'
-                    }`}
-                  >
-                    <span className="material-symbols-outlined text-[18px]">{lead.platformIcon}</span>
-                    <span>Open {lead.platform}</span>
-                  </a>
+                  {(() => {
+                    let openUrl = lead.link || lead.profile_url || '';
+                    const isWhatsApp = (lead.platform || '').toLowerCase().includes('whatsapp');
+                    const isInstagram = (lead.platform || '').toLowerCase().includes('instagram');
+                    const isLinkedIn = (lead.platform || '').toLowerCase().includes('linkedin');
+
+                    if (isWhatsApp && openUrl.startsWith('https://wa.me/') && !openUrl.includes('?text=')) {
+                      openUrl = `${openUrl}?text=${encodeURIComponent(lead.dmText || '')}`;
+                    }
+
+                    return (
+                      <a
+                        href={openUrl || '#'}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`py-2 px-3 rounded-lg font-label-md text-label-md font-semibold transition-all flex items-center justify-center gap-1.5 shadow-sm ${
+                          isWhatsApp
+                            ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                            : 'bg-primary-container hover:bg-primary text-white'
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-[18px]">
+                          {isWhatsApp
+                            ? 'chat'
+                            : isInstagram
+                            ? 'photo_camera'
+                            : isLinkedIn
+                            ? 'badge'
+                            : 'open_in_new'}
+                        </span>
+                        <span>Open {lead.platform || 'Platform'}</span>
+                      </a>
+                    );
+                  })()}
 
                   {/* Quick status transitions */}
                   <div className="grid grid-cols-2 gap-1.5 pt-1">

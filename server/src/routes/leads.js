@@ -519,6 +519,10 @@ router.get('/manual-tasks', async (req, res) => {
       if (!error && data && data.length > 0) {
         const formatted = data.map(t => {
           const l = t.leads || {};
+          let targetUrl = t.profile_url || '';
+          if (!targetUrl && l.phone) {
+            targetUrl = `https://wa.me/${l.phone.replace(/[^0-9]/g, '')}`;
+          }
           return {
             id: t.id,
             lead_id: t.lead_id,
@@ -526,8 +530,9 @@ router.get('/manual-tasks', async (req, res) => {
             contact_name: l.contact_name || l.first_name || 'Founder',
             city: l.city || 'Islamabad',
             country: l.country || 'Pakistan',
-            platform: t.platform,
-            profile_url: t.profile_url,
+            platform: t.platform || 'WhatsApp',
+            profile_url: targetUrl,
+            link: targetUrl,
             dmText: t.dm_message,
             status: t.status,
             suggested_service: t.suggested_service,
