@@ -137,7 +137,7 @@ router.get('/', async (req, res) => {
     const { search, industry, minScore, status } = req.query;
 
     if (supabase) {
-      let query = supabase.from('leads').select('*, lead_channels(*)').order('lead_score', { ascending: false });
+      let query = supabase.from('leads').select('*, services(slug, name), lead_channels(*)').order('lead_score', { ascending: false });
 
       if (search) {
         query = query.ilike('business_name', `%${search}%`);
@@ -151,7 +151,13 @@ router.get('/', async (req, res) => {
 
       const { data, error } = await query;
       if (!error && data && data.length > 0) {
-        return res.json(data);
+        const formatted = data.map(l => ({
+          ...l,
+          service_slug: l.services?.slug || 'social-media',
+          service_id: l.services?.slug || l.service_id || 'social-media',
+          service_uuid: l.service_id,
+        }));
+        return res.json(formatted);
       }
     }
 
@@ -200,20 +206,47 @@ router.post('/search-osm', async (req, res) => {
         localLeads.unshift(leadItem);
       }
 
-      // Upsert to Supabase if configured
+      // Save to Supabase if configured
       if (supabase) {
-        await supabase.from('leads').upsert({
-          business_name: raw.business_name,
-          email: raw.email || '',
-          phone: raw.phone || '',
-          website: raw.website || '',
-          city: raw.city,
-          address: raw.address,
-          rating: raw.rating,
-          review_count: raw.review_count,
-          lead_score: score,
-          source: 'osm_overpass',
-        }, { onConflict: 'email' });
+        try {
+          const { data: set } = await supabase.from('settings').select('user_id').limit(1).single();
+          const userId = set?.user_id;
+
+          const { data: s } = await supabase.from('services').select('id, slug').limit(1).single();
+          const serviceId = s?.id || null;
+
+          if (userId) {
+            let existing = null;
+            if (raw.email) {
+              const { data: ex } = await supabase.from('leads').select('id').eq('email', raw.email.toLowerCase().trim()).maybeSingle();
+              existing = ex;
+            } else {
+              const { data: ex } = await supabase.from('leads').select('id').eq('business_name', raw.business_name).maybeSingle();
+              existing = ex;
+            }
+
+            if (!existing) {
+              await supabase.from('leads').insert({
+                user_id: userId,
+                service_id: serviceId,
+                business_name: raw.business_name,
+                email: raw.email ? raw.email.toLowerCase().trim() : '',
+                phone: raw.phone || '',
+                website: raw.website || '',
+                city: raw.city || city,
+                address: raw.address || '',
+                rating: raw.rating || 0,
+                review_count: raw.review_count || 0,
+                lead_score: score,
+                status: 'new',
+                personal_hook: leadItem.personal_hook,
+                source: 'osm_overpass',
+              });
+            }
+          }
+        } catch (dbErr) {
+          console.error('[OSM SUPABASE INSERT ERROR]:', dbErr.message);
+        }
       }
     }
 
@@ -372,7 +405,8 @@ router.post('/import-csv', async (req, res) => {
 
 /**
  * GET /api/leads/telemetry-stats
- * Returns: leadsWithEmail, leadsOnlySocial, pendingManualTasksToday, totalLeads
+ * Returns live DB statistics: emailsSent, openRate, replyRate, meetingsBooked,
+ * leadsWithEmail, leadsOnlySocial, pendingManualTasksToday, activeLeadsPerService.
  */
 router.get('/telemetry-stats', async (req, res) => {
   try {
@@ -380,22 +414,73 @@ router.get('/telemetry-stats', async (req, res) => {
     let leadsOnlySocial = 0;
     let pendingManualTasksToday = 0;
     let totalLeads = 0;
+    let emailsSent = 0;
+    let emailsSentToday = 0;
+    let openedEmails = 0;
+    let openRate = 0;
+    let repliesCount = 0;
+    let replyRate = 0;
+    let meetingsBooked = 0;
+    let interestedCount = 0;
+    const activeLeadsPerService = {
+      'social-media': 0,
+      'video-editing': 0,
+      'ai-video': 0,
+      'product-manager': 0,
+    };
 
     if (supabase) {
-      const { count: withEmail } = await supabase.from('leads').select('*', { count: 'exact', head: true }).neq('email', '');
-      leadsWithEmail = withEmail || 0;
+      // 1. Leads
+      const { data: allLeads } = await supabase.from('leads').select('id, email, phone, status, service_id, link_click_count');
+      if (allLeads && allLeads.length > 0) {
+        totalLeads = allLeads.length;
+        leadsWithEmail = allLeads.filter(l => Boolean(l.email && l.email.trim())).length;
+        leadsOnlySocial = allLeads.filter(l => !l.email && Boolean(l.phone)).length;
+        meetingsBooked = allLeads.filter(l => l.status === 'call_booked' || l.status === 'won').length;
+        interestedCount = allLeads.filter(l => l.status === 'interested').length;
 
-      const { count: total } = await supabase.from('leads').select('*', { count: 'exact', head: true });
-      totalLeads = total || 0;
-      leadsOnlySocial = Math.max(0, totalLeads - leadsWithEmail);
+        // Map service IDs to slugs
+        const { data: dbServices } = await supabase.from('services').select('id, slug');
+        const idToSlug = {};
+        if (dbServices) {
+          for (const s of dbServices) idToSlug[s.id] = s.slug;
+        }
 
+        for (const l of allLeads) {
+          const sSlug = idToSlug[l.service_id] || l.service_id;
+          if (activeLeadsPerService[sSlug] !== undefined) {
+            activeLeadsPerService[sSlug]++;
+          }
+        }
+      }
+
+      // 2. Email Logs
+      const { data: logs, count: totalSent } = await supabase.from('email_logs').select('*', { count: 'exact' });
+      emailsSent = totalSent || (logs ? logs.length : 0);
+
+      const todayMidnight = new Date();
+      todayMidnight.setHours(0, 0, 0, 0);
+      if (logs) {
+        emailsSentToday = logs.filter(lg => new Date(lg.sent_at) >= todayMidnight).length;
+      }
+
+      // 3. Link Clicks / Opens
+      const { count: clickCount } = await supabase.from('link_clicks').select('*', { count: 'exact', head: true });
+      openedEmails = clickCount || 0;
+      if (emailsSent > 0) {
+        openRate = Math.round((openedEmails / emailsSent) * 100);
+      }
+
+      // 4. Replies
+      const { count: repCount } = await supabase.from('replies').select('*', { count: 'exact', head: true });
+      repliesCount = repCount || 0;
+      if (emailsSent > 0) {
+        replyRate = Math.round((repliesCount / emailsSent) * 100);
+      }
+
+      // 5. Manual Tasks
       const { count: tasks } = await supabase.from('manual_tasks').select('*', { count: 'exact', head: true }).eq('status', 'pending');
       pendingManualTasksToday = tasks || 0;
-    } else {
-      totalLeads = localLeads.length;
-      leadsWithEmail = localLeads.filter(l => Boolean(l.email)).length;
-      leadsOnlySocial = localLeads.filter(l => !l.email && (l.phone || (l.socials && Object.keys(l.socials).length > 0))).length;
-      pendingManualTasksToday = 4;
     }
 
     res.json({
@@ -404,7 +489,75 @@ router.get('/telemetry-stats', async (req, res) => {
       leadsWithEmail,
       leadsOnlySocial,
       pendingManualTasksToday,
+      emailsSent,
+      emailsSentToday,
+      openedEmails,
+      openRate,
+      repliesCount,
+      replyRate,
+      meetingsBooked,
+      interestedCount,
+      activeLeadsPerService,
     });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * GET /api/leads/manual-tasks
+ * Returns pending and completed manual outreach tasks with lead details
+ */
+router.get('/manual-tasks', async (req, res) => {
+  try {
+    if (supabase) {
+      const { data, error } = await supabase
+        .from('manual_tasks')
+        .select('*, leads(*)')
+        .order('created_at', { ascending: false });
+
+      if (!error && data && data.length > 0) {
+        const formatted = data.map(t => {
+          const l = t.leads || {};
+          return {
+            id: t.id,
+            lead_id: t.lead_id,
+            business_name: l.business_name || 'Business Contact',
+            contact_name: l.contact_name || l.first_name || 'Founder',
+            city: l.city || 'Islamabad',
+            country: l.country || 'Pakistan',
+            platform: t.platform,
+            profile_url: t.profile_url,
+            dmText: t.dm_message,
+            status: t.status,
+            suggested_service: t.suggested_service,
+            created_at: t.created_at,
+          };
+        });
+        return res.json(formatted);
+      }
+    }
+    return res.json([]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * POST /api/leads/manual-tasks/:id/status
+ * Updates status of a manual outreach task (done, replied, skipped, pending)
+ */
+router.post('/manual-tasks/:id/status', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    if (supabase) {
+      await supabase.from('manual_tasks').update({
+        status,
+        completed_at: status === 'done' || status === 'replied' ? new Date().toISOString() : null,
+      }).eq('id', id);
+    }
+    res.json({ success: true, id, status });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

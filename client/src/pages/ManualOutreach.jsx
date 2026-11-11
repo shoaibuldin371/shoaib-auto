@@ -1,19 +1,49 @@
-import React, { useState } from 'react';
-
-const MOCK_MANUAL_LEADS = [];
+import React, { useState, useEffect } from 'react';
 
 export default function ManualOutreach() {
-  const [leads, setLeads] = useState(MOCK_MANUAL_LEADS);
+  const [leads, setLeads] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [regionFilter, setRegionFilter] = useState('all'); // 'all', 'pakistan', 'worldwide'
   const [completedCount, setCompletedCount] = useState(0);
   const [copiedId, setCopiedId] = useState(null);
   const dailyGoal = 20;
 
-  function handleAction(leadId, action) {
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  async function fetchTasks() {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/leads/manual-tasks');
+      if (res.ok) {
+        const data = await res.json();
+        setLeads(data);
+        const done = data.filter(d => d.status === 'done' || d.status === 'replied').length;
+        setCompletedCount(Math.min(done, dailyGoal));
+      }
+    } catch (err) {
+      console.error('Failed to fetch manual tasks:', err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleAction(taskId, action) {
     if (action === 'done' || action === 'replied') {
       setCompletedCount(prev => Math.min(prev + 1, dailyGoal));
     }
-    setLeads(prev => prev.map(l => l.id === leadId ? { ...l, status: action } : l));
+    setLeads(prev => prev.map(l => l.id === taskId ? { ...l, status: action } : l));
+
+    try {
+      await fetch(`/api/leads/manual-tasks/${taskId}/status`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: action }),
+      });
+    } catch (err) {
+      console.error('Failed to update task status:', err);
+    }
   }
 
   function handleCopyDm(id, text) {

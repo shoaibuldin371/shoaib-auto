@@ -88,7 +88,7 @@ export default function Dashboard() {
           <div>
             <span className="text-xs text-outline font-semibold uppercase block">Verified Public Emails</span>
             <span className="font-headline-sm text-base text-on-surface font-bold">
-              {leadTelemetry?.leadsWithEmail ?? 24} Leads
+              {leadTelemetry?.leadsWithEmail ?? 0} Leads
             </span>
             <span className="text-[11px] text-emerald-700 block">Active in Auto Email Funnel</span>
           </div>
@@ -101,7 +101,7 @@ export default function Dashboard() {
           <div>
             <span className="text-xs text-outline font-semibold uppercase block">Social &amp; Phone Leads</span>
             <span className="font-headline-sm text-base text-on-surface font-bold">
-              {leadTelemetry?.leadsOnlySocial ?? 12} Leads
+              {leadTelemetry?.leadsOnlySocial ?? 0} Leads
             </span>
             <span className="text-[11px] text-primary block">WhatsApp / Instagram / TikTok</span>
           </div>
@@ -111,7 +111,7 @@ export default function Dashboard() {
           <div>
             <span className="text-xs text-secondary font-bold block">Pending Manual DMs Today</span>
             <span className="font-headline-sm text-lg text-primary font-bold">
-              {leadTelemetry?.pendingManualTasksToday ?? 4} Tasks
+              {leadTelemetry?.pendingManualTasksToday ?? 0} Tasks
             </span>
           </div>
           <NavLink
@@ -163,14 +163,16 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="my-space-md">
-            <div className="font-headline-xl text-headline-xl text-on-surface font-bold tracking-tight">2,480</div>
+            <div className="font-headline-xl text-headline-xl text-on-surface font-bold tracking-tight">
+              {leadTelemetry?.emailsSent ?? 0}
+            </div>
           </div>
           <div className="flex items-center justify-between font-body-sm text-body-sm">
             <div className="flex items-center gap-1 text-primary font-medium">
-              <span className="material-symbols-outlined text-[16px]">arrow_upward</span>
-              <span>+14.2%</span>
+              <span className="material-symbols-outlined text-[16px]">trending_up</span>
+              <span>{leadTelemetry?.emailsSentToday ?? 0} today</span>
             </div>
-            <span className="text-outline">vs last month</span>
+            <span className="text-outline">All-time sent</span>
           </div>
         </div>
 
@@ -183,12 +185,14 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="my-space-md">
-            <div className="font-headline-xl text-headline-xl text-on-surface font-bold tracking-tight">42.8%</div>
+            <div className="font-headline-xl text-headline-xl text-on-surface font-bold tracking-tight">
+              {leadTelemetry?.openRate !== undefined ? `${leadTelemetry.openRate}%` : '0%'}
+            </div>
           </div>
           <div className="flex items-center justify-between font-body-sm text-body-sm">
             <div className="flex items-center gap-1 text-primary font-medium">
-              <span className="material-symbols-outlined text-[16px]">arrow_upward</span>
-              <span>+3.1%</span>
+              <span className="material-symbols-outlined text-[16px]">drafts</span>
+              <span>{leadTelemetry?.openedEmails ?? 0} clicks</span>
             </div>
             <span className="text-outline">High Deliverability</span>
           </div>
@@ -203,14 +207,16 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="my-space-md">
-            <div className="font-headline-xl text-headline-xl text-on-surface font-bold tracking-tight">8.4%</div>
+            <div className="font-headline-xl text-headline-xl text-on-surface font-bold tracking-tight">
+              {leadTelemetry?.replyRate !== undefined ? `${leadTelemetry.replyRate}%` : '0%'}
+            </div>
           </div>
           <div className="flex items-center justify-between font-body-sm text-body-sm">
             <div className="flex items-center gap-1 text-primary font-medium">
-              <span className="material-symbols-outlined text-[16px]">arrow_upward</span>
-              <span>+1.6%</span>
+              <span className="material-symbols-outlined text-[16px]">forum</span>
+              <span>{leadTelemetry?.repliesCount ?? 0} Replies</span>
             </div>
-            <span className="text-outline">68 Interested</span>
+            <span className="text-outline">{leadTelemetry?.interestedCount ?? 0} Interested</span>
           </div>
         </div>
 
@@ -223,12 +229,14 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="my-space-md">
-            <div className="font-headline-xl text-headline-xl text-on-surface font-bold tracking-tight">14</div>
+            <div className="font-headline-xl text-headline-xl text-on-surface font-bold tracking-tight">
+              {leadTelemetry?.meetingsBooked ?? 0}
+            </div>
           </div>
           <div className="flex items-center justify-between font-body-sm text-body-sm">
             <div className="flex items-center gap-1 text-primary font-medium">
-              <span className="material-symbols-outlined text-[16px]">arrow_upward</span>
-              <span>+4 calls</span>
+              <span className="material-symbols-outlined text-[16px]">event_available</span>
+              <span>Direct via WhatsApp/Gmail</span>
             </div>
             <span className="text-outline">Target: 20/mo</span>
           </div>
@@ -275,7 +283,9 @@ export default function Dashboard() {
             </div>
             <div className="mt-4 pt-3 border-t border-surface-container-high flex items-center justify-between text-body-sm">
               <span className="text-outline">Active Leads</span>
-              <span className="font-bold text-on-surface">142</span>
+              <span className="font-bold text-on-surface">
+                {leadTelemetry?.activeLeadsPerService?.['social-media'] ?? 0}
+              </span>
             </div>
           </NavLink>
 
@@ -302,7 +312,9 @@ export default function Dashboard() {
             </div>
             <div className="mt-4 pt-3 border-t border-surface-container-high flex items-center justify-between text-body-sm">
               <span className="text-outline">Active Leads</span>
-              <span className="font-bold text-on-surface">98</span>
+              <span className="font-bold text-on-surface">
+                {leadTelemetry?.activeLeadsPerService?.['video-editing'] ?? 0}
+              </span>
             </div>
           </NavLink>
 
@@ -329,7 +341,9 @@ export default function Dashboard() {
             </div>
             <div className="mt-4 pt-3 border-t border-surface-container-high flex items-center justify-between text-body-sm">
               <span className="text-outline">Active Leads</span>
-              <span className="font-bold text-on-surface">64</span>
+              <span className="font-bold text-on-surface">
+                {leadTelemetry?.activeLeadsPerService?.['ai-video'] ?? 0}
+              </span>
             </div>
           </NavLink>
 
@@ -356,7 +370,9 @@ export default function Dashboard() {
             </div>
             <div className="mt-4 pt-3 border-t border-surface-container-high flex items-center justify-between text-body-sm">
               <span className="text-outline">Active Leads</span>
-              <span className="font-bold text-on-surface">51</span>
+              <span className="font-bold text-on-surface">
+                {leadTelemetry?.activeLeadsPerService?.['product-manager'] ?? 0}
+              </span>
             </div>
           </NavLink>
         </div>

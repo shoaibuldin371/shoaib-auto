@@ -200,14 +200,203 @@ router.all('/health', verifyCronAuth, async (req, res) => {
 });
 
 /**
+ * Standalone Auto-Discovery Executor
+ * Discovers leads via OSM/Overpass, validates AI hooks with Gemini,
+ * and saves leads and manual tasks to Supabase.
+ */
+export async function executeAutoDiscovery({ settings, limit = 10, scope = 'pakistan' }) {
+  if (!supabase || !settings?.user_id) {
+    return { discoveredCount: 0, reason: 'No Supabase or user_id configured' };
+  }
+
+  // 1. Get user services
+  const { data: dbServices } = await supabase
+    .from('services')
+    .select('*')
+    .eq('user_id', settings.user_id)
+    .eq('active', true);
+
+  const serviceMap = {};
+  if (dbServices && dbServices.length > 0) {
+    for (const s of dbServices) serviceMap[s.slug] = s;
+  }
+
+  const cities = scope === 'worldwide'
+    ? ['New York', 'London', 'Dubai', 'San Francisco', 'Toronto']
+    : ['Islamabad', 'Rawalpindi', 'Lahore', 'Karachi', 'Peshawar', 'Multan', 'Faisalabad'];
+  const randomCity = cities[Math.floor(Math.random() * cities.length)];
+  const industries = ['restaurants', 'gyms', 'ecommerce', 'tech'];
+  const randomInd = industries[Math.floor(Math.random() * industries.length)];
+
+  const discovered = await searchOsmLeads({
+    city: randomCity,
+    industry: randomInd,
+    scope,
+    limit,
+  });
+
+  let newEmailLeadsCount = 0;
+  let newManualTasksCount = 0;
+
+  for (const item of discovered) {
+    let targetSlug = 'social-media';
+    const indLower = (item.industry || randomInd).toLowerCase();
+    if (indLower.includes('tech') || indLower.includes('software') || indLower.includes('digital')) {
+      targetSlug = serviceMap['video-editing'] ? 'video-editing' : 'social-media';
+    } else if (indLower.includes('gym') || indLower.includes('fitness')) {
+      targetSlug = 'video-editing';
+    }
+
+    const serviceObj = serviceMap[targetSlug] || Object.values(serviceMap)[0] || null;
+    const serviceId = serviceObj?.id || null;
+
+    const hasEmail = isAllowedBusinessEmail(item.email, 'osm_overpass');
+    const hasSocialOrPhone = Boolean(item.phone || (item.socials && Object.keys(item.socials).length > 0));
+
+    let rawHook = '';
+    try {
+      rawHook = await aiProvider.generatePersonalHook(item, serviceObj?.display_name || 'Social Media Management');
+    } catch (e) {
+      rawHook = `I came across ${item.business_name} in ${randomCity} and was really impressed by your local presence.`;
+    }
+    const validated = validateAiHook(rawHook, item.business_name);
+    const score = calculateLeadScore(item);
+
+    if (hasEmail) {
+      const cleanEmail = item.email.trim().toLowerCase();
+      const { data: existing } = await supabase
+        .from('leads')
+        .select('id')
+        .eq('email', cleanEmail)
+        .maybeSingle();
+
+      if (!existing) {
+        const { data: insertedLead } = await supabase.from('leads').insert({
+          user_id: settings.user_id,
+          service_id: serviceId,
+          business_name: item.business_name,
+          email: cleanEmail,
+          phone: item.phone || '',
+          website: item.website || '',
+          city: item.city || randomCity,
+          country: item.country || (scope === 'worldwide' ? 'International' : 'Pakistan'),
+          lead_score: score,
+          status: 'new',
+          personal_hook: validated.hook,
+          source: item.source || 'osm_overpass',
+        }).select().single();
+
+        if (insertedLead) {
+          newEmailLeadsCount++;
+          if (item.socials) {
+            for (const [platform, url] of Object.entries(item.socials)) {
+              if (url) {
+                try {
+                  await supabase.from('lead_channels').insert({
+                    lead_id: insertedLead.id,
+                    platform,
+                    profile_url: url,
+                    status: 'pending',
+                  });
+                } catch (chErr) {}
+              }
+            }
+          }
+        }
+      }
+    } else if (hasSocialOrPhone) {
+      const { data: existing } = await supabase
+        .from('leads')
+        .select('id')
+        .eq('business_name', item.business_name)
+        .maybeSingle();
+
+      if (!existing) {
+        const { data: insertedLead } = await supabase.from('leads').insert({
+          user_id: settings.user_id,
+          service_id: serviceId,
+          business_name: item.business_name,
+          email: '',
+          phone: item.phone || '',
+          website: item.website || '',
+          city: item.city || randomCity,
+          country: item.country || (scope === 'worldwide' ? 'International' : 'Pakistan'),
+          lead_score: score,
+          status: 'new',
+          personal_hook: validated.hook,
+          source: item.source || 'osm_overpass',
+        }).select().single();
+
+        if (insertedLead) {
+          const platform = item.socials?.instagram ? 'Instagram' : (item.phone ? 'WhatsApp' : 'Social');
+          const profileUrl = item.socials?.instagram || (item.phone ? `https://wa.me/${item.phone.replace(/[^0-9]/g, '')}` : '');
+
+          let dmText = '';
+          try {
+            dmText = await aiProvider.generateManualDm({
+              business_name: item.business_name,
+              city: item.city || randomCity,
+              industry: item.industry || randomInd,
+            }, platform);
+          } catch (e) {
+            dmText = `Salam ${item.business_name}! Loved your presence in ${item.city || randomCity}. Would love to share a couple of short-form content ideas for your brand.`;
+          }
+
+          try {
+            await supabase.from('manual_tasks').insert({
+              user_id: settings.user_id,
+              lead_id: insertedLead.id,
+              platform,
+              profile_url: profileUrl,
+              suggested_service: targetSlug,
+              dm_message: dmText,
+              status: 'pending',
+            });
+          } catch (mErr) {
+            console.error('[MANUAL TASK INSERT ERROR]:', mErr.message);
+          }
+
+          newManualTasksCount++;
+        }
+      }
+    }
+  }
+
+  return {
+    success: true,
+    city: randomCity,
+    industry: randomInd,
+    newEmailLeadsCount,
+    newManualTasksCount,
+  };
+}
+
+/**
+ * /api/cron/discover
+ * Dedicated trigger to discover new leads and populate manual tasks
+ */
+router.all('/discover', verifyCronAuth, async (req, res) => {
+  try {
+    const { settings } = await resolveSettings();
+    const scope = req.query.scope || settings.reachout_scope || 'pakistan';
+    const limit = parseInt(req.query.limit || '10');
+    const result = await executeAutoDiscovery({ settings, limit, scope });
+    res.json({ success: true, result });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
  * /api/cron/send
- * Runs every 30 minutes between 10:00 and 18:00 Asia/Karachi (05:00 to 13:00 UTC), Mon-Sat.
- * Dispatches 1-2 emails per call with concurrency lock, warm-up cap, and deliverability checks.
+ * Runs every 15-30 minutes. Auto-discovers leads 24/7, dispatches during PKT hours.
+ * Supports ?force=1 to test-send immediately.
  * Supports ?dry=1 to generate and preview without sending.
  */
 router.all('/send', verifyCronAuth, async (req, res) => {
   const startTime = Date.now();
   const isDryRun = req.query.dry === '1' || req.query.dry === 'true';
+  const isForce = req.query.force === '1' || req.query.force === 'true';
 
   try {
     const now = new Date();
@@ -275,7 +464,7 @@ router.all('/send', verifyCronAuth, async (req, res) => {
     // =========================================================================
     // 1. IDEMPOTENCY & CONCURRENCY LOCK (Prevents duplicate simultaneous sends)
     // =========================================================================
-    if (cronSendLockUntil && new Date(cronSendLockUntil) > now) {
+    if (!isForce && cronSendLockUntil && new Date(cronSendLockUntil) > now) {
       console.log('[CRON SEND] Call locked by another active send job.');
       return res.json({
         status: 'locked',
@@ -283,7 +472,7 @@ router.all('/send', verifyCronAuth, async (req, res) => {
       });
     }
 
-    if (cronSendLastRunAt && (now.getTime() - new Date(cronSendLastRunAt).getTime()) < 15000) {
+    if (!isForce && cronSendLastRunAt && (now.getTime() - new Date(cronSendLastRunAt).getTime()) < 15000) {
       console.log('[CRON SEND] Call throttled: ran less than 15s ago.');
       return res.json({
         status: 'skipped_throttled',
@@ -296,7 +485,34 @@ router.all('/send', verifyCronAuth, async (req, res) => {
     cronSendLastRunAt = now.toISOString();
 
     // =========================================================================
-    // 2. SAFETY CHECKS (Global Pause, Auto-Pause, Sunday skip, Time Window)
+    // 2. AUTO-DISCOVERY (Runs 24/7 if fewer than 30 unsent leads in DB)
+    // =========================================================================
+    let discoveryResult = null;
+    let unsentLeadCount = 0;
+    if (supabase) {
+      const { count } = await supabase
+        .from('leads')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'new')
+        .neq('email', '');
+      unsentLeadCount = count || 0;
+    }
+
+    if (unsentLeadCount < 30) {
+      try {
+        discoveryResult = await executeAutoDiscovery({
+          settings,
+          limit: 10,
+          scope: settings.reachout_scope || 'pakistan',
+        });
+        console.log('[AUTO DISCOVERY SUCCESS]:', discoveryResult);
+      } catch (dErr) {
+        console.error('[AUTO DISCOVERY WARNING]:', dErr.message);
+      }
+    }
+
+    // =========================================================================
+    // 3. SAFETY CHECKS (Global Pause, Auto-Pause, Sunday skip, Time Window)
     // =========================================================================
     if (settings.pause_all) {
       cronSendLockUntil = null;
@@ -312,16 +528,17 @@ router.all('/send', verifyCronAuth, async (req, res) => {
       });
     }
 
-    if (settings.skip_sundays && pktDay === 0) {
+    if (!isForce && settings.skip_sundays && pktDay === 0) {
       cronSendLockUntil = null;
       return res.json({ status: 'skipped', message: 'Skipping Sunday as per outreach policy.' });
     }
 
-    if (pktHours < 10 || pktHours >= 18) {
+    if (!isForce && (pktHours < 10 || pktHours >= 18)) {
       cronSendLockUntil = null;
       return res.json({
         status: 'outside_window',
-        message: `Current PKT time is ${pktHours}:${pktMinutes}. Sending window is 10:00–18:00 Asia/Karachi.`,
+        message: `Current PKT time is ${pktHours}:${pktMinutes}. Sending window is 10:00–18:00 Asia/Karachi. Auto-discovery finished.`,
+        discovery: discoveryResult,
       });
     }
 
@@ -331,7 +548,7 @@ router.all('/send', verifyCronAuth, async (req, res) => {
     }
 
     // =========================================================================
-    // 3. SERVER-SIDE WARM-UP CALCULATION (Counted strictly from DB)
+    // 4. SERVER-SIDE WARM-UP CALCULATION (Counted strictly from DB)
     // =========================================================================
     const startDate = settings.created_at ? new Date(settings.created_at) : new Date(now.getTime() - 4 * 86400000);
     const daysSinceStart = Math.max(0, Math.floor((now - startDate) / (1000 * 60 * 60 * 24)));
@@ -364,7 +581,7 @@ router.all('/send', verifyCronAuth, async (req, res) => {
       if (logsData) recentLogs = logsData;
     }
 
-    if (sentToday >= dailyLimit) {
+    if (!isForce && sentToday >= dailyLimit) {
       cronSendLockUntil = null;
       return res.json({
         status: 'daily_limit_reached',
@@ -375,7 +592,7 @@ router.all('/send', verifyCronAuth, async (req, res) => {
     }
 
     // =========================================================================
-    // 4. BOUNCE SAFETY GUARDRAIL (Evaluates ONLY after at least 20 sent emails)
+    // 5. BOUNCE SAFETY GUARDRAIL (Evaluates ONLY after at least 20 sent emails)
     // =========================================================================
     const bounceSafety = evaluateBounceSafety(recentLogs);
     if (bounceSafety.shouldPause) {
@@ -414,149 +631,53 @@ router.all('/send', verifyCronAuth, async (req, res) => {
 
     // Small batch: send at most 1-2 emails per call
     const remainingToday = dailyLimit - sentToday;
-    const batchSize = Math.min(2, Math.max(1, remainingToday));
+    const batchSize = isForce ? 1 : Math.min(2, Math.max(1, remainingToday));
 
     // =========================================================================
-    // 5. AUTO-DISCOVERY IF FEWER THAN 30 UNSENT LEADS
-    // =========================================================================
-    let unsentLeadCount = 0;
-    if (supabase) {
-      const { count } = await supabase
-        .from('leads')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'new')
-        .neq('email', '');
-      unsentLeadCount = count || 0;
-    }
-
-    if (unsentLeadCount < 30) {
-      const cities = ['Islamabad', 'Rawalpindi', 'Lahore', 'Karachi', 'Peshawar', 'Multan', 'Faisalabad'];
-      const randomCity = cities[Math.floor(Math.random() * cities.length)];
-      const industries = ['restaurants', 'gyms', 'ecommerce', 'tech'];
-      const randomInd = industries[Math.floor(Math.random() * industries.length)];
-
-      try {
-        const discovered = await searchOsmLeads({
-          city: randomCity,
-          industry: randomInd,
-          scope: 'pakistan',
-          limit: 10,
-        });
-
-        for (const item of discovered) {
-          // If lead has NO email but has phone/whatsapp/social -> Auto create Manual Outreach Task!
-          const hasEmail = isAllowedBusinessEmail(item.email, 'osm_overpass');
-          const hasSocialOrPhone = Boolean(item.phone || (item.socials && Object.keys(item.socials).length > 0));
-
-          if (!hasEmail && hasSocialOrPhone) {
-            const platform = item.socials?.instagram ? 'Instagram' : (item.phone ? 'WhatsApp' : 'Social');
-            const contactTarget = item.phone || item.business_name;
-            const dmText = await aiProvider.generateManualDm({
-              business_name: item.business_name,
-              city: randomCity,
-              industry: randomInd,
-            }, platform);
-
-            if (supabase) {
-              await supabase.from('manual_tasks').insert({
-                user_id: settings.user_id || 'default-user',
-                lead_id: item.id || 'lead-manual',
-                platform,
-                profile_url: item.socials?.instagram || (item.phone ? `https://wa.me/${item.phone.replace(/[^0-9]/g, '')}` : ''),
-                suggested_service: 'social-media',
-                dm_message: dmText,
-                status: 'pending',
-              });
-            }
-            continue;
-          }
-
-          if (!hasEmail) continue;
-
-          // Validate AI hook
-          let rawHook = '';
-          try {
-            rawHook = await aiProvider.generatePersonalHook(item, 'Social Media Management');
-          } catch (e) {
-            rawHook = `I came across ${item.business_name} in ${randomCity} and was impressed by your presence.`;
-          }
-
-          const validated = validateAiHook(rawHook, item.business_name);
-          const score = calculateLeadScore(item);
-
-          if (supabase) {
-            await supabase.from('leads').upsert({
-              business_name: item.business_name,
-              email: item.email,
-              phone: item.phone || '',
-              website: item.website || '',
-              city: item.city || randomCity,
-              country: 'Pakistan',
-              lead_score: score,
-              service_id: 'social-media',
-              status: 'new',
-              personal_hook: validated.hook,
-              source: 'osm_overpass',
-            }, { onConflict: 'email' });
-          }
-        }
-      } catch (err) {
-        console.error('[AUTO DISCOVERY WARNING]:', err.message);
-      }
-    }
-
-    // =========================================================================
-    // 6. SELECT 1-2 EMAILS (Priority: Day 3 Follow-up -> Day 7 Follow-up -> Day 0 Initial)
+    // 6. SELECT 1-2 EMAILS (Follow-ups Day 3 -> Day 7 -> Day 0 Initial)
     // =========================================================================
     const itemsToSend = [];
 
     if (supabase) {
-      // Check Day 3 Follow-ups (Contacted >= 3 days ago, no follow-up 1, still 'contacted')
-      const threeDaysAgo = new Date(now.getTime() - 3 * 86400000).toISOString();
-      const { data: followUpsDay3 } = await supabase
-        .from('email_logs')
-        .select('*, leads(*)')
-        .eq('status', 'sent')
-        .eq('sequence_step', 0)
-        .lte('sent_at', threeDaysAgo)
+      // Check follow-ups for leads already contacted
+      const { data: contactedLeads } = await supabase
+        .from('leads')
+        .select('*, services(*)')
+        .eq('status', 'contacted')
+        .neq('email', '')
         .limit(batchSize);
 
-      if (followUpsDay3) {
-        for (const log of followUpsDay3) {
-          if (log.leads && log.leads.status === 'contacted') {
-            // Lock lead immediately to prevent race conditions
-            await supabase.from('leads').update({ status: 'sending' }).eq('id', log.leads.id);
-            itemsToSend.push({
-              lead: log.leads,
-              step: 1,
-              inReplyTo: log.message_id,
-              threadId: log.thread_id || log.message_id,
-            });
-            if (itemsToSend.length >= batchSize) break;
-          }
-        }
-      }
+      if (contactedLeads) {
+        for (const clead of contactedLeads) {
+          const { data: leadLogs } = await supabase
+            .from('email_logs')
+            .select('*')
+            .eq('lead_id', clead.id)
+            .eq('status', 'sent')
+            .order('sent_at', { ascending: true });
 
-      // Check Day 7 Follow-ups (Follow-up 1 sent >= 4 days ago, still 'contacted')
-      if (itemsToSend.length < batchSize) {
-        const fourDaysAgo = new Date(now.getTime() - 4 * 86400000).toISOString();
-        const { data: followUpsDay7 } = await supabase
-          .from('email_logs')
-          .select('*, leads(*)')
-          .eq('status', 'sent')
-          .eq('sequence_step', 1)
-          .lte('sent_at', fourDaysAgo)
-          .limit(batchSize - itemsToSend.length);
-
-        if (followUpsDay7) {
-          for (const log of followUpsDay7) {
-            if (log.leads && log.leads.status === 'contacted') {
-              await supabase.from('leads').update({ status: 'sending' }).eq('id', log.leads.id);
+          const sentCount = leadLogs ? leadLogs.length : 0;
+          if (sentCount === 1) {
+            const lastSent = new Date(leadLogs[0].sent_at);
+            if (now - lastSent >= 3 * 86400000) {
+              await supabase.from('leads').update({ status: 'sending' }).eq('id', clead.id);
               itemsToSend.push({
-                lead: log.leads,
+                lead: clead,
+                step: 1,
+                inReplyTo: leadLogs[0].message_id,
+                threadId: leadLogs[0].thread_id || leadLogs[0].message_id,
+              });
+              if (itemsToSend.length >= batchSize) break;
+            }
+          } else if (sentCount === 2) {
+            const lastSent = new Date(leadLogs[1].sent_at);
+            if (now - lastSent >= 4 * 86400000) {
+              await supabase.from('leads').update({ status: 'sending' }).eq('id', clead.id);
+              itemsToSend.push({
+                lead: clead,
                 step: 2,
-                inReplyTo: log.message_id,
-                threadId: log.thread_id || log.message_id,
+                inReplyTo: leadLogs[1].message_id,
+                threadId: leadLogs[1].thread_id || leadLogs[1].message_id,
               });
               if (itemsToSend.length >= batchSize) break;
             }
@@ -568,7 +689,7 @@ router.all('/send', verifyCronAuth, async (req, res) => {
       if (itemsToSend.length < batchSize) {
         const { data: newLeads } = await supabase
           .from('leads')
-          .select('*')
+          .select('*, services(*)')
           .eq('status', 'new')
           .neq('email', '')
           .order('lead_score', { ascending: false })
@@ -588,6 +709,7 @@ router.all('/send', verifyCronAuth, async (req, res) => {
       return res.json({
         status: 'no_leads_ready',
         message: 'No leads currently due for sending.',
+        discovery: discoveryResult,
         executionMs: Date.now() - startTime,
       });
     }
@@ -601,7 +723,8 @@ router.all('/send', verifyCronAuth, async (req, res) => {
 
     for (const item of itemsToSend) {
       const { lead, step, inReplyTo, threadId } = item;
-      const slug = lead.service_id || 'social-media';
+      const serviceObj = lead.services || null;
+      const slug = serviceObj?.slug || 'social-media';
 
       // Check required URLs for this service
       const reqCheck = checkServiceRequirements(slug, settings, 'pakistan');
@@ -631,7 +754,7 @@ router.all('/send', verifyCronAuth, async (req, res) => {
       const composition = composeEmail({
         step,
         lead,
-        service: { slug },
+        service: serviceObj || { slug },
         settings,
         region: 'pakistan',
       });
@@ -664,12 +787,13 @@ router.all('/send', verifyCronAuth, async (req, res) => {
 
         if (supabase) {
           await supabase.from('email_logs').insert({
-            user_id: settings.user_id || 'default-user',
+            user_id: settings.user_id,
             lead_id: lead.id,
-            service_id: slug,
+            service_id: serviceObj?.id || lead.service_id || null,
             message_id: sendRes.messageId,
             thread_id: threadId || sendRes.messageId,
-            sequence_step: step,
+            in_reply_to: inReplyTo || null,
+            references_header: threadId || null,
             subject: composition.subject,
             recipient: lead.email,
             status: 'sent',
@@ -722,13 +846,14 @@ router.all('/send', verifyCronAuth, async (req, res) => {
       sentToday: sentToday + results.filter(r => !r.error && !r.skipped).length,
       dailyLimit,
       results,
+      discovery: discoveryResult,
     });
   } catch (err) {
     cronSendLockUntil = null;
     const executionMs = Date.now() - startTime;
     recordCronExecution('/api/cron/send', executionMs, 'error', { error: err.message });
     console.error('[CRON SEND FATAL]:', err);
-    res.status(500).json({ error: err.message, executionMs });
+    res.status(500).json({ status: 'error', error: err.message, executionMs });
   }
 });
 
@@ -779,12 +904,15 @@ router.all('/replies', verifyCronAuth, async (req, res) => {
           processedReplies.push({ type: 'bounce', from: fromEmail, subject });
           inMemoryBouncedList.push(fromEmail.toLowerCase());
 
-          if (supabase) {
-            await supabase.from('suppression_list').upsert({
-              user_id: settings.user_id || 'default-user',
-              email: fromEmail.toLowerCase(),
-              reason: 'bounced',
-            }, { onConflict: 'email' });
+          if (supabase && settings.user_id) {
+            const { data: exSup } = await supabase.from('suppression_list').select('id').eq('email', fromEmail.toLowerCase()).maybeSingle();
+            if (!exSup) {
+              await supabase.from('suppression_list').insert({
+                user_id: settings.user_id,
+                email: fromEmail.toLowerCase(),
+                reason: 'bounced',
+              });
+            }
 
             await supabase.from('email_logs').update({
               status: 'bounced',
@@ -810,12 +938,15 @@ router.all('/replies', verifyCronAuth, async (req, res) => {
         });
 
         if (classification === 'Unsubscribe') {
-          if (supabase) {
-            await supabase.from('suppression_list').upsert({
-              user_id: settings.user_id || 'default-user',
-              email: fromEmail.toLowerCase(),
-              reason: 'unsubscribed',
-            }, { onConflict: 'email' });
+          if (supabase && settings.user_id) {
+            const { data: exSup } = await supabase.from('suppression_list').select('id').eq('email', fromEmail.toLowerCase()).maybeSingle();
+            if (!exSup) {
+              await supabase.from('suppression_list').insert({
+                user_id: settings.user_id,
+                email: fromEmail.toLowerCase(),
+                reason: 'unsubscribed',
+              });
+            }
 
             await supabase.from('leads').update({
               status: 'unsubscribed',
